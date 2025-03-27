@@ -12,9 +12,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,18 +25,19 @@ import java.util.UUID;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final MailComponents mailComponents;
 
     public MemberSignupDto signup(@Valid MemberSignupForm memberSignupForm) {
-//        String password = passwordEncoder.encode(memberSignupForm.getPassword());
-        String password = memberSignupForm.getPassword();
+        if(!Objects.equals(memberSignupForm.getPassword(), memberSignupForm.getConfirmPassword())) {
+            throw new CustomException(ErrorCode.CONFIRM_PASSWORD_MISMATCH);
+        }
+        String password = passwordEncoder.encode(memberSignupForm.getPassword());
         String emailAuthKey = UUID.randomUUID().toString();
         String email = memberSignupForm.getEmail();
         if(memberRepository.existsByEmail(email)){
             throw new CustomException(ErrorCode.ALREADY_REGISTER_USER);
         }
-
         Member member = Member.form(memberSignupForm, password, emailAuthKey);
         memberRepository.save(member);
 
