@@ -15,6 +15,13 @@ public class MailComponents {
 
     private final JavaMailSender mailSender;
 
+    /**
+     * 메일을 보내기 위한 메서드
+     * @param to 회원 가입을 시도하는 유저의 이메일
+     * @param subject 메일의 제목
+     * @param body 회원 가입 축하문, 이메일 인증 링크
+     * @return 메일 전송 유무
+     */
     public boolean send(String to, String subject, String body) {
 
         MimeMessagePreparator msg = mimeMessage -> {
