@@ -43,6 +43,15 @@ public class Member {
 
     private Long account;
 
+    // 이메일 인증을 완료하는 메서드
+    public void completeEmailAuth() {
+        // 이미 인증된 경우 추가 처리는 생략
+        if (!this.emailAuthYn) {
+            this.emailAuthYn = true;
+            this.emailAuthDate = LocalDateTime.now();
+        }
+    }
+
     public static Member form(MemberSignupForm form, String password, String emailAuthKey) {
         return Member.builder()
                 .memberId(form.getMemberId())
