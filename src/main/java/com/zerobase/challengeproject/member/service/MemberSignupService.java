@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberSignupService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;

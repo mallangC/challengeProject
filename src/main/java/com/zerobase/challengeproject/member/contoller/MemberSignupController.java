@@ -4,7 +4,7 @@ import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.member.domain.dto.MemberEmailAuthDto;
 import com.zerobase.challengeproject.member.domain.dto.MemberSignupDto;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
-import com.zerobase.challengeproject.member.service.MemberService;
+import com.zerobase.challengeproject.member.service.MemberSignupService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
-public class MemberController {
+public class MemberSignupController {
 
-    private final MemberService memberService;
+    private final MemberSignupService memberService;
 
     /**
      * 회원 가입시 사용되는 컨틀로러 메서드 비밀번호는 8 ~ 15자 사이며, 최소 하나의 영문자, 숫자, 특수문자를 포함해야 함.

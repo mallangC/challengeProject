@@ -8,7 +8,6 @@ import com.zerobase.challengeproject.member.domain.dto.MemberSignupDto;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +34,7 @@ class MemberServiceTest {
     private MailComponents mailComponents;
 
     @InjectMocks
-    private MemberService memberService;
+    private MemberSignupService memberService;
 
     @Test
     @DisplayName("회원 가입 성공")
