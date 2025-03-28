@@ -108,6 +108,25 @@ public class AccountService {
             HttpStatus.OK);
   }
 
+  /**
+   * 회원이 이전에 신청한 환불신청을 취소하는 서비스 메서드
+   * 파라미터로 받은 id의 환불신청이 없으면 예외 발생
+   * @param refundId 취소할 환불신청 아이디
+   * @return 취소하기 전 환불 신청 정보
+   */
+  @Transactional
+  public BaseResponseDto<RefundDto> cancelRefund(Long refundId){
+    //토큰 provider에서 토큰 해석
+    String userId = "test@company.com";
+    Refund refund = refundRepository.findById(refundId)
+            .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_REFUND));
+
+    refundRepository.delete(refund);
+    return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
+            "환불 신청을 취소했습니다.",
+            HttpStatus.OK);
+  }
+
   private Member searchMember(String userId){
     return memberRepository.findByMemberId(userId)
             .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_MEMBER));

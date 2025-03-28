@@ -47,17 +47,20 @@ public class AccountController {
   }
 
 
-   //환불 신청 취소
-//  @DeleteMapping("/refund")
-//  public ResponseEntity<BaseResponseDto<RefundDto>> cancelRefundRequest(
-//          @RequestParam Long refundId){
-//    return ResponseEntity.ok(accountService.);
-//  }
+  /**
+   * 회원의 환불 신청 취소
+   */
+  @DeleteMapping("/refund")
+  public ResponseEntity<BaseResponseDto<RefundDto>> cancelRefundRequest(
+          @RequestParam Long refundId){
+    return ResponseEntity.ok(accountService.cancelRefund(refundId));
+  }
 
 
-  //관리자는 모든 사용자의 충전내역을 환불할 수 있다.
-  //사유, 충전내역 id
 
+//  /**
+//   * 관리자는 모든 사용자의 충전내역을 환불할 수 있다.
+//   */
 //  @PreAuthorize("hasRole('ROLE_ADMIN')")
 //  @PatchMapping("/refund")
 //  public ResponseEntity<BaseResponseDto<RefundDto>> refundAmount(
