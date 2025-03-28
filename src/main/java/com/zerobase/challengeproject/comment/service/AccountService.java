@@ -3,11 +3,15 @@ package com.zerobase.challengeproject.comment.service;
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.comment.domain.dto.AccountDetailDto;
 import com.zerobase.challengeproject.comment.domain.dto.MemberDto;
+import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
+import com.zerobase.challengeproject.comment.domain.form.RefundAddForm;
 import com.zerobase.challengeproject.comment.entity.AccountDetail;
 import com.zerobase.challengeproject.comment.entity.Member;
+import com.zerobase.challengeproject.comment.entity.Refund;
 import com.zerobase.challengeproject.comment.repository.AccountDetailRepository;
 import com.zerobase.challengeproject.comment.repository.MemberRepository;
+import com.zerobase.challengeproject.comment.repository.RefundRepository;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,7 @@ public class AccountService {
 
   private final MemberRepository memberRepository;
   private final AccountDetailRepository accountDetailRepository;
+  private final RefundRepository refundRepository;
 
   public MemberDto getMember(){
     return MemberDto.fromWithoutAccountDetails(searchMember("test@company.com"));
@@ -51,7 +56,7 @@ public class AccountService {
 
 
   /**
-   * 회원이 이전에 충전한 금액을 환불하기 위한 서비스 메서드
+   * 관리자가 회원이 한 환불 신청을 승인하고 환불을 해주기 위한 서비스 메서드
    * 환불할 충전 내역이 없거나, 이미 환불 받았거나, 충전 내역이 아니거나,
    * 환불할 충전 내역과 내역 이후에 충전한 전체 금액이(이미 환불된건 제외)이
    * 지금 계좌에 있는금액보다 크면(이미 사용했다고 판단) 예외 발생
@@ -77,6 +82,29 @@ public class AccountService {
     member.refundAccount(accountDetail);
     return new BaseResponseDto<AccountDetailDto>(AccountDetailDto.from(refundDetail),
             amount + "원 환불을 성공했습니다.",
+            HttpStatus.OK);
+  }
+
+  /**
+   * 회원이 이전에 충전한 금액을 환불하기 위한 서비스 메서드
+   * 이미 신청한 환불 내역이 있거나, 충전 내역을 찾을 수 없을 때 예외 발생
+   * @param form 환불 신청할 내역id, 환불 사유
+   * @return 환불 신청에 대한 정보 (id 제외)
+   */
+  public BaseResponseDto<RefundDto> addRefund(RefundAddForm form){
+    //토큰 provider에서 토큰 해석
+    String userId = "test@company.com";
+    boolean isExist = refundRepository.existsByAccountDetail_Id(form.getAccountId());
+    if (isExist){
+      throw new CustomException(ErrorCode.ALREADY_REFUND_REQUEST);
+    }
+    Member member = memberRepository.searchByEmailAndAccountDetailId(userId, form.getAccountId());
+
+    Refund refund = Refund.from(form.getContent(), member);
+    refundRepository.save(refund);
+
+    return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
+             "환불을 신청했습니다.",
             HttpStatus.OK);
   }
 

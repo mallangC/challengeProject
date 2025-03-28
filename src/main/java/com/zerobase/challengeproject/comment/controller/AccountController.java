@@ -3,7 +3,9 @@ package com.zerobase.challengeproject.comment.controller;
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.comment.domain.dto.AccountDetailDto;
 import com.zerobase.challengeproject.comment.domain.dto.MemberDto;
+import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
+import com.zerobase.challengeproject.comment.domain.form.RefundAddForm;
 import com.zerobase.challengeproject.comment.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,12 +38,32 @@ public class AccountController {
   }
 
   /**
-   * 충전했던 금액 환불
+   * 회원이 충전했던 금액을 환불 신청
    */
-  @PatchMapping
-  public ResponseEntity<BaseResponseDto<AccountDetailDto>> refundAmount(
-          @RequestParam Long accountDetailId){
-    return ResponseEntity.ok(accountService.refundAmount(accountDetailId));
+  @PostMapping("/refund")
+  public ResponseEntity<BaseResponseDto<RefundDto>> refundRequest(
+          @RequestBody RefundAddForm form){
+    return ResponseEntity.ok(accountService.addRefund(form));
   }
+
+
+   //환불 신청 취소
+//  @DeleteMapping("/refund")
+//  public ResponseEntity<BaseResponseDto<RefundDto>> cancelRefundRequest(
+//          @RequestParam Long refundId){
+//    return ResponseEntity.ok(accountService.);
+//  }
+
+
+  //관리자는 모든 사용자의 충전내역을 환불할 수 있다.
+  //사유, 충전내역 id
+
+//  @PreAuthorize("hasRole('ROLE_ADMIN')")
+//  @PatchMapping("/refund")
+//  public ResponseEntity<BaseResponseDto<RefundDto>> refundAmount(
+//          @RequestParam Long accountDetailId){
+//    return ResponseEntity.ok(accountService.refundAmount(accountDetailId));
+//  }
+
 
 }
