@@ -25,8 +25,7 @@ public class MemberSignupController {
      */
     @PostMapping("/sign-up")
     public ResponseEntity<BaseResponseDto<MemberSignupDto>> signUp(@Valid @RequestBody MemberSignupForm memberSignupForm) {
-        MemberSignupDto memberSignupDto = memberService.signup(memberSignupForm);
-        return ResponseEntity.ok(new BaseResponseDto(memberSignupDto, "회원 가입 요청 성공했습니다.", HttpStatus.OK));
+        return ResponseEntity.ok(new BaseResponseDto(memberService.signup(memberSignupForm), "회원 가입 요청 성공했습니다.", HttpStatus.OK));
     }
 
     /**
@@ -36,7 +35,6 @@ public class MemberSignupController {
      */
     @GetMapping("/email-auth")
     public ResponseEntity<BaseResponseDto<MemberEmailAuthDto>> verifyEmail(@RequestParam("id") String emailAuthKey){
-        MemberEmailAuthDto isVerified = memberService.verifyEmail(emailAuthKey);
-        return ResponseEntity.ok(new BaseResponseDto<>(isVerified,"이메일 인증 완료되었습니다.", HttpStatus.OK));
+        return ResponseEntity.ok(new BaseResponseDto<>(memberService.verifyEmail(emailAuthKey),"이메일 인증 완료되었습니다.", HttpStatus.OK));
     }
 }
