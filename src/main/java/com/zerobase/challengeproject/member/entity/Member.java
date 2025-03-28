@@ -53,7 +53,7 @@ public class Member {
         }
     }
 
-    public static Member form(MemberSignupForm form, String password, String emailAuthKey) {
+    public static Member from(MemberSignupForm form, String password, String emailAuthKey) {
         return Member.builder()
                 .memberId(form.getMemberId())
                 .memberName(form.getMemberName())

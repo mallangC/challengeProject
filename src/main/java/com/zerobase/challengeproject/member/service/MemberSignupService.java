@@ -46,7 +46,7 @@ public class MemberSignupService {
         if(memberRepository.existsByEmail(email)){
             throw new CustomException(ErrorCode.ALREADY_REGISTER_USER);
         }
-        Member member = Member.form(memberSignupForm, password, emailAuthKey);
+        Member member = Member.from(memberSignupForm, password, emailAuthKey);
         memberRepository.save(member);
 
         sendEmail(memberSignupForm.getEmail(), emailAuthKey);
