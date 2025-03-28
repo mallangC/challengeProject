@@ -93,15 +93,15 @@ public class AccountController {
   }
 
 
-//  /**
-//   * 관리자는 모든 사용자의 충전내역을 환불할 수 있다.
-//   */
-////  @PreAuthorize("hasRole('ROLE_ADMIN')")
-//  @PatchMapping("/refund/admin")
-//  public ResponseEntity<BaseResponseDto<RefundDto>> refundAmount(
-//          @RequestParam Long accountDetailId){
-//    return ResponseEntity.ok(accountService.refundAmount(accountDetailId));
-//  }
+  /**
+   * 관리자는 모든 사용자의 충전내역을 환불할 수 있다.
+   */
+//  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PatchMapping("/refund/admin")
+  public ResponseEntity<BaseResponseDto<RefundDto>> refundAmount(
+          @RequestParam Long refundId) {
+    return ResponseEntity.ok(accountService.refundApproval(refundId));
+  }
 
 
 }

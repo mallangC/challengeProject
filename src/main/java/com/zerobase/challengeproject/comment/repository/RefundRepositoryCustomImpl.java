@@ -4,6 +4,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
 import com.zerobase.challengeproject.comment.entity.Refund;
+import com.zerobase.challengeproject.exception.CustomException;
+import com.zerobase.challengeproject.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -56,5 +58,26 @@ public class RefundRepositoryCustomImpl implements RefundRepositoryCustom {
             .toList();
 
     return new PageImpl<>(refundDtos, pageable, total);
+  }
+
+  @Override
+  public Refund searchRefundById(Long id) {
+
+    Refund findRefund = queryFactory.selectFrom(refund)
+            .join(refund.accountDetail).fetchJoin()
+            .join(refund.member).fetchJoin()
+            .where(refund.id.eq(id))
+            .fetchOne();
+    if (findRefund == null) {
+      throw new CustomException(ErrorCode.ALREADY_REFUND_REQUEST);
+    }
+    if (findRefund.isRefunded()) {
+      throw new CustomException(ErrorCode.ALREADY_REFUNDED);
+    }
+    if (findRefund.isDone()) {
+      throw new CustomException(ErrorCode.ALREADY_DONE);
+    }
+
+    return findRefund;
   }
 }

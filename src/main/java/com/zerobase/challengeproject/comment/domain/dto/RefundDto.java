@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class RefundDto {
+  private Long id;
   private String accountDetailId;
   private String memberContent;
   private String adminContent;
@@ -19,6 +20,7 @@ public class RefundDto {
 
   public static RefundDto from(Refund refund) {
     return RefundDto.builder()
+            .id(refund.getId())
             .accountDetailId(refund.getId().toString())
             .memberContent(refund.getMemberContent())
             .adminContent(refund.getAdminContent())

@@ -79,40 +79,8 @@ public class AccountService {
             HttpStatus.OK);
   }
 
-
   /**
-   * 관리자가 회원이 한 환불 신청을 승인하고 환불을 해주기 위한 서비스 메서드
-   * 환불할 충전 내역이 없거나, 이미 환불 받았거나, 충전 내역이 아니거나,
-   * 환불할 충전 내역과 내역 이후에 충전한 전체 금액이(이미 환불된건 제외)이
-   * 지금 계좌에 있는금액보다 크면(이미 사용했다고 판단) 예외 발생
-   * 환불이 가능한 경우
-   *
-   * @param id 환불할 충전 내역 아이디
-   * @return id, updateAt을 제외한 모든 환불 내역
-   */
-  @Transactional
-  public BaseResponseDto<AccountDetailDto> refundAmount(Long id) {
-    //토큰 provider에서 토큰 해석
-    String userId = "test@company.com";
-
-    AccountDetail accountDetail = accountDetailRepository.findById(id)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ACCOUNT_DETAIL));
-    if (!accountDetail.isCharge()) {
-      throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
-    }
-
-    Member member = memberRepository.searchByEmailAndSearchByAccountDetailsToDate(userId, accountDetail.getCreatedAt());
-    Long amount = accountDetail.getAmount();
-    AccountDetail refundDetail = AccountDetail.refund(member, amount);
-    accountDetailRepository.save(refundDetail);
-    member.refundAccount(accountDetail);
-    return new BaseResponseDto<AccountDetailDto>(AccountDetailDto.from(refundDetail),
-            amount + "원 환불을 성공했습니다.",
-            HttpStatus.OK);
-  }
-
-  /**
-   * 회원이 이전에 충전한 금액을 환불하기 위한 서비스 메서드
+   * 회원의 이전 충전한 금액에 대한 환불신청 서비스 메서드
    * 이미 신청한 환불 내역이 있거나, 충전 내역을 찾을 수 없을 때 예외 발생
    *
    * @param form 환불 신청할 내역id, 환불 사유
@@ -147,6 +115,10 @@ public class AccountService {
     Refund refund = refundRepository.findById(refundId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REFUND));
 
+    if (refund.isDone()) {
+      throw new CustomException(ErrorCode.ALREADY_DONE);
+    }
+
     refundRepository.delete(refund);
     return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
             "환불 신청을 취소했습니다.",
@@ -162,11 +134,9 @@ public class AccountService {
    * @return paging된 검색 기준에 맞는 Refund 정보
    */
   public BaseResponseDto<PageDto<RefundDto>> getAllRefund(int page, RefundSearchForm form) {
-    //토큰 provider에서 토큰 해석
-    String userId = "test@company.com";
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
     LocalDateTime startAt = null;
-    if (form.getStartAtStr() != null){
+    if (form.getStartAtStr() != null) {
       startAt = LocalDateTime.parse(form.getStartAtStr(), formatter);
     }
     Page<RefundDto> paging = refundRepository.searchAllRefund(page - 1, startAt, form.getDone(), form.getRefunded());
@@ -175,6 +145,43 @@ public class AccountService {
             , HttpStatus.OK);
   }
 
+
+  /**
+   * 관리자가 회원이 한 환불 신청을 승인하고 환불을 해주기 위한 서비스 메서드
+   * 환불할 충전 내역이 없거나, 이미 환불 받았거나, 충전 내역이 아니거나,
+   * 환불할 충전 내역과 내역 이후에 충전한 전체 금액이(이미 환불된건 제외)이
+   * 지금 계좌에 있는금액보다 크면(이미 사용했다고 판단) 예외 발생
+   * 환불이 가능한 경우
+   *
+   * @param id 환불할 충전 내역 아이디
+   * @return updateAt을 제외한 모든 환불 내역
+   */
+  @Transactional
+  public BaseResponseDto<RefundDto> refundApproval(Long refundId) {
+    //관리자 -> 환불 승인 Refund에 isDone, isRefunded & AccountDetail에 isRefunded 모두 true
+    //토큰 provider에서 토큰 해석
+    String userId = "test@company.com";
+
+    Refund refund = refundRepository.searchRefundById(refundId);
+    AccountDetail accountDetail = refund.getAccountDetail();
+    if (!accountDetail.isCharge()) {
+      throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
+    }
+    Member member = memberRepository.searchByEmailAndSearchByAccountDetailsToDate(userId, accountDetail.getCreatedAt());
+    Long amount = accountDetail.getAmount();
+    AccountDetail refundDetail = AccountDetail.refund(member, amount);
+    accountDetailRepository.save(refundDetail);
+    refund.refundTrue();
+    member.refundAccount(accountDetail);
+    return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
+            amount + "원 환불을 성공했습니다.",
+            HttpStatus.OK);
+  }
+
+  //관리자 -> 환불 비승인 Refund에 isDone = true, adminContent에 환불 비승인 사유 작성
+//  public BaseResponseDto<RefundDto> refundDisapproval(){
+//    return new BaseResponseDto<>();
+//  }
 
 
   private Member searchMember(String userId) {
