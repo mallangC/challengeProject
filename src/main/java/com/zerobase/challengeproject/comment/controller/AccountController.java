@@ -7,8 +7,10 @@ import com.zerobase.challengeproject.comment.domain.dto.PageDto;
 import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
 import com.zerobase.challengeproject.comment.domain.form.RefundAddForm;
+import com.zerobase.challengeproject.comment.domain.form.RefundSearchForm;
 import com.zerobase.challengeproject.comment.service.AccountService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,12 +69,35 @@ public class AccountController {
     return ResponseEntity.ok(accountService.cancelRefund(refundId));
   }
 
+//  /**
+//   * 회원의 환불 신청 확인
+//   */
+//  @GetMapping("/refund")
+//  public ResponseEntity<BaseResponseDto<PageDto<RefundDto>>> getAllRefund(
+//          @RequestParam @Min(1) int page,
+//          @RequestParam Boolean done,
+//          @RequestParam Boolean refunded) {
+//    return ResponseEntity.ok(accountService.getAllRefund(page, startAtStr, done, refunded));
+//  }
+
+
+  /**
+   * 관리자가 환불 내역 확인
+   */
+  //  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @GetMapping("/refund/admin")
+  public ResponseEntity<BaseResponseDto<PageDto<RefundDto>>> getAllRefund(
+          @RequestParam @Min(1) int page,
+          @RequestBody RefundSearchForm form) {
+    return ResponseEntity.ok(accountService.getAllRefund(page, form));
+  }
+
 
 //  /**
 //   * 관리자는 모든 사용자의 충전내역을 환불할 수 있다.
 //   */
-//  @PreAuthorize("hasRole('ROLE_ADMIN')")
-//  @PatchMapping("/refund")
+////  @PreAuthorize("hasRole('ROLE_ADMIN')")
+//  @PatchMapping("/refund/admin")
 //  public ResponseEntity<BaseResponseDto<RefundDto>> refundAmount(
 //          @RequestParam Long accountDetailId){
 //    return ResponseEntity.ok(accountService.refundAmount(accountDetailId));

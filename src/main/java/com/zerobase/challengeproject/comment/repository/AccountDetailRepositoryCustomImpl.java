@@ -25,21 +25,20 @@ public class AccountDetailRepositoryCustomImpl implements AccountDetailRepositor
     Long total = queryFactory.select(accountDetail.count())
             .from(accountDetail)
             .where(accountDetail.member.memberId.eq(userId))
-            .orderBy(accountDetail.createdAt.desc())
             .fetchOne();
 
     if (total == null) {
       return new PageImpl<>(List.of(), pageable, 0);
     }
 
-    List<AccountDetail> accountDetails = queryFactory.selectFrom(accountDetail)
+    List<AccountDetail> findAccountDetails = queryFactory.selectFrom(accountDetail)
             .where(accountDetail.member.memberId.eq(userId))
             .orderBy(accountDetail.createdAt.desc())
             .limit(pageable.getPageSize())
             .offset(pageable.getOffset())
             .fetch();
 
-    List<AccountDetailDto> accountDetailDtos = accountDetails.stream()
+    List<AccountDetailDto> accountDetailDtos = findAccountDetails.stream()
             .map(AccountDetailDto::from)
             .toList();
 

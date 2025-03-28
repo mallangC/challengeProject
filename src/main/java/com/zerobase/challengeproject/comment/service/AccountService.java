@@ -7,6 +7,7 @@ import com.zerobase.challengeproject.comment.domain.dto.PageDto;
 import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
 import com.zerobase.challengeproject.comment.domain.form.RefundAddForm;
+import com.zerobase.challengeproject.comment.domain.form.RefundSearchForm;
 import com.zerobase.challengeproject.comment.entity.AccountDetail;
 import com.zerobase.challengeproject.comment.entity.Member;
 import com.zerobase.challengeproject.comment.entity.Refund;
@@ -20,6 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -148,6 +152,29 @@ public class AccountService {
             "환불 신청을 취소했습니다.",
             HttpStatus.OK);
   }
+
+  /**
+   * 관리자가 회원이 신청한 환불을 확인하기 위한 서비스 메서드
+   * 환불 신청 내역을 찾을 수 없는 경우 빈 페이지로 반환
+   *
+   * @param page 페이지 넘버
+   * @param form 검색 기준이 되는 날짜(문자열), 두개의 boolean
+   * @return paging된 검색 기준에 맞는 Refund 정보
+   */
+  public BaseResponseDto<PageDto<RefundDto>> getAllRefund(int page, RefundSearchForm form) {
+    //토큰 provider에서 토큰 해석
+    String userId = "test@company.com";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
+    LocalDateTime startAt = null;
+    if (form.getStartAtStr() != null){
+      startAt = LocalDateTime.parse(form.getStartAtStr(), formatter);
+    }
+    Page<RefundDto> paging = refundRepository.searchAllRefund(page - 1, startAt, form.getDone(), form.getRefunded());
+    return new BaseResponseDto<>(PageDto.from(paging)
+            , "환불 신청 조회에 성공했습니다.(" + (page) + "페이지)"
+            , HttpStatus.OK);
+  }
+
 
 
   private Member searchMember(String userId) {
