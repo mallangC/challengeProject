@@ -10,12 +10,22 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Challenge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+    /**
+     * 회원 테이블과 조인
+    @Column
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private Member member;
+    */
 
     @Column(nullable = false)
     private String title;
@@ -48,7 +58,28 @@ public class Challenge {
     private LocalDateTime updateAt;
 
 
-    // 챌린지 수정시 요청받은 정보로 업데이트
+    /**
+     * 클라리언트로부터 받은 정보로 챌린지 생성
+     * @param dto
+     */
+    public Challenge(ChallengeForm dto) {
+
+        this.title = dto.getTitle();
+        this.img = dto.getImg();
+        this.participant = dto.getParticipant();
+        this.max_deposit = dto.getMax_deposit();
+        this.standard = dto.getStandard();
+        this.min_deposit = dto.getMin_deposit();
+        this.description = dto.getDescription();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+        this.createAt = LocalDateTime.now();
+    }
+
+    /**
+     * 클라이언트로부터 받은 정보로 챌린지 수정
+     * @param dto
+     */
     public void update(ChallengeForm dto) {
         this.title = dto.getTitle();
         this.img = dto.getImg();
@@ -61,4 +92,6 @@ public class Challenge {
         this.endDate = dto.getEndDate();
         this.updateAt = LocalDateTime.now();
     }
+
+
 }

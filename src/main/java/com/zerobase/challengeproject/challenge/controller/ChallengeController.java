@@ -7,52 +7,79 @@ import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/challenge")
 @AllArgsConstructor
 public class ChallengeController {
 
     private final ChallengeService challengeService;
 
-    // 챌린지 조회
-    @GetMapping("/challenge")
-    public ResponseEntity<BaseResponseDto<List<Challenge>>> getAllChallenge() {
+    /**
+     * 챌린지 전체 조회
+     */
+    @GetMapping
+    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getAllChallenge(Pageable pageable) {
         
-        return challengeService.getAllChallenges();
+        return challengeService.getAllChallenges(pageable);
     }
-    
-    // 챌린지 상세조회
-    @GetMapping("/challenge/{id}")
+
+    /**
+     * 챌린지 상세조회
+     */
+    @GetMapping("/{id}")
     public ResponseEntity<BaseResponseDto<Challenge>> getChallengeDetail(@PathVariable Long id){
 
         return challengeService.getChallengeDetail(id);
     }
-    
-    
-    // 챌린지 생성
-    @PostMapping("/challenge")
+
+    /**
+     * 사용자가 생성한 챌린지 조회
+     */
+    @GetMapping("/my-challenge/{id}")
+    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getChallengesMadeByUser(@PathVariable Long id, Pageable pageable){
+
+        return challengeService.getChallengesMadeByUser(id, pageable);
+    }
+
+    /**
+     * 사용자가 참여중인 챌린지 조회
+     */
+    @GetMapping("/on-going/{id}")
+    public ResponseEntity<BaseResponseDto<Page<Challenge>>> ongoingChallenges(@PathVariable Long id){
+
+        return challengeService.getOngoingChallenges(id);
+    }
+
+    /**
+     * 챌린지 생성
+     */
+    @PostMapping
     public ResponseEntity<BaseResponseDto<Challenge>> createChallenge(@Valid @RequestBody ChallengeForm dto) {
 
         return challengeService.createChallenge(dto);
     }
 
-    
-    // 챌린지 수정
-    @PostMapping("/challenge")
-    public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(@Valid @RequestBody ChallengeForm dto){
+    /**
+     * 챌린지 수정
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(@PathVariable Long id, @Valid @RequestBody ChallengeForm dto){
 
-        return challengeService.updateChallenge(dto);
+        return challengeService.updateChallenge(id, dto);
     }
 
-    // 챌린지 삭제
-    @DeleteMapping("/challenge")
+    /**
+     * 챌린지 삭제
+     */
+    @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponseDto<Challenge>> deleteChallenge(@PathVariable Long id){
-
 
         return challengeService.deleteChallenge(id);
     }
