@@ -36,7 +36,7 @@ public class ChallengeService {
     }
 
     /**
-     *  챌린지 상세 조회
+     *  특정챌린지 상세 조회
       */
     public ResponseEntity<BaseResponseDto<Challenge>> getChallengeDetail(Long id){
 
@@ -61,7 +61,6 @@ public class ChallengeService {
      * 사용자가 참여중인 챌린지 조회
      */
     public ResponseEntity<BaseResponseDto<Page<Challenge>>> getOngoingChallenges(Long id) {
-
 
         return ResponseEntity.ok(new BaseResponseDto<Page<Challenge>>(null, "유저가 참여중인 챌린지 조회 성공", HttpStatus.OK));
     }

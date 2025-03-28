@@ -32,6 +32,7 @@ public class ChallengeController {
 
     /**
      * 챌린지 상세조회
+     * @param id 게시물번호
      */
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponseDto<Challenge>> getChallengeDetail(@PathVariable Long id){
@@ -41,6 +42,7 @@ public class ChallengeController {
 
     /**
      * 사용자가 생성한 챌린지 조회
+     * @param id 유저아이디
      */
     @GetMapping("/my-challenge/{id}")
     public ResponseEntity<BaseResponseDto<Page<Challenge>>> getChallengesMadeByUser(@PathVariable Long id, Pageable pageable){
@@ -50,6 +52,7 @@ public class ChallengeController {
 
     /**
      * 사용자가 참여중인 챌린지 조회
+     * @param id 유저아이디
      */
     @GetMapping("/on-going/{id}")
     public ResponseEntity<BaseResponseDto<Page<Challenge>>> ongoingChallenges(@PathVariable Long id){
@@ -59,6 +62,7 @@ public class ChallengeController {
 
     /**
      * 챌린지 생성
+     * @param dto 클라이언트가 서버에 보낸 정보
      */
     @PostMapping
     public ResponseEntity<BaseResponseDto<Challenge>> createChallenge(@Valid @RequestBody ChallengeForm dto) {
@@ -68,6 +72,7 @@ public class ChallengeController {
 
     /**
      * 챌린지 수정
+     * @param id 게시물번호
      */
     @PutMapping("/{id}")
     public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(@PathVariable Long id, @Valid @RequestBody ChallengeForm dto){
@@ -77,13 +82,12 @@ public class ChallengeController {
 
     /**
      * 챌린지 삭제
+     * @param id 게시물번호
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponseDto<Challenge>> deleteChallenge(@PathVariable Long id){
 
         return challengeService.deleteChallenge(id);
     }
-
-
 
 }
