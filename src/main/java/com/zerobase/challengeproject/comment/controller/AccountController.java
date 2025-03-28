@@ -3,6 +3,7 @@ package com.zerobase.challengeproject.comment.controller;
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.comment.domain.dto.AccountDetailDto;
 import com.zerobase.challengeproject.comment.domain.dto.MemberDto;
+import com.zerobase.challengeproject.comment.domain.dto.PageDto;
 import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
 import com.zerobase.challengeproject.comment.domain.form.RefundAddForm;
@@ -22,7 +23,7 @@ public class AccountController {
   /**
    * 회원 조회(계좌 확인을 위해 구현)
    */
-  @GetMapping
+  @GetMapping("/member")
   public ResponseEntity<MemberDto> getAccountDetail() {
     return ResponseEntity.ok(accountService.getMember());
   }
@@ -33,16 +34,26 @@ public class AccountController {
    */
   @PostMapping
   public ResponseEntity<BaseResponseDto<AccountDetailDto>> addAmount(
-          @Valid @RequestBody AccountAddForm form){
+          @Valid @RequestBody AccountAddForm form) {
     return ResponseEntity.ok(accountService.addAmount(form));
   }
+
+  /**
+   * 전체 계좌 내역 조회 (페이징)
+   */
+  @GetMapping
+  public ResponseEntity<BaseResponseDto<PageDto<AccountDetailDto>>> getAllAccountDetail(
+          @RequestParam int page) {
+    return ResponseEntity.ok(accountService.getAllAccounts(page));
+  }
+
 
   /**
    * 회원이 충전했던 금액을 환불 신청
    */
   @PostMapping("/refund")
   public ResponseEntity<BaseResponseDto<RefundDto>> refundRequest(
-          @RequestBody RefundAddForm form){
+          @RequestBody RefundAddForm form) {
     return ResponseEntity.ok(accountService.addRefund(form));
   }
 
@@ -52,10 +63,9 @@ public class AccountController {
    */
   @DeleteMapping("/refund")
   public ResponseEntity<BaseResponseDto<RefundDto>> cancelRefundRequest(
-          @RequestParam Long refundId){
+          @RequestParam Long refundId) {
     return ResponseEntity.ok(accountService.cancelRefund(refundId));
   }
-
 
 
 //  /**
