@@ -17,8 +17,7 @@ public class Challenge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
+    
     /**
      * 회원 테이블과 조인
     @Column
@@ -35,6 +34,7 @@ public class Challenge {
     @Column(nullable = false)
     private Integer participant;
 
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
@@ -59,7 +59,7 @@ public class Challenge {
 
 
     /**
-     * 클라리언트로부터 받은 정보로 챌린지 생성
+     * 클라이언트로부터 받은 정보로 챌린지 생성
      * @param dto
      */
     public Challenge(ChallengeForm dto) {

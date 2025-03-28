@@ -48,6 +48,7 @@ public class ChallengeService {
 
     /**
      * 사용자가 만든 챌린지 조회
+     * @param id 사용자아이디
      */
     public ResponseEntity<BaseResponseDto<Page<Challenge>>> getChallengesMadeByUser(Long id, Pageable pageable){
         Page<Challenge> userChallenges = challengeRepository.findById(id, pageable);
@@ -59,6 +60,7 @@ public class ChallengeService {
 
     /**
      * 사용자가 참여중인 챌린지 조회
+     * @param id 사용자아이디
      */
     public ResponseEntity<BaseResponseDto<Page<Challenge>>> getOngoingChallenges(Long id) {
 
@@ -67,6 +69,7 @@ public class ChallengeService {
 
     /**
      * 챌린지 생성
+     * @param dto 클라이언트가 서버에 보낸 데이터
      */
     public ResponseEntity<BaseResponseDto<Challenge>> createChallenge(ChallengeForm dto){
 
@@ -78,6 +81,7 @@ public class ChallengeService {
 
     /**
      * 챌린지 수정
+     * @param id 챌린지번호
      */
     public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(Long id, ChallengeForm dto) {
 
@@ -92,6 +96,7 @@ public class ChallengeService {
 
     /**
      * 챌린지 삭제
+     * @param id 챌린지번호
      */
     public ResponseEntity<BaseResponseDto<Challenge>> deleteChallenge(Long id){
 
