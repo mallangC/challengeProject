@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -101,12 +100,12 @@ public class AccountService {
     refundRepository.save(refund);
 
     return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
-            "환불을 신청했습니다.",
+            "환불 신청을 성공했습니다.",
             HttpStatus.OK);
   }
 
 
-  public BaseResponseDto<PageDto<RefundDto>> getAllMyRefund(int page){
+  public BaseResponseDto<PageDto<RefundDto>> getAllMyRefund(int page) {
     //토큰 provider에서 토큰 해석
     String userId = "test@company.com";
     Page<RefundDto> paging = refundRepository.searchAllMyRefund(page - 1, userId);
@@ -169,12 +168,12 @@ public class AccountService {
    * 비승인시
    * Refund에 isDone = true, adminContent에 form에 있는 content로 변경
    *
-   * @param approval  승인/ 비승인 확인
-   * @param form  환불 신청한 아이디,
+   * @param approval 승인/ 비승인 확인
+   * @param form     환불 신청한 아이디,
    * @return updateAt을 제외한 모든 환불 내역
    */
   @Transactional
-  public BaseResponseDto<RefundDto> refundApproval(boolean approval, RefundUpdateForm form) {
+  public BaseResponseDto<RefundDto> refundDecision(boolean approval, RefundUpdateForm form) {
     //토큰 provider에서 토큰 해석
     String userId = "test@company.com";
     Refund refund = refundRepository.searchRefundById(form.getRefundId());
@@ -182,12 +181,11 @@ public class AccountService {
     if (!accountDetail.isCharge()) {
       throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
     }
-    if (approval){
-      Member member = memberRepository.searchByEmailAndSearchByAccountDetailsToDate(userId, accountDetail.getCreatedAt());
+    if (approval) {
+      Member member = memberRepository.searchByEmailAndAccountDetailsToDate(userId, accountDetail.getCreatedAt());
       AccountDetail refundDetail = AccountDetail.refund(member, accountDetail.getAmount());
       accountDetailRepository.save(refundDetail);
-      refund.refundTrue();
-      member.refundAccount(accountDetail);
+      member.refundAccount(accountDetail, refund);
       return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
               "환불 승인을 성공했습니다.",
               HttpStatus.OK);

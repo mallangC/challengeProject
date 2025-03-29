@@ -100,7 +100,7 @@ public class AccountController {
   public ResponseEntity<BaseResponseDto<RefundDto>> refundApproval(
           @RequestParam boolean approval,
           @RequestBody RefundUpdateForm form) {
-    return ResponseEntity.ok(accountService.refundApproval(approval, form));
+    return ResponseEntity.ok(accountService.refundDecision(approval, form));
   }
 
 
