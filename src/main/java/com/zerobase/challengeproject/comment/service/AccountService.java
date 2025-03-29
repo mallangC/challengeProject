@@ -8,6 +8,7 @@ import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
 import com.zerobase.challengeproject.comment.domain.form.RefundAddForm;
 import com.zerobase.challengeproject.comment.domain.form.RefundSearchForm;
+import com.zerobase.challengeproject.comment.domain.form.RefundUpdateForm;
 import com.zerobase.challengeproject.comment.entity.AccountDetail;
 import com.zerobase.challengeproject.comment.entity.Member;
 import com.zerobase.challengeproject.comment.entity.Refund;
@@ -48,9 +49,9 @@ public class AccountService {
   public BaseResponseDto<PageDto<AccountDetailDto>> getAllAccounts(int page) {
     //토큰 provider에서 토큰 해석
     String userId = "test@company.com";
-    Page<AccountDetailDto> paging = accountDetailRepository.searchAllAccountDetail(page, userId);
+    Page<AccountDetailDto> paging = accountDetailRepository.searchAllAccountDetail(page - 1, userId);
     return new BaseResponseDto<>(PageDto.from(paging)
-            , "계좌 내역 조회에 성공했습니다.(" + (page + 1) + "페이지)"
+            , "계좌 내역 조회에 성공했습니다.(" + page + "페이지)"
             , HttpStatus.OK);
   }
 
@@ -141,48 +142,50 @@ public class AccountService {
     }
     Page<RefundDto> paging = refundRepository.searchAllRefund(page - 1, startAt, form.getDone(), form.getRefunded());
     return new BaseResponseDto<>(PageDto.from(paging)
-            , "환불 신청 조회에 성공했습니다.(" + (page) + "페이지)"
+            , "환불 신청 조회에 성공했습니다.(" + page + "페이지)"
             , HttpStatus.OK);
   }
 
 
   /**
-   * 관리자가 회원이 한 환불 신청을 승인하고 환불을 해주기 위한 서비스 메서드
+   * 관리자가 회원이 한 환불 신청을 승인/ 비승인 하기위한 서비스 메서드
    * 환불할 충전 내역이 없거나, 이미 환불 받았거나, 충전 내역이 아니거나,
    * 환불할 충전 내역과 내역 이후에 충전한 전체 금액이(이미 환불된건 제외)이
    * 지금 계좌에 있는금액보다 크면(이미 사용했다고 판단) 예외 발생
-   * 환불이 가능한 경우
+   * 승인시
+   * Refund에 isDone, isRefunded & AccountDetail에 isRefunded 모두 true
+   * Refund amdinContent 를 "환불 완료" 변경
+   * 비승인시
+   * Refund에 isDone = true, adminContent에 form에 있는 content로 변경
    *
-   * @param id 환불할 충전 내역 아이디
+   * @param approval  승인/ 비승인 확인
+   * @param form  환불 신청한 아이디,
    * @return updateAt을 제외한 모든 환불 내역
    */
   @Transactional
-  public BaseResponseDto<RefundDto> refundApproval(Long refundId) {
-    //관리자 -> 환불 승인 Refund에 isDone, isRefunded & AccountDetail에 isRefunded 모두 true
+  public BaseResponseDto<RefundDto> refundApproval(boolean approval, RefundUpdateForm form) {
     //토큰 provider에서 토큰 해석
     String userId = "test@company.com";
-
-    Refund refund = refundRepository.searchRefundById(refundId);
+    Refund refund = refundRepository.searchRefundById(form.getRefundId());
     AccountDetail accountDetail = refund.getAccountDetail();
     if (!accountDetail.isCharge()) {
       throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
     }
-    Member member = memberRepository.searchByEmailAndSearchByAccountDetailsToDate(userId, accountDetail.getCreatedAt());
-    Long amount = accountDetail.getAmount();
-    AccountDetail refundDetail = AccountDetail.refund(member, amount);
-    accountDetailRepository.save(refundDetail);
-    refund.refundTrue();
-    member.refundAccount(accountDetail);
+    if (approval){
+      Member member = memberRepository.searchByEmailAndSearchByAccountDetailsToDate(userId, accountDetail.getCreatedAt());
+      AccountDetail refundDetail = AccountDetail.refund(member, accountDetail.getAmount());
+      accountDetailRepository.save(refundDetail);
+      refund.refundTrue();
+      member.refundAccount(accountDetail);
+      return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
+              "환불 승인을 성공했습니다.",
+              HttpStatus.OK);
+    }
+    refund.refundFalse(form);
     return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
-            amount + "원 환불을 성공했습니다.",
+            "환불 비승인을 성공했습니다.",
             HttpStatus.OK);
   }
-
-  //관리자 -> 환불 비승인 Refund에 isDone = true, adminContent에 환불 비승인 사유 작성
-//  public BaseResponseDto<RefundDto> refundDisapproval(){
-//    return new BaseResponseDto<>();
-//  }
-
 
   private Member searchMember(String userId) {
     return memberRepository.findByMemberId(userId)

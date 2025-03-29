@@ -8,6 +8,7 @@ import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
 import com.zerobase.challengeproject.comment.domain.form.RefundAddForm;
 import com.zerobase.challengeproject.comment.domain.form.RefundSearchForm;
+import com.zerobase.challengeproject.comment.domain.form.RefundUpdateForm;
 import com.zerobase.challengeproject.comment.service.AccountService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -45,7 +46,7 @@ public class AccountController {
    */
   @GetMapping
   public ResponseEntity<BaseResponseDto<PageDto<AccountDetailDto>>> getAllAccountDetail(
-          @RequestParam int page) {
+          @RequestParam @Min(1) int page) {
     return ResponseEntity.ok(accountService.getAllAccounts(page));
   }
 
@@ -94,14 +95,16 @@ public class AccountController {
 
 
   /**
-   * 관리자는 모든 사용자의 충전내역을 환불할 수 있다.
+   * 관리자는 회원의 환불신청을 승인/비승인 할 수 있다.
    */
 //  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PatchMapping("/refund/admin")
-  public ResponseEntity<BaseResponseDto<RefundDto>> refundAmount(
-          @RequestParam Long refundId) {
-    return ResponseEntity.ok(accountService.refundApproval(refundId));
+  public ResponseEntity<BaseResponseDto<RefundDto>> refundApproval(
+          @RequestParam boolean approval,
+          @RequestBody RefundUpdateForm form) {
+    return ResponseEntity.ok(accountService.refundApproval(approval, form));
   }
+
 
 
 }
