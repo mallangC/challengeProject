@@ -10,4 +10,6 @@ public interface RefundRepositoryCustom {
   Page<RefundDto> searchAllRefund(int page, LocalDateTime startAt, Boolean isDone, Boolean isRefunded);
 
   Refund searchRefundById(Long id);
+
+  Page<RefundDto> searchAllMyRefund(int page, String userId);
 }

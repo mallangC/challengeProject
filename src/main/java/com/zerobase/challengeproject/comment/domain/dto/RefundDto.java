@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class RefundDto {
   private Long id;
-  private String accountDetailId;
+  private Long accountDetailId;
   private String memberContent;
   private String adminContent;
   private boolean isRefunded;
@@ -21,7 +21,7 @@ public class RefundDto {
   public static RefundDto from(Refund refund) {
     return RefundDto.builder()
             .id(refund.getId())
-            .accountDetailId(refund.getId().toString())
+            .accountDetailId(refund.getAccountDetail().getId())
             .memberContent(refund.getMemberContent())
             .adminContent(refund.getAdminContent())
             .isRefunded(refund.isRefunded())

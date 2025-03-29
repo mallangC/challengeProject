@@ -80,4 +80,33 @@ public class RefundRepositoryCustomImpl implements RefundRepositoryCustom {
 
     return findRefund;
   }
+
+  @Override
+  public Page<RefundDto> searchAllMyRefund(int page, String userId) {
+    Pageable pageable = PageRequest.of(page, 20);
+
+    Long total = queryFactory.select(refund.count())
+            .from(refund)
+            .where(refund.member.memberId.eq(userId))
+            .fetchOne();
+
+    if (total == null) {
+      return new PageImpl<>(List.of(), pageable, 0);
+    }
+
+    List<Refund> findRefunds = queryFactory.selectFrom(refund)
+            .join(refund.member).fetchJoin()
+            .join(refund.accountDetail).fetchJoin()
+            .where(refund.member.memberId.eq(userId))
+            .orderBy(refund.createdAt.desc())
+            .limit(pageable.getPageSize())
+            .offset(pageable.getOffset())
+            .fetch();
+
+    List<RefundDto> refundDtos = findRefunds.stream()
+            .map(RefundDto::from)
+            .toList();
+    return new PageImpl<>(refundDtos, pageable, total);
+  }
+
 }

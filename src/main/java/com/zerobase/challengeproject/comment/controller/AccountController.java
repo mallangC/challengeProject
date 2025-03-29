@@ -70,16 +70,14 @@ public class AccountController {
     return ResponseEntity.ok(accountService.cancelRefund(refundId));
   }
 
-//  /**
-//   * 회원의 환불 신청 확인
-//   */
-//  @GetMapping("/refund")
-//  public ResponseEntity<BaseResponseDto<PageDto<RefundDto>>> getAllRefund(
-//          @RequestParam @Min(1) int page,
-//          @RequestParam Boolean done,
-//          @RequestParam Boolean refunded) {
-//    return ResponseEntity.ok(accountService.getAllRefund(page, startAtStr, done, refunded));
-//  }
+  /**
+   * 회원의 환불 신청 확인
+   */
+  @GetMapping("/refund")
+  public ResponseEntity<BaseResponseDto<PageDto<RefundDto>>> getAllRefund(
+          @RequestParam @Min(1) int page) {
+    return ResponseEntity.ok(accountService.getAllMyRefund(page));
+  }
 
 
   /**

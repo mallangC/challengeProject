@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -102,6 +103,16 @@ public class AccountService {
     return new BaseResponseDto<RefundDto>(RefundDto.from(refund),
             "환불을 신청했습니다.",
             HttpStatus.OK);
+  }
+
+
+  public BaseResponseDto<PageDto<RefundDto>> getAllMyRefund(int page){
+    //토큰 provider에서 토큰 해석
+    String userId = "test@company.com";
+    Page<RefundDto> paging = refundRepository.searchAllMyRefund(page - 1, userId);
+    return new BaseResponseDto<>(PageDto.from(paging)
+            , "회원의 환불신청 조회에 성공했습니다.(" + page + "페이지)"
+            , HttpStatus.OK);
   }
 
   /**
