@@ -1,6 +1,7 @@
 package com.zerobase.challengeproject.member.repository;
 
 import com.zerobase.challengeproject.member.entity.Member;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,4 +22,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @return 해당 이메일 인증 키를 가지고 있는 유저
      */
     Optional<Member> findByEmailAuthKey(String emailAuthKey);
+
+    Optional<Member> findByMemberId(@NotBlank String memberId);
 }
