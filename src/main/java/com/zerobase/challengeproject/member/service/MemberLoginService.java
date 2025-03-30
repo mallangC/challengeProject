@@ -19,6 +19,11 @@ public class MemberLoginService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 유저가 로그인을 시도할 때 사용되는 서비스 메서드
+     * @param form 유저 아이디, 비밀번호
+     * @return 토큰, 유저 아이디
+     */
     public MemberLoginResponse login(MemberLoginForm form) {
         Member member = memberRepository.findByMemberId(form.getMemberId())
                 .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_MEMBER));

@@ -23,5 +23,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      */
     Optional<Member> findByEmailAuthKey(String emailAuthKey);
 
+    /**
+     * 유저 아이디로 유저 객체를 찾기 위한 메서드
+     * @param memberId 유저 아이디
+     * @return 유저 객체
+     */
     Optional<Member> findByMemberId(@NotBlank String memberId);
 }

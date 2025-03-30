@@ -17,6 +17,11 @@ public class MemberLoginController {
 
     private final MemberLoginService memberLoginService;
 
+    /**
+     * 유저가 로그인을 시도할 때 사용하는 컨트롤러 메서드
+     * @param form 유저 아이디, 비밀번호
+     * @return 유저아이디, 성공 메세지, HttpCode
+     */
     @PostMapping("/login")
     public ResponseEntity<BaseResponseDto<MemberLoginDto>> login(@RequestBody MemberLoginForm form) {
         MemberLoginResponse response = memberLoginService.login(form);

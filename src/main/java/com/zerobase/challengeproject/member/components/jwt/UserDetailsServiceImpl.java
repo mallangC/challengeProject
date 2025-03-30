@@ -16,6 +16,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
+    /**
+     * UserDetails에서 유저의 정보를 가져옵니다.
+     * @param memberId 로그인을 시도한 유저의 아이디
+     * @return 유저가 입력한 유저의 아이디
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
 
