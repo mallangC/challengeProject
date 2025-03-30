@@ -1,4 +1,4 @@
-package com.zerobase.challengeproject.member.components;
+package com.zerobase.challengeproject.member.components.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,7 +14,7 @@ public class JwtUtil {
 
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
-    private final int EXPIRATION_TIME = 60 * 60 * 24 * 1000;
+    private final long EXPIRATION_TIME = 60 * 60 * 24 * 1000;
 
     public String createToken(String username) {
 
