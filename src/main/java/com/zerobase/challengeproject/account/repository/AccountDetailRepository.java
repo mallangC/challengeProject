@@ -1,6 +1,6 @@
-package com.zerobase.challengeproject.comment.repository;
+package com.zerobase.challengeproject.account.repository;
 
-import com.zerobase.challengeproject.comment.entity.AccountDetail;
+import com.zerobase.challengeproject.account.entity.AccountDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,6 @@
 package com.zerobase.challengeproject.member.repository;
 
 import com.zerobase.challengeproject.member.entity.Member;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -28,5 +27,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @param memberId 유저 아이디
      * @return 유저 객체
      */
-    Optional<Member> findByMemberId(@NotBlank String memberId);
+    Optional<Member> findByMemberId(String memberId);
 }

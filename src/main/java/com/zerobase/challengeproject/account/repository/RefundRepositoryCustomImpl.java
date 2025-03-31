@@ -1,9 +1,9 @@
-package com.zerobase.challengeproject.comment.repository;
+package com.zerobase.challengeproject.account.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
-import com.zerobase.challengeproject.comment.entity.Refund;
+import com.zerobase.challengeproject.account.domain.dto.RefundDto;
+import com.zerobase.challengeproject.account.entity.Refund;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.zerobase.challengeproject.comment.entity.QRefund.refund;
+import static com.zerobase.challengeproject.account.entity.QRefund.refund;
 
 @RequiredArgsConstructor
 public class RefundRepositoryCustomImpl implements RefundRepositoryCustom {

@@ -1,5 +1,6 @@
-package com.zerobase.challengeproject.comment.entity;
+package com.zerobase.challengeproject.account.entity;
 
+import com.zerobase.challengeproject.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +26,7 @@ public class AccountDetail extends BaseEntity {
   @Column(nullable = false)
   private Long amount; //충전, 환불한 금액
   private boolean isCharge; //충전 내역인지, 환불내역인지 구별
-  private boolean isRefunded; //환불이 된 내역인지 구별
+  private boolean isRefunded; //환불이 된 충전 내역인지 구별
 
 
   public static AccountDetail charge(Member member, Long amount){
