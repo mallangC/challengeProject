@@ -5,7 +5,7 @@ import com.zerobase.challengeproject.comment.domain.dto.AccountDetailDto;
 import com.zerobase.challengeproject.comment.domain.dto.MemberDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
 import com.zerobase.challengeproject.comment.entity.AccountDetail;
-import com.zerobase.challengeproject.comment.entity.Member;
+import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.comment.repository.AccountDetailRepository;
 import com.zerobase.challengeproject.comment.repository.MemberRepository;
 import com.zerobase.challengeproject.exception.CustomException;

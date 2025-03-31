@@ -2,7 +2,6 @@ package com.zerobase.challengeproject.comment.controller;
 
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.comment.domain.dto.AccountDetailDto;
-import com.zerobase.challengeproject.comment.domain.dto.MemberDto;
 import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
 import com.zerobase.challengeproject.comment.service.AccountService;
 import jakarta.validation.Valid;
