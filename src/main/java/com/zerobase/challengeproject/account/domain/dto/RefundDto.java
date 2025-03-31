@@ -1,6 +1,6 @@
-package com.zerobase.challengeproject.comment.domain.dto;
+package com.zerobase.challengeproject.account.domain.dto;
 
-import com.zerobase.challengeproject.comment.entity.Refund;
+import com.zerobase.challengeproject.account.entity.Refund;
 import lombok.Builder;
 import lombok.Getter;
 

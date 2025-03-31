@@ -1,4 +1,4 @@
-package com.zerobase.challengeproject.comment.domain.form;
+package com.zerobase.challengeproject.account.domain.form;
 
 import lombok.Builder;
 import lombok.Getter;

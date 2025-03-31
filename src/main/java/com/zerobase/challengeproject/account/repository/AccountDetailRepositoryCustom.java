@@ -1,6 +1,6 @@
-package com.zerobase.challengeproject.comment.repository;
+package com.zerobase.challengeproject.account.repository;
 
-import com.zerobase.challengeproject.comment.domain.dto.AccountDetailDto;
+import com.zerobase.challengeproject.account.domain.dto.AccountDetailDto;
 import org.springframework.data.domain.Page;
 
 public interface AccountDetailRepositoryCustom {

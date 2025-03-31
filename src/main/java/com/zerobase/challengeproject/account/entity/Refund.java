@@ -1,8 +1,9 @@
-package com.zerobase.challengeproject.comment.entity;
+package com.zerobase.challengeproject.account.entity;
 
-import com.zerobase.challengeproject.comment.domain.form.RefundUpdateForm;
+import com.zerobase.challengeproject.account.domain.form.RefundUpdateForm;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
+import com.zerobase.challengeproject.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,8 +1,8 @@
-package com.zerobase.challengeproject.comment.repository;
+package com.zerobase.challengeproject.account.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.zerobase.challengeproject.comment.domain.dto.AccountDetailDto;
-import com.zerobase.challengeproject.comment.entity.AccountDetail;
+import com.zerobase.challengeproject.account.domain.dto.AccountDetailDto;
+import com.zerobase.challengeproject.account.entity.AccountDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-import static com.zerobase.challengeproject.comment.entity.QAccountDetail.accountDetail;
+import static com.zerobase.challengeproject.account.entity.QAccountDetail.accountDetail;
 
 @RequiredArgsConstructor
 public class AccountDetailRepositoryCustomImpl implements AccountDetailRepositoryCustom {

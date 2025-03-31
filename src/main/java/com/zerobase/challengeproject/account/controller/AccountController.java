@@ -1,15 +1,15 @@
-package com.zerobase.challengeproject.comment.controller;
+package com.zerobase.challengeproject.account.controller;
 
 import com.zerobase.challengeproject.BaseResponseDto;
-import com.zerobase.challengeproject.comment.domain.dto.AccountDetailDto;
-import com.zerobase.challengeproject.comment.domain.dto.MemberDto;
-import com.zerobase.challengeproject.comment.domain.dto.PageDto;
-import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
-import com.zerobase.challengeproject.comment.domain.form.AccountAddForm;
-import com.zerobase.challengeproject.comment.domain.form.RefundAddForm;
-import com.zerobase.challengeproject.comment.domain.form.RefundSearchForm;
-import com.zerobase.challengeproject.comment.domain.form.RefundUpdateForm;
-import com.zerobase.challengeproject.comment.service.AccountService;
+import com.zerobase.challengeproject.account.domain.dto.AccountDetailDto;
+import com.zerobase.challengeproject.member.domain.dto.MemberDto;
+import com.zerobase.challengeproject.account.domain.dto.PageDto;
+import com.zerobase.challengeproject.account.domain.dto.RefundDto;
+import com.zerobase.challengeproject.account.domain.form.AccountAddForm;
+import com.zerobase.challengeproject.account.domain.form.RefundAddForm;
+import com.zerobase.challengeproject.account.domain.form.RefundSearchForm;
+import com.zerobase.challengeproject.account.domain.form.RefundUpdateForm;
+import com.zerobase.challengeproject.account.service.AccountService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;

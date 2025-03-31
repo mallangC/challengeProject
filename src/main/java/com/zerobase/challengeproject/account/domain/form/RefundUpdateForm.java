@@ -1,4 +1,4 @@
-package com.zerobase.challengeproject.comment.domain.form;
+package com.zerobase.challengeproject.account.domain.form;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

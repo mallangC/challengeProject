@@ -1,4 +1,4 @@
-package com.zerobase.challengeproject.comment.entity;
+package com.zerobase.challengeproject.account.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
