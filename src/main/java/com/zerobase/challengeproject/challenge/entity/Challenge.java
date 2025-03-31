@@ -31,6 +31,10 @@ public class Challenge {
 
     private String img;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
+
     @Column(nullable = false)
     private Integer participant;
 

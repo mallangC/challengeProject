@@ -55,9 +55,9 @@ public class ChallengeController {
      * @param id 유저아이디
      */
     @GetMapping("/on-going/{id}")
-    public ResponseEntity<BaseResponseDto<Page<Challenge>>> ongoingChallenges(@PathVariable Long id){
+    public ResponseEntity<BaseResponseDto<Page<Challenge>>> ongoingChallenges(@PathVariable Long id, Pageable pageable){
 
-        return challengeService.getOngoingChallenges(id);
+        return challengeService.getOngoingChallenges(id, pageable);
     }
 
     /**
