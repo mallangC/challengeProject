@@ -1,7 +1,7 @@
-package com.zerobase.challengeproject.comment.repository;
+package com.zerobase.challengeproject.account.repository;
 
-import com.zerobase.challengeproject.comment.domain.dto.RefundDto;
-import com.zerobase.challengeproject.comment.entity.Refund;
+import com.zerobase.challengeproject.account.domain.dto.RefundDto;
+import com.zerobase.challengeproject.account.entity.Refund;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
