@@ -17,5 +17,5 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     /**
      * 사용자와 조인후 사용자아이디로 파라미터 변경예정 ex)user_id
      */
-    Page<Challenge> findById(Long id, Pageable pageable);
+    Page<Challenge> findById(Long memberId, Pageable pageable);
 }

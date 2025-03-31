@@ -48,4 +48,8 @@
 
         @Future(message = "종료날짜를 지정해 주세요.")
         private LocalDateTime endDate;
+
+
+        private Long memberId;
+
     }

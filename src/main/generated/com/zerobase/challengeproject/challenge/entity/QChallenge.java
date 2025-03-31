@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -16,6 +17,8 @@ import com.querydsl.core.types.Path;
 public class QChallenge extends EntityPathBase<Challenge> {
 
     private static final long serialVersionUID = 822264595L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QChallenge challenge = new QChallenge("challenge");
 
@@ -33,6 +36,8 @@ public class QChallenge extends EntityPathBase<Challenge> {
 
     public final NumberPath<Integer> max_deposit = createNumber("max_deposit", Integer.class);
 
+    public final com.zerobase.challengeproject.member.entity.QMember member;
+
     public final NumberPath<Integer> min_deposit = createNumber("min_deposit", Integer.class);
 
     public final NumberPath<Integer> participant = createNumber("participant", Integer.class);
@@ -46,15 +51,24 @@ public class QChallenge extends EntityPathBase<Challenge> {
     public final DateTimePath<java.time.LocalDateTime> updateAt = createDateTime("updateAt", java.time.LocalDateTime.class);
 
     public QChallenge(String variable) {
-        super(Challenge.class, forVariable(variable));
+        this(Challenge.class, forVariable(variable), INITS);
     }
 
     public QChallenge(Path<? extends Challenge> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QChallenge(PathMetadata metadata) {
-        super(Challenge.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QChallenge(PathMetadata metadata, PathInits inits) {
+        this(Challenge.class, metadata, inits);
+    }
+
+    public QChallenge(Class<? extends Challenge> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.member = inits.isInitialized("member") ? new com.zerobase.challengeproject.member.entity.QMember(forProperty("member")) : null;
     }
 
 }

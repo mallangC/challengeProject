@@ -5,6 +5,7 @@ import com.zerobase.challengeproject.challenge.ChallengeService;
 import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
+import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -65,9 +66,9 @@ public class ChallengeController {
      * @param dto 클라이언트가 서버에 보낸 정보
      */
     @PostMapping
-    public ResponseEntity<BaseResponseDto<Challenge>> createChallenge(@Valid @RequestBody ChallengeForm dto) {
+    public ResponseEntity<BaseResponseDto<Challenge>> createChallenge(@Valid @RequestBody ChallengeForm dto, UserDetailsImpl userDetails) {
 
-        return challengeService.createChallenge(dto);
+        return challengeService.createChallenge(dto, userDetails);
     }
 
     /**

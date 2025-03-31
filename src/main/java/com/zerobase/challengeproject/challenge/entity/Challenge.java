@@ -1,6 +1,8 @@
 package com.zerobase.challengeproject.challenge.entity;
 
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
+import com.zerobase.challengeproject.member.entity.Member;
+import com.zerobase.challengeproject.member.repository.MemberRepository;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,14 +19,11 @@ public class Challenge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    /**
-     * 회원 테이블과 조인
-    @Column
+
+
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    */
 
     @Column(nullable = false)
     private String title;
@@ -66,9 +65,10 @@ public class Challenge {
      * 클라이언트로부터 받은 정보로 챌린지 생성
      * @param dto
      */
-    public Challenge(ChallengeForm dto) {
+    public Challenge(ChallengeForm dto, Member member) {
 
         this.title = dto.getTitle();
+        this.member = member;
         this.img = dto.getImg();
         this.participant = dto.getParticipant();
         this.max_deposit = dto.getMax_deposit();
