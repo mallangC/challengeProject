@@ -40,9 +40,6 @@ public class Challenge {
 
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    private CommentType commentType;
-
     @Column(nullable = false)
     private Integer min_deposit;
 
