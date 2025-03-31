@@ -1,4 +1,4 @@
-package com.zerobase.challengeproject.comment.entity;
+package com.zerobase.challengeproject.account.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultSupertypeSerializer")
 public class QBaseEntity extends EntityPathBase<BaseEntity> {
 
-    private static final long serialVersionUID = -1215056800L;
+    private static final long serialVersionUID = -808765266L;
 
     public static final QBaseEntity baseEntity = new QBaseEntity("baseEntity");
 

@@ -24,6 +24,8 @@ public class QChallenge extends EntityPathBase<Challenge> {
 
     public final EnumPath<Category> category = createEnum("category", Category.class);
 
+    public final ListPath<MemberChallenge, QMemberChallenge> challengeMembers = this.<MemberChallenge, QMemberChallenge>createList("challengeMembers", MemberChallenge.class, QMemberChallenge.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> createAt = createDateTime("createAt", java.time.LocalDateTime.class);
 
     public final StringPath description = createString("description");

@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -21,6 +22,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Long> account = createNumber("account", Long.class);
 
+    public final ListPath<com.zerobase.challengeproject.account.entity.AccountDetail, com.zerobase.challengeproject.account.entity.QAccountDetail> accountDetails = this.<com.zerobase.challengeproject.account.entity.AccountDetail, com.zerobase.challengeproject.account.entity.QAccountDetail>createList("accountDetails", com.zerobase.challengeproject.account.entity.AccountDetail.class, com.zerobase.challengeproject.account.entity.QAccountDetail.class, PathInits.DIRECT2);
+
     public final StringPath email = createString("email");
 
     public final DateTimePath<java.time.LocalDateTime> emailAuthDate = createDateTime("emailAuthDate", java.time.LocalDateTime.class);
@@ -30,6 +33,8 @@ public class QMember extends EntityPathBase<Member> {
     public final BooleanPath emailAuthYn = createBoolean("emailAuthYn");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final ListPath<com.zerobase.challengeproject.challenge.entity.MemberChallenge, com.zerobase.challengeproject.challenge.entity.QMemberChallenge> memberChallenges = this.<com.zerobase.challengeproject.challenge.entity.MemberChallenge, com.zerobase.challengeproject.challenge.entity.QMemberChallenge>createList("memberChallenges", com.zerobase.challengeproject.challenge.entity.MemberChallenge.class, com.zerobase.challengeproject.challenge.entity.QMemberChallenge.class, PathInits.DIRECT2);
 
     public final StringPath memberId = createString("memberId");
 

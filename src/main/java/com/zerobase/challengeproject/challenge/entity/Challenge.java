@@ -1,10 +1,7 @@
 package com.zerobase.challengeproject.challenge.entity;
 
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
-import com.zerobase.challengeproject.comment.entity.CoteComment;
-import com.zerobase.challengeproject.type.CommentType;
 import com.zerobase.challengeproject.member.entity.Member;
-import com.zerobase.challengeproject.member.repository.MemberRepository;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,10 +20,12 @@ public class Challenge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @OneToMany(mappedBy = "challenge")
+    private List<MemberChallenge> challengeMembers;
 
     @Column(nullable = false)
     private String title;
@@ -58,14 +57,12 @@ public class Challenge {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY)
-    List<CoteComment> coteComments;
+//    @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY)
 //    @OneToMany(mappedBy = "callenge", fetch = FetchType.LAZY)
 //    List<DrinkingComment> drinkingComments;
 //    @OneToMany(mappedBy = "callenge", fetch = FetchType.LAZY)
 //    List<DietComment> dietComments;
 
-    @Column(nullable = false)
     private LocalDateTime createAt;
     
     private LocalDateTime updateAt;
@@ -85,7 +82,6 @@ public class Challenge {
         this.standard = dto.getStandard();
         this.min_deposit = dto.getMin_deposit();
         this.description = dto.getDescription();
-        this.commentType = dto.getCommentType();
         this.startDate = dto.getStartDate();
         this.endDate = dto.getEndDate();
         this.createAt = LocalDateTime.now();

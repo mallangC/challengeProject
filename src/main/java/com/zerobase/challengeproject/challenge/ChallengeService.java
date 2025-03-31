@@ -1,11 +1,13 @@
 package com.zerobase.challengeproject.challenge;
 
 
-import com.sun.security.auth.UserPrincipal;
 import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
+import com.zerobase.challengeproject.challenge.domain.dto.OngoingChallengeDto;
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
+import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
+import com.zerobase.challengeproject.challenge.repository.MemberChallengeRepository;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
@@ -14,12 +16,10 @@ import com.zerobase.challengeproject.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
+    private final MemberChallengeRepository memberChallengeRepository;
     private final MemberRepository memberRepository;
 
     /**
@@ -47,6 +48,7 @@ public class ChallengeService {
 
     /**
      *  특정챌린지 상세 조회
+     * @param id 챌린지 아이디
       */
     public ResponseEntity<BaseResponseDto<Challenge>> getChallengeDetail(@PathVariable Long id){
 
@@ -60,8 +62,14 @@ public class ChallengeService {
      * 사용자가 만든 챌린지 조회
      * @param memberId 사용자아이디
      */
-    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getChallengesMadeByUser(@PathVariable Long memberId, Pageable pageable){
-        Page<Challenge> userChallenges = challengeRepository.findById(memberId, pageable);
+    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getChallengesMadeByUser(@PathVariable Long memberId, Pageable pageable, UserDetailsImpl userDetails){
+
+        if(!memberId.equals(userDetails.getMember().getId())){
+
+            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
+        }
+
+        Page<Challenge> userChallenges = challengeRepository.findByMemberId(memberId, pageable);
         if (userChallenges.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND_CHALLENGES);
         }
@@ -72,9 +80,15 @@ public class ChallengeService {
      * 사용자가 참여중인 챌린지 조회
      * @param memberId 사용자아이디
      */
-    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getOngoingChallenges(@PathVariable Long memberId, Pageable pageable) {
+    public ResponseEntity<BaseResponseDto<Page<OngoingChallengeDto>>> getOngoingChallenges(@PathVariable Long memberId, Pageable pageable, UserDetailsImpl userDetails) {
 
-        return ResponseEntity.ok(new BaseResponseDto<Page<Challenge>>(null, "유저가 참여중인 챌린지 조회 성공", HttpStatus.OK));
+        if(!memberId.equals(userDetails.getMember().getId())){
+            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
+        }
+        Page<MemberChallenge> memberChallenges = memberChallengeRepository.findByMemberId(memberId, pageable);
+
+        Page<OngoingChallengeDto> challengeDtos = memberChallenges.map(memberChallenge -> new OngoingChallengeDto(memberChallenge.getChallenge()));
+        return ResponseEntity.ok(new BaseResponseDto<Page<OngoingChallengeDto>>(challengeDtos, "유저가 참여중인 챌린지 조회 성공", HttpStatus.OK));
     }
 
     /**
@@ -82,7 +96,7 @@ public class ChallengeService {
      * @param dto 클라이언트가 서버에 보낸 데이터
      */
     public ResponseEntity<BaseResponseDto<Challenge>> createChallenge(@Valid @RequestBody ChallengeForm dto,
-                                                                      @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                                      UserDetailsImpl userDetails){
 
         if (dto.getMin_deposit() > dto.getMax_deposit()) {
             throw new CustomException(ErrorCode.INVALID_DEPOSIT_AMOUNT);
@@ -100,7 +114,6 @@ public class ChallengeService {
         Member member = memberRepository.findById(dto.getMemberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
-
         Challenge challenge = new Challenge(dto, member);
         challengeRepository.save(challenge);
 
@@ -111,7 +124,7 @@ public class ChallengeService {
      * 챌린지 수정
      * @param id 챌린지번호
      */
-    public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(@PathVariable Long id, @Valid @RequestBody ChallengeForm dto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(@PathVariable Long id, @Valid @RequestBody ChallengeForm dto, UserDetailsImpl userDetails) {
 
         if (dto.getMin_deposit() > dto.getMax_deposit()) {
             throw new CustomException(ErrorCode.INVALID_DEPOSIT_AMOUNT);
@@ -145,7 +158,7 @@ public class ChallengeService {
      * @param id 챌린지번호
      */
 
-    public ResponseEntity<BaseResponseDto<Challenge>> deleteChallenge(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<BaseResponseDto<Challenge>> deleteChallenge(@PathVariable Long id, UserDetailsImpl userDetails){
 
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
@@ -160,6 +173,4 @@ public class ChallengeService {
 
         return ResponseEntity.ok(new BaseResponseDto<Challenge>(null, "챌린지 삭제 성공", HttpStatus.OK));
     }
-
-
 }

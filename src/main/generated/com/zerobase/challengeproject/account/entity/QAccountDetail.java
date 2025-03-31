@@ -1,4 +1,4 @@
-package com.zerobase.challengeproject.comment.entity;
+package com.zerobase.challengeproject.account.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -15,7 +16,9 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QAccountDetail extends EntityPathBase<AccountDetail> {
 
-    private static final long serialVersionUID = -136558830L;
+    private static final long serialVersionUID = 476690436L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QAccountDetail accountDetail = new QAccountDetail("accountDetail");
 
@@ -34,7 +37,7 @@ public class QAccountDetail extends EntityPathBase<AccountDetail> {
 
     public final BooleanPath isRefunded = createBoolean("isRefunded");
 
-    public final NumberPath<Member> member = createNumber("member", Member.class);
+    public final com.zerobase.challengeproject.member.entity.QMember member;
 
     public final NumberPath<Long> preAmount = createNumber("preAmount", Long.class);
 
@@ -42,15 +45,24 @@ public class QAccountDetail extends EntityPathBase<AccountDetail> {
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public QAccountDetail(String variable) {
-        super(AccountDetail.class, forVariable(variable));
+        this(AccountDetail.class, forVariable(variable), INITS);
     }
 
     public QAccountDetail(Path<? extends AccountDetail> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QAccountDetail(PathMetadata metadata) {
-        super(AccountDetail.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QAccountDetail(PathMetadata metadata, PathInits inits) {
+        this(AccountDetail.class, metadata, inits);
+    }
+
+    public QAccountDetail(Class<? extends AccountDetail> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.member = inits.isInitialized("member") ? new com.zerobase.challengeproject.member.entity.QMember(forProperty("member")) : null;
     }
 
 }

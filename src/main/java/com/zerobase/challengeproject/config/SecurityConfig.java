@@ -4,8 +4,10 @@ import com.zerobase.challengeproject.member.components.jwt.JwtAuthenticationFilt
 import com.zerobase.challengeproject.member.components.jwt.JwtAuthorizationFilter;
 import com.zerobase.challengeproject.member.components.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +27,10 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+
+    @Value("${spring.security.enabled:true}")  // 기본값 true
+    private boolean securityEnabled;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -78,14 +84,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable);
+        /*
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/member/sign-up", "/api/member/email-auth", "/api/member/login").permitAll()
                         .anyRequest().authenticated()
                 );
-
+*/
         http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(jwtAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+
+        if (!securityEnabled) {
+            // 🔥 Security 비활성화 (로컬 테스트용)
+            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        } else {
+            // ✅ Security 활성화 (운영 환경)
+            http.authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/member/sign-up", "/api/member/email-auth", "/api/member/login").permitAll()
+                    .anyRequest().authenticated()
+            );
+            http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        }
 
         return http.build();
     }

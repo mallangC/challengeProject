@@ -1,4 +1,4 @@
-package com.zerobase.challengeproject.comment.entity;
+package com.zerobase.challengeproject.account.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QRefund extends EntityPathBase<Refund> {
 
-    private static final long serialVersionUID = -364649532L;
+    private static final long serialVersionUID = -2137669870L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -37,7 +37,7 @@ public class QRefund extends EntityPathBase<Refund> {
 
     public final BooleanPath isRefunded = createBoolean("isRefunded");
 
-    public final NumberPath<Member> member = createNumber("member", Member.class);
+    public final com.zerobase.challengeproject.member.entity.QMember member;
 
     public final StringPath memberContent = createString("memberContent");
 
@@ -62,7 +62,8 @@ public class QRefund extends EntityPathBase<Refund> {
 
     public QRefund(Class<? extends Refund> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.accountDetail = inits.isInitialized("accountDetail") ? new QAccountDetail(forProperty("accountDetail")) : null;
+        this.accountDetail = inits.isInitialized("accountDetail") ? new QAccountDetail(forProperty("accountDetail"), inits.get("accountDetail")) : null;
+        this.member = inits.isInitialized("member") ? new com.zerobase.challengeproject.member.entity.QMember(forProperty("member")) : null;
     }
 
 }

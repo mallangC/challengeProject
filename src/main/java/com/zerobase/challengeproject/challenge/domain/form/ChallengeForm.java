@@ -16,11 +16,15 @@
     @Builder
     public class ChallengeForm {
 
+        @NotNull(message = "멤버 ID는 필수 값입니다.")
+        @Positive(message = "멤버 ID는 양수여야 합니다.")
+        private Long memberId;
+
         @NotBlank(message = "제목을 작성해 주세요.")
         @Size(min = 3, max = 100, message = "제목은 3자 이상, 100자 이하로 입력해야 합니다.")
         private String title;
 
-        @NotBlank(message = "카테고리를 선택해 주세요.")
+        @NotNull(message = "카테고리를 선택해 주세요.")
         private Category category;
 
         @NotBlank(message = "챌린지 인증기준을 작성해 주세요.")
@@ -33,13 +37,13 @@
         @Max(value = 100, message = "참여 인원은 최대 100명이하여야 합니다.")
         private Integer participant;
 
-        @NotNull
-        @Min(value = 0, message = "최소 보증금을 입력해 주세요.")
+
         @NotBlank(message = "내용은 필수 항목입니다.")
         @Size(min = 10, max = 500, message = "내용은 10자 이상, 500자 이하로 입력해야 합니다.")
         private String description;
 
-
+        @NotNull
+        @Min(value = 0, message = "최소 보증금을 입력해 주세요.")
         private Integer min_deposit;
 
         @NotNull
@@ -52,6 +56,7 @@
         @Future(message = "종료날짜를 지정해 주세요.")
         private LocalDateTime endDate;
 
-        private Long memberId;
+
+
 
     }

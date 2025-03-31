@@ -3,14 +3,18 @@ package com.zerobase.challengeproject.challenge.controller;
 
 import com.zerobase.challengeproject.challenge.ChallengeService;
 import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
+import com.zerobase.challengeproject.challenge.domain.dto.OngoingChallengeDto;
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
+import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,9 +50,9 @@ public class ChallengeController {
      * @param id 유저아이디
      */
     @GetMapping("/my-challenge/{id}")
-    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getChallengesMadeByUser(@PathVariable Long id, Pageable pageable){
+    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getChallengesMadeByUser(@PathVariable Long id, Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return challengeService.getChallengesMadeByUser(id, pageable);
+        return challengeService.getChallengesMadeByUser(id, pageable, userDetails);
     }
 
     /**
@@ -56,9 +60,9 @@ public class ChallengeController {
      * @param id 유저아이디
      */
     @GetMapping("/on-going/{id}")
-    public ResponseEntity<BaseResponseDto<Page<Challenge>>> ongoingChallenges(@PathVariable Long id, Pageable pageable){
+    public ResponseEntity<BaseResponseDto<Page<OngoingChallengeDto>>> ongoingChallenges(@PathVariable Long id, Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return challengeService.getOngoingChallenges(id, pageable);
+        return challengeService.getOngoingChallenges(id, pageable, userDetails);
     }
 
     /**
@@ -76,9 +80,9 @@ public class ChallengeController {
      * @param id 게시물번호
      */
     @PutMapping("/{id}")
-    public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(@PathVariable Long id, @Valid @RequestBody ChallengeForm dto){
+    public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(@PathVariable Long id, @Valid @RequestBody ChallengeForm dto, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return challengeService.updateChallenge(id, dto);
+        return challengeService.updateChallenge(id, dto, userDetails);
     }
 
     /**
@@ -86,9 +90,9 @@ public class ChallengeController {
      * @param id 게시물번호
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponseDto<Challenge>> deleteChallenge(@PathVariable Long id){
+    public ResponseEntity<BaseResponseDto<Challenge>> deleteChallenge(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return challengeService.deleteChallenge(id);
+        return challengeService.deleteChallenge(id, userDetails);
     }
 
 }
