@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> , MemberRepositoryCustom{
+public interface MemberRepository extends JpaRepository<Member, Long> {
     /**
      * 회원 가입시 이메일 중복을 막기 위한 메서드
      * @param email  회원 가입을 요청한 유저의 이메일
@@ -22,5 +22,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> , MemberRe
      */
     Optional<Member> findByEmailAuthKey(String emailAuthKey);
 
+    /**
+     * 유저 아이디로 유저 객체를 찾기 위한 메서드
+     * @param memberId 유저 아이디
+     * @return 유저 객체
+     */
     Optional<Member> findByMemberId(String memberId);
 }
