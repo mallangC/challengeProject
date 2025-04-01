@@ -16,9 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+
 /**
  * JWT 기반의 인가 필터 클래스.
  * HTTP 요청에서 JWT를 검증하고, 유효한 경우 SecurityContext에 인증 정보를 설정.
@@ -45,13 +44,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
 
         if (token != null && jwtUtil.isTokenValid(token)) {
-            String username = jwtUtil.extractUsername(token);
+            String memberId = jwtUtil.extractMemberId(token);
             String role = jwtUtil.extractRoles(token);
 
             MemberType memberType = role.equals("admin") ? MemberType.ADMIN : MemberType.USER;
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(memberType.getAuthority()));
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 

@@ -135,7 +135,7 @@ class MemberLoginServiceTest {
         //given
         String accessToken = "Bearer " + mockAccessToken;
 
-        when(jwtUtil.extractUsername(mockAccessToken)).thenReturn(mockMember.getMemberId());
+        when(jwtUtil.extractMemberId(mockAccessToken)).thenReturn(mockMember.getMemberId());
         when(jwtUtil.isTokenValid(mockRefreshToken)).thenReturn(true);
         //when
         MemberLogoutDto result = memberLoginService.logout(accessToken, mockRefreshToken);
@@ -161,7 +161,7 @@ class MemberLoginServiceTest {
         //given
         String newAccessToken = "newAccessToken";
         when(jwtUtil.isTokenValid(mockRefreshToken)).thenReturn(true);
-        when(jwtUtil.extractUsername(mockRefreshToken)).thenReturn(mockMember.getMemberId());
+        when(jwtUtil.extractMemberId(mockRefreshToken)).thenReturn(mockMember.getMemberId());
         when(memberRepository.findByMemberId(mockMember.getMemberId())).thenReturn(Optional.of(mockMember));
         when(refreshTokenRepository.findByToken(mockRefreshToken)).thenReturn(Optional.of(existingRefreshToken));
         when(jwtUtil.generateAccessToken(mockMember.getMemberId(), mockMember.getMemberType())).thenReturn(newAccessToken);
