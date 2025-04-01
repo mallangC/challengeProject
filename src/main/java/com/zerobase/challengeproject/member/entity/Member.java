@@ -2,15 +2,13 @@ package com.zerobase.challengeproject.member.entity;
 
 import com.zerobase.challengeproject.account.entity.AccountDetail;
 import com.zerobase.challengeproject.account.entity.Refund;
+import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
 import com.zerobase.challengeproject.type.MemberType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,6 +40,9 @@ public class Member {
     private boolean emailAuthYn;
     private LocalDateTime emailAuthDate;
     private String emailAuthKey;
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberChallenge> memberChallenges;
 
     @Column(nullable = false)
     private MemberType memberType;
