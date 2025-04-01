@@ -22,7 +22,7 @@ public class QChallenge extends EntityPathBase<Challenge> {
 
     public static final QChallenge challenge = new QChallenge("challenge");
 
-    public final EnumPath<Category> category = createEnum("category", Category.class);
+    public final EnumPath<com.zerobase.challengeproject.type.Category> category = createEnum("category", com.zerobase.challengeproject.type.Category.class);
 
     public final ListPath<MemberChallenge, QMemberChallenge> challengeMembers = this.<MemberChallenge, QMemberChallenge>createList("challengeMembers", MemberChallenge.class, QMemberChallenge.class, PathInits.DIRECT2);
 

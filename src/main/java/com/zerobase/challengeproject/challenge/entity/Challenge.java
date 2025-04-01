@@ -2,7 +2,9 @@ package com.zerobase.challengeproject.challenge.entity;
 
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
 import com.zerobase.challengeproject.member.entity.Member;
+import com.zerobase.challengeproject.type.Category;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -34,6 +36,7 @@ public class Challenge {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private Category category;
 
     @Column(nullable = false)
@@ -76,6 +79,7 @@ public class Challenge {
 
         this.title = dto.getTitle();
         this.member = member;
+        this.category = dto.getCategory();
         this.img = dto.getImg();
         this.participant = dto.getParticipant();
         this.max_deposit = dto.getMax_deposit();
@@ -86,6 +90,22 @@ public class Challenge {
         this.endDate = dto.getEndDate();
         this.createAt = LocalDateTime.now();
     }
+
+    public Challenge(ChallengeForm dto) {
+
+        this.title = dto.getTitle();
+        this.img = dto.getImg();
+        this.category = dto.getCategory();
+        this.participant = dto.getParticipant();
+        this.max_deposit = dto.getMax_deposit();
+        this.standard = dto.getStandard();
+        this.min_deposit = dto.getMin_deposit();
+        this.description = dto.getDescription();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+        this.createAt = LocalDateTime.now();
+    }
+
 
     /**
      * 클라이언트로부터 받은 정보로 챌린지 수정

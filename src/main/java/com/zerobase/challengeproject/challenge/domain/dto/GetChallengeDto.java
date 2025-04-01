@@ -1,18 +1,19 @@
 package com.zerobase.challengeproject.challenge.domain.dto;
 
-
-import com.zerobase.challengeproject.type.Category;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
-import jakarta.persistence.*;
+import com.zerobase.challengeproject.type.Category;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+
 @Getter
 @Setter
-public class OngoingChallengeDto {
-
+public class GetChallengeDto {
     private Long id;
 
     private String title;
@@ -48,8 +49,7 @@ public class OngoingChallengeDto {
 
     private LocalDateTime updateAt;
 
-
-    public OngoingChallengeDto(Challenge challenge) {
+    public GetChallengeDto(Challenge challenge) {
         this.id = challenge.getId();
         this.updateAt = challenge.getUpdateAt();
         this.createAt = challenge.getCreateAt();

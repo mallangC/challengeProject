@@ -3,7 +3,7 @@
 
     import jakarta.validation.constraints.NotBlank;
     import jakarta.validation.constraints.Size;
-    import com.zerobase.challengeproject.challenge.entity.Category;
+    import com.zerobase.challengeproject.type.Category;
     import jakarta.validation.constraints.*;
     import lombok.Builder;
     import lombok.Getter;
@@ -50,7 +50,7 @@
         @Max(value = 1_000_000, message = "최대 보증금은 1,000,000원 이하로 설정해 주세요.")
         private Integer max_deposit;
 
-        @Future(message = "시작날짜를 지정해 주세요.")
+        @FutureOrPresent(message = "시작날짜를 지정해 주세요.")
         private LocalDateTime startDate;
 
         @Future(message = "종료날짜를 지정해 주세요.")

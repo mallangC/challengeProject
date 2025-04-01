@@ -3,8 +3,9 @@ package com.zerobase.challengeproject.challenge.service;
 
 import com.zerobase.challengeproject.challenge.ChallengeService;
 import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
+import com.zerobase.challengeproject.challenge.domain.dto.GetChallengeDto;
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
-import com.zerobase.challengeproject.challenge.entity.Category;
+import com.zerobase.challengeproject.type.Category;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
 import com.zerobase.challengeproject.exception.CustomException;
@@ -25,8 +26,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,9 +34,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -54,8 +51,7 @@ public class ChallengeServiceTest {
     
     @InjectMocks
     private ChallengeService challengeService;
-    
-    
+
     private ChallengeForm challengeForm;
     private Long challengeId;
     private Member member;
@@ -97,18 +93,23 @@ public class ChallengeServiceTest {
 
     @BeforeEach
     void setUp() {
-        memberId = 1L;
-        member = new Member();
-        member.setId(memberId);
 
         challengeId = 1L;
         challengeForm = createChallengeForm();
 
+        memberId = 1L;
+        member = Member.builder()
+                .id(memberId)  // id를 설정
+                .memberId("member123")
+                .memberName("user123")
+                .phoneNum("123-456-7890")
+                .email("test@example.com")
+                .build();
     }
 
     @Test
-    @DisplayName("성공 - 챌린지 전체조회 성공")
-    void getAllChallenges_success() {
+    @DisplayName("챌린지 전체조회 성공")
+    void getAllChallenges() {
         // Given
         List<Challenge> challengeList = List.of(
                 createChallenge(1L, "챌린지 1"),
@@ -121,7 +122,7 @@ public class ChallengeServiceTest {
         given(challengeRepository.findAll(pageable)).willReturn(challengePage);
 
         // When
-        ResponseEntity<BaseResponseDto<Page<Challenge>>> response = challengeService.getAllChallenges(pageable);
+        ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> response = challengeService.getAllChallenges(pageable);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -131,8 +132,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("실패 - 챌린지 전체조회 실패")
-    void getAllChallenges_failure() {
+    @DisplayName("챌린지 전체조회 실패")
+    void getAllChallengesFailure() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);
         Page<Challenge> emptyPage = Page.empty();
@@ -146,15 +147,15 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("성공 - 챌린지 상세조회 성공")
-    void getChallengeDetail_success() {
+    @DisplayName("챌린지 상세조회 성공")
+    void getChallengeDetail() {
 
         // Given
         Challenge challenge = createChallenge(challengeId, "챌린지 제목");
         given(challengeRepository.findById(challengeId)).willReturn(Optional.of(challenge));
 
         // When
-        ResponseEntity<BaseResponseDto<Challenge>> response = challengeService.getChallengeDetail(challengeId);
+        ResponseEntity<BaseResponseDto<GetChallengeDto>> response = challengeService.getChallengeDetail(challengeId);
 
         // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
@@ -162,8 +163,8 @@ public class ChallengeServiceTest {
         assertThat(response.getBody().getData().getId()).isEqualTo(1L);
     }
     @Test
-    @DisplayName("실패 - 챌린지 상세조회 실패")
-    void getChallengeDetail_failure() {
+    @DisplayName("챌린지 상세조회 실패")
+    void getChallengeDetailFailure() {
         // Given
         given(challengeRepository.findById(challengeId)).willReturn(Optional.empty());
 
@@ -174,18 +175,17 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("성공 - 챌린지 생성 성공")
-    void createChallenge_Success() {
+    @DisplayName("챌린지 생성 성공")
+    void createChallenge() {
         // Given
         ChallengeForm form = createChallengeForm();
 
-        given(memberRepository.findById(form.getMemberId())).willReturn(Optional.of(member));
-
         Challenge challenge = new Challenge(form, member);
+        given(memberRepository.findById(form.getMemberId())).willReturn(Optional.of(member));
         given(challengeRepository.save(any(Challenge.class))).willReturn(challenge);
 
         // When
-        ResponseEntity<BaseResponseDto<Challenge>> response = challengeService.createChallenge(form, userDetails);
+        ResponseEntity<BaseResponseDto<GetChallengeDto>> response = challengeService.createChallenge(form, userDetails);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -197,8 +197,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("실패 - 최소 보증금이 최대 보증금보다 클 경우 예외 발생")
-    void createChallenge_minDepositThanMaxDeposit() {
+    @DisplayName("최소 보증금이 최대 보증금보다 클 경우 예외 발생")
+    void createChallengeFailure1() {
         // Given
 
         challengeForm.setMin_deposit(6000);
@@ -211,8 +211,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("실패 - 시작일이 종료일보다 늦을 경우 예외 발생")
-    void createChallenge_startDateThanEndDate() {
+    @DisplayName("시작일이 종료일보다 늦을 경우 예외 발생")
+    void createChallengeFailure2() {
         // Given
 
         challengeForm.setStartDate(LocalDateTime.now().plusDays(10));
@@ -226,8 +226,8 @@ public class ChallengeServiceTest {
 
 
     @Test
-    @DisplayName("성공 - 챌린지 수정 성공")
-    void updateChallenge_success() {
+    @DisplayName("챌린지 수정 성공")
+    void updateChallenge() {
         // Given
         Challenge existingChallenge = createChallenge(challengeId, "기존 제목");
         given(challengeRepository.findById(challengeId)).willReturn(Optional.of(existingChallenge));
@@ -235,7 +235,7 @@ public class ChallengeServiceTest {
 
         UserDetailsImpl userDetails = new UserDetailsImpl(member);
         // When
-        ResponseEntity<BaseResponseDto<Challenge>> response = challengeService.updateChallenge(challengeId, challengeForm, userDetails);
+        ResponseEntity<BaseResponseDto<GetChallengeDto>> response = challengeService.updateChallenge(challengeId, challengeForm, userDetails);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -244,8 +244,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("실패 - 최소 보종금이 최대 보증금보다 클 경우 예외 발생")
-    void updateChallenge_invalidDepositAmount() {
+    @DisplayName("최소 보증금이 최대 보증금보다 클 경우 예외 발생")
+    void updateChallengeFailure1() {
 
         // Given
         challengeForm.setMin_deposit(6000);
@@ -258,8 +258,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("실패 - 참여인원이 0명일 경우 예외 발생")
-    void updateChallenge_invalidParticipantNumber() {
+    @DisplayName("참여인원이 0명일 경우 예외 발생")
+    void updateChallengeFailure2() {
 
         // Given
         challengeForm.setParticipant(0);
@@ -271,8 +271,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("실패 - 시작일이 종료일보다 늦을 경우 예외 발생")
-    void updateChallenge_invalidDateRange() {
+    @DisplayName("시작일이 종료일보다 늦을 경우 예외 발생")
+    void updateChallengeFailure3() {
         // Given
         challengeForm.setStartDate(LocalDateTime.now().plusDays(10));
 
@@ -283,8 +283,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("실패 - 챌린지가 없을 시 예외 발생")
-    void updateChallenge_challengeNotFound() {
+    @DisplayName("챌린지가 없을 시 예외 발생")
+    void updateChallengeFailure4() {
         // Given
         given(challengeRepository.findById(challengeId)).willReturn(Optional.empty());
 
@@ -295,13 +295,13 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("성공 - 챌린지 삭제 성공")
-    void deleteChallenge_success() {
+    @DisplayName("챌린지 삭제 성공")
+    void deleteChallenge() {
         // Given
         given(challengeRepository.findById(challengeId)).willReturn(Optional.of(createChallenge(challengeId,"삭제용 챌린지")));
         UserDetailsImpl userDetails = new UserDetailsImpl(member);
         // When
-        ResponseEntity<BaseResponseDto<Challenge>> response = challengeService.deleteChallenge(challengeId, userDetails);
+        ResponseEntity<BaseResponseDto<GetChallengeDto>> response = challengeService.deleteChallenge(challengeId, userDetails);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -310,8 +310,8 @@ public class ChallengeServiceTest {
 
 
     @Test
-    @DisplayName("실패 챌린지 없을 시 예외 발생")
-    void deleteChallenge_notFound() {
+    @DisplayName("챌린지 없을 시 예외 발생")
+    void deleteChallengeFailure() {
         // Given
         given(challengeRepository.findById(challengeId)).willReturn(Optional.empty());
 

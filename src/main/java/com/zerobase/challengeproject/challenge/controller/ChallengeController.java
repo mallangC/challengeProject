@@ -3,21 +3,18 @@ package com.zerobase.challengeproject.challenge.controller;
 
 import com.zerobase.challengeproject.challenge.ChallengeService;
 import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
+import com.zerobase.challengeproject.challenge.domain.dto.GetChallengeDto;
 import com.zerobase.challengeproject.challenge.domain.dto.OngoingChallengeDto;
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
-import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/challenge")
@@ -30,39 +27,39 @@ public class ChallengeController {
      * 챌린지 전체 조회
      */
     @GetMapping
-    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getAllChallenge(Pageable pageable) {
+    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getAllChallenge(Pageable pageable) {
         
         return challengeService.getAllChallenges(pageable);
     }
 
     /**
      * 챌린지 상세조회
-     * @param id 게시물번호
+     * @param challengeId 게시물번호
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<BaseResponseDto<Challenge>> getChallengeDetail(@PathVariable Long id){
+    @GetMapping("/{challengeId}")
+    public ResponseEntity<BaseResponseDto<GetChallengeDto>> getChallengeDetail(@PathVariable Long challengeId){
 
-        return challengeService.getChallengeDetail(id);
+        return challengeService.getChallengeDetail(challengeId);
     }
 
     /**
      * 사용자가 생성한 챌린지 조회
-     * @param id 유저아이디
+     * @param memberId 유저아이디
      */
-    @GetMapping("/my-challenge/{id}")
-    public ResponseEntity<BaseResponseDto<Page<Challenge>>> getChallengesMadeByUser(@PathVariable Long id, Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    @GetMapping("/my-challenge/{memberId}")
+    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getChallengesMadeByUser(@PathVariable Long memberId, Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return challengeService.getChallengesMadeByUser(id, pageable, userDetails);
+        return challengeService.getChallengesMadeByUser(memberId, pageable, userDetails);
     }
 
     /**
      * 사용자가 참여중인 챌린지 조회
-     * @param id 유저아이디
+     * @param memberId 유저아이디
      */
-    @GetMapping("/on-going/{id}")
-    public ResponseEntity<BaseResponseDto<Page<OngoingChallengeDto>>> ongoingChallenges(@PathVariable Long id, Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    @GetMapping("/on-going/{memberId}")
+    public ResponseEntity<BaseResponseDto<Page<OngoingChallengeDto>>> ongoingChallenges(@PathVariable Long memberId, Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return challengeService.getOngoingChallenges(id, pageable, userDetails);
+        return challengeService.getOngoingChallenges(memberId, pageable, userDetails);
     }
 
     /**
@@ -70,29 +67,29 @@ public class ChallengeController {
      * @param dto 클라이언트가 서버에 보낸 정보
      */
     @PostMapping
-    public ResponseEntity<BaseResponseDto<Challenge>> createChallenge(@Valid @RequestBody ChallengeForm dto, UserDetailsImpl userDetails) {
+    public ResponseEntity<BaseResponseDto<GetChallengeDto>> createChallenge(@Valid @RequestBody ChallengeForm dto, UserDetailsImpl userDetails) {
 
         return challengeService.createChallenge(dto, userDetails);
     }
 
     /**
      * 챌린지 수정
-     * @param id 게시물번호
+     * @param challengeId 게시물번호
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<BaseResponseDto<Challenge>> updateChallenge(@PathVariable Long id, @Valid @RequestBody ChallengeForm dto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    @PutMapping("/{challengeId}")
+    public ResponseEntity<BaseResponseDto<GetChallengeDto>> updateChallenge(@PathVariable Long challengeId, @Valid @RequestBody ChallengeForm dto, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return challengeService.updateChallenge(id, dto, userDetails);
+        return challengeService.updateChallenge(challengeId, dto, userDetails);
     }
 
     /**
      * 챌린지 삭제
-     * @param id 게시물번호
+     * @param challengeId 게시물번호
      */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponseDto<Challenge>> deleteChallenge(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    @DeleteMapping("/{challengeId}")
+    public ResponseEntity<BaseResponseDto<GetChallengeDto>> deleteChallenge(@PathVariable Long challengeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return challengeService.deleteChallenge(id, userDetails);
+        return challengeService.deleteChallenge(challengeId, userDetails);
     }
 
 }
