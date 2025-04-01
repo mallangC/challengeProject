@@ -45,7 +45,7 @@ public class MemberSignupService {
         String emailAuthKey = UUID.randomUUID().toString();
         String email = memberSignupForm.getEmail();
         if(memberRepository.existsByEmail(email)){
-            throw new CustomException(ErrorCode.ALREADY_REGISTER_Email);
+            throw new CustomException(ErrorCode.ALREADY_REGISTER_EMAIL);
         }
         if(memberRepository.existsByMemberId(memberId)){
             throw new CustomException(ErrorCode.ALREADY_REGISTER_LOGIN_ID);
