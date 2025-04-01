@@ -4,8 +4,10 @@ import com.zerobase.challengeproject.member.components.jwt.JwtAuthenticationFilt
 import com.zerobase.challengeproject.member.components.jwt.JwtAuthorizationFilter;
 import com.zerobase.challengeproject.member.components.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,6 +30,7 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -93,6 +96,8 @@ public class SecurityConfig {
 
         http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(jwtAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+
+
 
         return http.build();
     }

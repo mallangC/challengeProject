@@ -1,9 +1,10 @@
 package com.zerobase.challengeproject.challenge.entity;
 
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
-import com.zerobase.challengeproject.comment.entity.CoteComment;
-import com.zerobase.challengeproject.type.CommentType;
+import com.zerobase.challengeproject.member.entity.Member;
+import com.zerobase.challengeproject.type.Category;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,27 +22,28 @@ public class Challenge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    /**
-     * 회원 테이블과 조인
-    @Column
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    */
+
+    @OneToMany(mappedBy = "challenge")
+    private List<MemberChallenge> challengeMembers;
 
     @Column(nullable = false)
     private String title;
 
     private String img;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private Category category;
+
     @Column(nullable = false)
     private Integer participant;
 
+    @Column(nullable = false)
     private String description;
-
-    @Enumerated(EnumType.STRING)
-    private CommentType commentType;
 
     @Column(nullable = false)
     private Integer min_deposit;
@@ -58,37 +60,52 @@ public class Challenge {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY)
-    List<CoteComment> coteComments;
+//    @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY)
 //    @OneToMany(mappedBy = "callenge", fetch = FetchType.LAZY)
 //    List<DrinkingComment> drinkingComments;
 //    @OneToMany(mappedBy = "callenge", fetch = FetchType.LAZY)
 //    List<DietComment> dietComments;
 
-    @Column(nullable = false)
     private LocalDateTime createAt;
     
     private LocalDateTime updateAt;
 
 
     /**
-     * 클라리언트로부터 받은 정보로 챌린지 생성
+     * 클라이언트로부터 받은 정보로 챌린지 생성
      * @param dto
      */
-    public Challenge(ChallengeForm dto) {
+    public Challenge(ChallengeForm dto, Member member) {
 
         this.title = dto.getTitle();
+        this.member = member;
+        this.category = dto.getCategory();
         this.img = dto.getImg();
         this.participant = dto.getParticipant();
         this.max_deposit = dto.getMax_deposit();
         this.standard = dto.getStandard();
         this.min_deposit = dto.getMin_deposit();
         this.description = dto.getDescription();
-        this.commentType = dto.getCommentType();
         this.startDate = dto.getStartDate();
         this.endDate = dto.getEndDate();
         this.createAt = LocalDateTime.now();
     }
+
+    public Challenge(ChallengeForm dto) {
+
+        this.title = dto.getTitle();
+        this.img = dto.getImg();
+        this.category = dto.getCategory();
+        this.participant = dto.getParticipant();
+        this.max_deposit = dto.getMax_deposit();
+        this.standard = dto.getStandard();
+        this.min_deposit = dto.getMin_deposit();
+        this.description = dto.getDescription();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+        this.createAt = LocalDateTime.now();
+    }
+
 
     /**
      * 클라이언트로부터 받은 정보로 챌린지 수정
