@@ -2,6 +2,7 @@ package com.zerobase.challengeproject.member.components.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.challengeproject.member.domain.form.MemberLoginForm;
+import com.zerobase.challengeproject.type.MemberType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,11 +32,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             // JSON 요청 데이터를 파싱하여 로그인 정보 추출
             MemberLoginForm form = new ObjectMapper().readValue(request.getInputStream(), MemberLoginForm.class);
-
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(form.getMemberId(), form.getPassword());
-
-            return getAuthenticationManager().authenticate(authenticationToken);
+            return getAuthenticationManager().authenticate(
+                    new UsernamePasswordAuthenticationToken(form.getMemberId(),
+                            form.getPassword())
+            );
         } catch (IOException e) {
             throw new AuthenticationServiceException("로그인 시도 중 오류가 발생했습니다.", e);
         }
@@ -47,8 +47,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
+        MemberType role = userDetails.getMember().getMemberType();
         String username = userDetails.getUsername();
-        String accessToken = jwtUtil.createToken(username);
+        String accessToken = jwtUtil.generateAccessToken(username, role);
 
 
         // JWT를 응답 헤더에 추가
