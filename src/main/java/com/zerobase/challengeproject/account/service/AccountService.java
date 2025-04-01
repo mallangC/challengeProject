@@ -2,6 +2,7 @@ package com.zerobase.challengeproject.account.service;
 
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.account.domain.dto.AccountDetailDto;
+import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.domain.dto.MemberDto;
 import com.zerobase.challengeproject.account.domain.dto.PageDto;
 import com.zerobase.challengeproject.account.domain.dto.RefundDto;
@@ -34,8 +35,8 @@ public class AccountService {
   private final AccountDetailRepository accountDetailRepository;
   private final RefundRepository refundRepository;
 
-  public MemberDto getMember() {
-    return MemberDto.fromWithoutAccountDetails(searchMember("test@company.com"));
+  public MemberDto getMember(UserDetailsImpl userDetails) {
+    return MemberDto.fromWithoutAccountDetails(searchMember(userDetails.getUsername()));
   }
 
   /**
@@ -46,10 +47,8 @@ public class AccountService {
    * @param page 찾은 계좌 내역 페이지
    * @return 계좌 내역과 총 갯수, 총페이지, 현재 페이지, 한페이지에 표시되는 계좌내역의 갯수 정보
    */
-  public BaseResponseDto<PageDto<AccountDetailDto>> getAllAccounts(int page) {
-    //토큰 provider에서 토큰 해석
-    String userId = "test@company.com";
-    Page<AccountDetailDto> paging = accountDetailRepository.searchAllAccountDetail(page - 1, userId);
+  public BaseResponseDto<PageDto<AccountDetailDto>> getAllAccounts(int page, UserDetailsImpl userDetails) {
+    Page<AccountDetailDto> paging = accountDetailRepository.searchAllAccountDetail(page - 1, userDetails.getUsername());
     return new BaseResponseDto<>(PageDto.from(paging)
             , "계좌 내역 조회에 성공했습니다.(" + page + "페이지)"
             , HttpStatus.OK);
@@ -64,9 +63,8 @@ public class AccountService {
    * @return id, updateAt을 제외한 모든 충전내역
    */
   @Transactional
-  public BaseResponseDto<AccountDetailDto> addAmount(AccountAddForm form) {
-    //토큰 provider에서 토큰 해석
-    String userId = "test@company.com";
+  public BaseResponseDto<AccountDetailDto> addAmount(AccountAddForm form, UserDetailsImpl userDetails) {
+    String userId = userDetails.getUsername();
     Member member = searchMember(userId);
 
     Long amount = form.getChargeAmount();
@@ -87,9 +85,8 @@ public class AccountService {
    * @param form 환불 신청할 내역id, 환불 사유
    * @return 환불 신청에 대한 정보 (id 제외)
    */
-  public BaseResponseDto<RefundDto> addRefund(RefundAddForm form) {
-    //토큰 provider에서 토큰 해석
-    String userId = "test@company.com";
+  public BaseResponseDto<RefundDto> addRefund(RefundAddForm form, UserDetailsImpl userDetails) {
+    String userId = userDetails.getUsername();
     boolean isExist = refundRepository.existsByAccountDetail_Id(form.getAccountId());
     if (isExist) {
       throw new CustomException(ErrorCode.ALREADY_REFUND_REQUEST);
@@ -105,9 +102,8 @@ public class AccountService {
   }
 
 
-  public BaseResponseDto<PageDto<RefundDto>> getAllMyRefund(int page) {
-    //토큰 provider에서 토큰 해석
-    String userId = "test@company.com";
+  public BaseResponseDto<PageDto<RefundDto>> getAllMyRefund(int page, UserDetailsImpl userDetails) {
+    String userId = userDetails.getUsername();
     Page<RefundDto> paging = refundRepository.searchAllMyRefund(page - 1, userId);
     return new BaseResponseDto<>(PageDto.from(paging)
             , "회원의 환불신청 조회에 성공했습니다.(" + page + "페이지)"
@@ -174,15 +170,15 @@ public class AccountService {
    */
   @Transactional
   public BaseResponseDto<RefundDto> refundDecision(boolean approval, RefundUpdateForm form) {
-    //토큰 provider에서 토큰 해석
-    String userId = "test@company.com";
     Refund refund = refundRepository.searchRefundById(form.getRefundId());
     AccountDetail accountDetail = refund.getAccountDetail();
     if (!accountDetail.isCharge()) {
       throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
     }
     if (approval) {
-      Member member = memberRepository.searchByEmailAndAccountDetailsToDate(userId, accountDetail.getCreatedAt());
+      Member member = memberRepository.searchByEmailAndAccountDetailsToDate(
+              refund.getMember().getMemberId(),
+              accountDetail.getCreatedAt());
       AccountDetail refundDetail = AccountDetail.refund(member, accountDetail.getAmount());
       accountDetailRepository.save(refundDetail);
       member.refundAccount(accountDetail, refund);
