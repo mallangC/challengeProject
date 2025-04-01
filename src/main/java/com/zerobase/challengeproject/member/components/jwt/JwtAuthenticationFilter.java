@@ -2,6 +2,7 @@ package com.zerobase.challengeproject.member.components.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.challengeproject.member.domain.form.MemberLoginForm;
+import com.zerobase.challengeproject.type.MemberType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

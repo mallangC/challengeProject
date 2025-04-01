@@ -44,6 +44,7 @@ public class Member {
     private String emailAuthKey;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private MemberType memberType;
 
     private Long account;

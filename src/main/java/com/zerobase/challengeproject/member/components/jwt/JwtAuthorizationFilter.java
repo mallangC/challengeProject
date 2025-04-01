@@ -47,12 +47,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String memberId = jwtUtil.extractMemberId(token);
             String role = jwtUtil.extractRoles(token);
 
-            MemberType memberType = role.equals("admin") ? MemberType.ADMIN : MemberType.USER;
+            MemberType memberType = role.equals("ROLE_ADMIN") ? MemberType.ADMIN : MemberType.USER;
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(memberType.getAuthority()));
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
             Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
