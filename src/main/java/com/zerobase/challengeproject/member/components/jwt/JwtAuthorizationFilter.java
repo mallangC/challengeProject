@@ -1,5 +1,6 @@
 package com.zerobase.challengeproject.member.components.jwt;
 
+import com.zerobase.challengeproject.type.MemberType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,13 +8,21 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
+/**
+ * JWT 기반의 인가 필터 클래스.
+ * HTTP 요청에서 JWT를 검증하고, 유효한 경우 SecurityContext에 인증 정보를 설정.
+ * OncePerRequestFilter를 상속하여 요청 당 한 번만 실행.
+ */
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -21,13 +30,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     /**
-     * HTTP 요청에서 JWT의 만료 여부를 확인하고, 만약 토큰이 만료되지 않았다면 SecurityContext에
-     * 인증 정보를 설정
-     * @param request HTTP 요청 객체
-     * @param response HTTP 응답 객체
-     * @param filterChain 필터 체인
+     * HTTP 요청에서 JWT의 만료 여부를 확인하고, 만약 토큰이 유효하다면 SecurityContext에 인증 정보를 설정.
+     * @param request      HTTP 요청 객체
+     * @param response     HTTP 응답 객체
+     * @param filterChain  필터 체인
      * @throws ServletException 필터 처리 중 발생한 예외
-     * @throws IOException I/O 처리 중 발생한 예외
+     * @throws IOException       I/O 처리 중 발생한 예외
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -35,12 +43,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String token = resolveToken(request);
 
-        if (token != null && jwtUtil.isTokenExpired(token)) {
+        if (token != null && jwtUtil.isTokenValid(token)) {
             String username = jwtUtil.extractUsername(token);
+            String role = jwtUtil.extractRoles(token);
+
+            MemberType memberType = role.equals("admin") ? MemberType.ADMIN : MemberType.USER;
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(memberType.getAuthority()));
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
