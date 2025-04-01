@@ -19,7 +19,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
+/**
+ * JWT 기반의 인가 필터 클래스.
+ * HTTP 요청에서 JWT를 검증하고, 유효한 경우 SecurityContext에 인증 정보를 설정.
+ * OncePerRequestFilter를 상속하여 요청 당 한 번만 실행.
+ */
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -27,13 +31,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     /**
-     * HTTP 요청에서 JWT의 만료 여부를 확인하고, 만약 토큰이 만료되지 않았다면 SecurityContext에
-     * 인증 정보를 설정
-     * @param request HTTP 요청 객체
-     * @param response HTTP 응답 객체
-     * @param filterChain 필터 체인
+     * HTTP 요청에서 JWT의 만료 여부를 확인하고, 만약 토큰이 유효하다면 SecurityContext에 인증 정보를 설정.
+     * @param request      HTTP 요청 객체
+     * @param response     HTTP 응답 객체
+     * @param filterChain  필터 체인
      * @throws ServletException 필터 처리 중 발생한 예외
-     * @throws IOException I/O 처리 중 발생한 예외
+     * @throws IOException       I/O 처리 중 발생한 예외
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

@@ -13,6 +13,9 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+/**
+ * JWT 토큰을 생성하고 검증하는 유틸리티 클래스
+ */
 @Component
 public class JwtUtil {
 
@@ -22,6 +25,12 @@ public class JwtUtil {
     private final long ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000;
     private final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000;
 
+    /**
+     * 액세스 토큰 생성
+     * @param username 사용자 이름
+     * @param role 사용자 역할
+     * @return 생성된 JWT 액세스 토큰
+     */
     public String generateAccessToken(String username, MemberType role) {
         return Jwts.builder()
                 .setSubject(username)
@@ -31,7 +40,12 @@ public class JwtUtil {
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
-
+    /**
+     * 리프레시 토큰 생성
+     * @param username 사용자 이름
+     * @param role 사용자 역할
+     * @return 생성된 JWT 리프레시 토큰
+     */
     public String generateRefreshToken(String username, MemberType role) {
         return Jwts.builder()
                 .setSubject(username)
@@ -41,7 +55,11 @@ public class JwtUtil {
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
-
+    /**
+     * JWT에서 사용자 이름 추출
+     * @param token JWT 토큰
+     * @return 사용자 이름
+     */
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -50,11 +68,19 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
-
+    /**
+     * JWT 토큰의 유효성 검사
+     * @param token JWT 토큰
+     * @return 유효한 경우 true, 그렇지 않으면 false
+     */
     public boolean isTokenValid(String token) {
         return !extractExpiration(token).before(new Date());
     }
-
+    /**
+     * JWT에서 만료 날짜 추출
+     * @param token JWT 토큰
+     * @return 만료 날짜
+     */
     private Date extractExpiration(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -63,6 +89,11 @@ public class JwtUtil {
                 .getBody()
                 .getExpiration();
     }
+    /**
+     * JWT에서 역할(Role) 정보 추출
+     * @param token JWT 토큰
+     * @return 역할 문자열
+     */
     public String extractRoles(String token) {
 
         Claims claims = Jwts.parserBuilder()
@@ -75,9 +106,10 @@ public class JwtUtil {
     }
 
     /**
-     * 리프레시 토큰 쿠키 생성
+     * 리프레시 토큰을 위한 HTTP 쿠키 생성
      * @param refreshToken 리프레시 토큰
-     * @return ResponseCookie
+     * @param expiresIn 만료 기간 (일 단위)
+     * @return 생성된 ResponseCookie
      */
     public ResponseCookie createRefreshTokenCookie(String refreshToken, int expiresIn) {
         boolean isSecure = !isLocalEnvironment();
@@ -86,11 +118,14 @@ public class JwtUtil {
                 .httpOnly(true)
                 .secure(isSecure)
                 .path("/")
-                .maxAge( expiresIn * 24 * 60 * 60)
+                .maxAge((long) expiresIn * 24 * 60 * 60)
                 .build();
     }
 
-    // 로컬 환경인지 확인하는 메서드
+    /**
+     * 현재 환경이 로컬인지 확인
+     * @return 로컬 환경이면 true, 그렇지 않으면 false
+     */
     private boolean isLocalEnvironment() {
         String profile = System.getProperty("spring.profiles.active", "default");
         return profile.equals("local") || profile.equals("default");

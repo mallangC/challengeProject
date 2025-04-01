@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -55,7 +54,16 @@ public class MemberLoginService {
 
         return new MemberLoginResponse(accessToken, responseCookie, member.getMemberId());
     }
-
+    /**
+     * 로그아웃 처리 서비스
+     * 엑세스 토큰에서 "Bearer "를 제거하고 회원 아이디를 추출.
+     * 리프레시 토큰이 제공되지 않거나 유효하지 안으면 예외 처리
+     * 리프레시 토큰이 유효할 경우 삭제
+     * @param token JWT 액세스 토큰
+     * @param refreshToken 리프레시 토큰
+     * @return 로그아웃 후 반환할 DTO 객체
+     * @throws CustomException 토큰이 제공되지 않거나 유효하지 않은 경우 예외 발생
+     */
     public MemberLogoutDto logout(String token, String refreshToken) {
         token = token.substring(7);
         String memberId = jwtUtil.extractUsername(token);
@@ -65,14 +73,17 @@ public class MemberLoginService {
         if (!jwtUtil.isTokenValid(refreshToken)) {
             throw new CustomException(ErrorCode.TOKEN_IS_INVALID_OR_EXPIRED);
         }
-
-        // 리프레시 토큰이 유효할 경우 삭제
         refreshTokenRepository.deleteByMemberId(memberId);
 
         ResponseCookie responseCookie =  jwtUtil.createRefreshTokenCookie("", 0);
         return new MemberLogoutDto(memberId, responseCookie);
     }
-
+    /**
+     * 리프레시 토큰을 이용해 새로운 액세스 토큰을 발급하는 서비스
+     * @param refreshToken 리프레시 토큰
+     * @return 새로운 액세스 토큰과 리프레시 토큰을 포함하는 DTO 객체
+     * @throws CustomException 토큰이 유효하지 않거나 만료된 경우 예외 발생
+     */
     public RefreshTokenDto refreshAccessToken(String refreshToken) {
         if (refreshToken == null || !jwtUtil.isTokenValid(refreshToken)) {
             throw new CustomException(ErrorCode.TOKEN_IS_INVALID_OR_EXPIRED);
