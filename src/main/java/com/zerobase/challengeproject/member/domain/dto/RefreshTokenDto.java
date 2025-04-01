@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class RefreshTokenDto {
-  private String refreshToken;
-  private String accessToken;
+    private String refreshToken;
+    private String accessToken;
 
-  public RefreshTokenDto(String refreshToken, String accessToken) {
-    this.refreshToken = refreshToken;
-    this.accessToken = accessToken;
-  }
+    public RefreshTokenDto(String refreshToken, String accessToken) {
+        this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
+    }
 
 }

@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 import java.util.Map;
 
-
 /**
  * JWT 기반의 인증 필터 클래스.
  * 사용자의 로그인 요청을 처리하고, 인증 성공 시 JWT를 생성하여 반환.
@@ -27,11 +26,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JwtUtil jwtUtil;
 
-    /**
-     * JwtAuthenticationFilter 생성자.
-     * @param jwtUtil JWT 유틸리티 클래스.
-     * @param authenticationManager Spring Security의 AuthenticationManager.
-     */
     public JwtAuthenticationFilter(JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
         super.setAuthenticationManager(authenticationManager);
         this.jwtUtil = jwtUtil;
@@ -50,7 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             /**
              * JSON 요청 데이터를 파싱하여 로그인 정보 추출
-             */
+              */
             MemberLoginForm form = new ObjectMapper().readValue(request.getInputStream(), MemberLoginForm.class);
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(form.getMemberId(),
@@ -78,13 +72,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication authResult) throws IOException, ServletException {
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
         MemberType role = userDetails.getMember().getMemberType();
-        String username = userDetails.getUsername();
-        String accessToken = jwtUtil.generateAccessToken(username, role);
+        String memberId = userDetails.getMember().getMemberId();
+        String accessToken = jwtUtil.generateAccessToken(memberId, role);
 
 
         /**
          * JWT를 응답 헤더에 추가
-         */
+          */
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.setContentType("application/json");
         response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("token", accessToken)));

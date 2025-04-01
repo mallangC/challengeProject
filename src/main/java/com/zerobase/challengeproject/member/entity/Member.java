@@ -45,6 +45,7 @@ public class Member {
     private List<MemberChallenge> memberChallenges;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private MemberType memberType;
 
     private Long account;

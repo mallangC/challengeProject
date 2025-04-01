@@ -66,7 +66,7 @@ public class MemberLoginService {
      */
     public MemberLogoutDto logout(String token, String refreshToken) {
         token = token.substring(7);
-        String memberId = jwtUtil.extractUsername(token);
+        String memberId = jwtUtil.extractMemberId(token);
         if (refreshToken == null) {
             throw new CustomException(ErrorCode.TOKEN_NOT_PROVIDED);
         }
@@ -89,7 +89,7 @@ public class MemberLoginService {
             throw new CustomException(ErrorCode.TOKEN_IS_INVALID_OR_EXPIRED);
         }
 
-        String memberId = jwtUtil.extractUsername(refreshToken);
+        String memberId = jwtUtil.extractMemberId(refreshToken);
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 

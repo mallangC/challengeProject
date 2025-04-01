@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
@@ -21,19 +22,23 @@ public class JwtUtil {
 
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
+    private SecretKey secretKey;
     private final long ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000;
     private final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000;
 
+    @PostConstruct
+    public void init() {
+        secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    }
     /**
      * 액세스 토큰 생성
-     * @param username 사용자 이름
+     * @param memberId 사용자 이름
      * @param role 사용자 역할
      * @return 생성된 JWT 액세스 토큰
      */
-    public String generateAccessToken(String username, MemberType role) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    public String generateAccessToken(String memberId, MemberType role) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(memberId)
                 .claim("role", role.getAuthority())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
@@ -42,14 +47,13 @@ public class JwtUtil {
     }
     /**
      * 리프레시 토큰 생성
-     * @param username 사용자 이름
+     * @param memberId 사용자 이름
      * @param role 사용자 역할
      * @return 생성된 JWT 리프레시 토큰
      */
-    public String generateRefreshToken(String username, MemberType role) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    public String generateRefreshToken(String memberId, MemberType role) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(memberId)
                 .claim("role", role.getAuthority())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
@@ -61,8 +65,7 @@ public class JwtUtil {
      * @param token JWT 토큰
      * @return 사용자 이름
      */
-    public String extractUsername(String token) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    public String extractMemberId(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
@@ -84,7 +87,6 @@ public class JwtUtil {
      * @return 만료 날짜
      */
     private Date extractExpiration(String token) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
@@ -98,7 +100,7 @@ public class JwtUtil {
      * @return 역할 문자열
      */
     public String extractRoles(String token) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
