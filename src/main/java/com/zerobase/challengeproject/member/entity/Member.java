@@ -72,6 +72,7 @@ public class Member {
                 .memberType(MemberType.USER)
                 .registerDate(LocalDateTime.now())
                 .email(form.getEmail())
+                .account(0L)
                 .build();
     }
 

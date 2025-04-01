@@ -33,6 +33,8 @@ public enum ErrorCode {
   TOKEN_NOT_PROVIDED(HttpStatus.BAD_REQUEST, "리프레시 토큰이 제공되지 않았습니다." )
   ;
 
+
+
   private final HttpStatus httpStatus;
   private final String message;
 }

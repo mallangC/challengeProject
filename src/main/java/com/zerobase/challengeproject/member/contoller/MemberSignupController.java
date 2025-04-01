@@ -25,7 +25,7 @@ public class MemberSignupController {
      */
     @PostMapping("/sign-up")
     public ResponseEntity<BaseResponseDto<MemberSignupDto>> signUp(@Valid @RequestBody MemberSignupForm memberSignupForm) {
-        return ResponseEntity.ok(new BaseResponseDto(memberService.signup(memberSignupForm), "회원 가입 요청 성공했습니다.", HttpStatus.OK));
+        return ResponseEntity.ok(new BaseResponseDto<>(memberService.signup(memberSignupForm), "회원 가입 요청 성공했습니다.", HttpStatus.OK));
     }
 
     /**

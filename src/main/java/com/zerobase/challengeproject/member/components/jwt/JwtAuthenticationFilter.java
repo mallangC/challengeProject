@@ -2,7 +2,6 @@ package com.zerobase.challengeproject.member.components.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.challengeproject.member.domain.form.MemberLoginForm;
-import com.zerobase.challengeproject.type.MemberType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,11 +25,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JwtUtil jwtUtil;
 
-    /**
-     * JwtAuthenticationFilter 생성자.
-     * @param jwtUtil JWT 유틸리티 클래스.
-     * @param authenticationManager Spring Security의 AuthenticationManager.
-     */
     public JwtAuthenticationFilter(JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
         super.setAuthenticationManager(authenticationManager);
         this.jwtUtil = jwtUtil;

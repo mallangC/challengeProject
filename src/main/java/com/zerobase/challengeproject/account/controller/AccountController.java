@@ -2,7 +2,6 @@ package com.zerobase.challengeproject.account.controller;
 
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.account.domain.dto.AccountDetailDto;
-import com.zerobase.challengeproject.member.domain.dto.MemberDto;
 import com.zerobase.challengeproject.account.domain.dto.PageDto;
 import com.zerobase.challengeproject.account.domain.dto.RefundDto;
 import com.zerobase.challengeproject.account.domain.form.AccountAddForm;
@@ -10,10 +9,13 @@ import com.zerobase.challengeproject.account.domain.form.RefundAddForm;
 import com.zerobase.challengeproject.account.domain.form.RefundSearchForm;
 import com.zerobase.challengeproject.account.domain.form.RefundUpdateForm;
 import com.zerobase.challengeproject.account.service.AccountService;
+import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
+import com.zerobase.challengeproject.member.domain.dto.MemberDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,18 +29,18 @@ public class AccountController {
    * 회원 조회(계좌 확인을 위해 구현)
    */
   @GetMapping("/member")
-  public ResponseEntity<MemberDto> getAccountDetail() {
-    return ResponseEntity.ok(accountService.getMember());
+  public ResponseEntity<MemberDto> getAccountDetail(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return ResponseEntity.ok(accountService.getMember(userDetails));
   }
 
   /**
    * 회원 계좌에 금액 충전
-   * TODO 토큰 파라미터 추가
    */
   @PostMapping
   public ResponseEntity<BaseResponseDto<AccountDetailDto>> addAmount(
-          @Valid @RequestBody AccountAddForm form) {
-    return ResponseEntity.ok(accountService.addAmount(form));
+          @Valid @RequestBody AccountAddForm form,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return ResponseEntity.ok(accountService.addAmount(form, userDetails));
   }
 
   /**
@@ -46,8 +48,9 @@ public class AccountController {
    */
   @GetMapping
   public ResponseEntity<BaseResponseDto<PageDto<AccountDetailDto>>> getAllAccountDetail(
-          @RequestParam @Min(1) int page) {
-    return ResponseEntity.ok(accountService.getAllAccounts(page));
+          @RequestParam @Min(1) int page,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return ResponseEntity.ok(accountService.getAllAccounts(page, userDetails));
   }
 
 
@@ -56,8 +59,9 @@ public class AccountController {
    */
   @PostMapping("/refund")
   public ResponseEntity<BaseResponseDto<RefundDto>> refundRequest(
-          @RequestBody RefundAddForm form) {
-    return ResponseEntity.ok(accountService.addRefund(form));
+          @RequestBody RefundAddForm form,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return ResponseEntity.ok(accountService.addRefund(form, userDetails));
   }
 
 
@@ -66,7 +70,7 @@ public class AccountController {
    */
   @DeleteMapping("/refund")
   public ResponseEntity<BaseResponseDto<RefundDto>> cancelRefundRequest(
-          @RequestParam Long refundId) {
+          @RequestParam("id") Long refundId) {
     return ResponseEntity.ok(accountService.cancelRefund(refundId));
   }
 
@@ -75,15 +79,16 @@ public class AccountController {
    */
   @GetMapping("/refund")
   public ResponseEntity<BaseResponseDto<PageDto<RefundDto>>> getAllRefund(
-          @RequestParam @Min(1) int page) {
-    return ResponseEntity.ok(accountService.getAllMyRefund(page));
+          @RequestParam @Min(1) int page,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return ResponseEntity.ok(accountService.getAllMyRefund(page, userDetails));
   }
 
 
   /**
    * 관리자가 환불 내역 확인
    */
-  //  @PreAuthorize("hasRole('ROLE_ADMIN')")
+//  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/refund/admin")
   public ResponseEntity<BaseResponseDto<PageDto<RefundDto>>> getAllRefund(
           @RequestParam @Min(1) int page,
