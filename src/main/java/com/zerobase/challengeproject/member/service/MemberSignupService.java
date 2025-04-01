@@ -41,10 +41,14 @@ public class MemberSignupService {
             throw new CustomException(ErrorCode.CONFIRM_PASSWORD_MISMATCH);
         }
         String password = passwordEncoder.encode(memberSignupForm.getPassword());
+        String memberId = memberSignupForm.getMemberId();
         String emailAuthKey = UUID.randomUUID().toString();
         String email = memberSignupForm.getEmail();
         if(memberRepository.existsByEmail(email)){
-            throw new CustomException(ErrorCode.ALREADY_REGISTER_USER);
+            throw new CustomException(ErrorCode.ALREADY_REGISTER_Email);
+        }
+        if(memberRepository.existsByMemberId(memberId)){
+            throw new CustomException(ErrorCode.ALREADY_REGISTER_LOGIN_ID);
         }
         Member member = Member.from(memberSignupForm, password, emailAuthKey);
         memberRepository.save(member);
