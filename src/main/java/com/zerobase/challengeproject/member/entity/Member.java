@@ -8,10 +8,7 @@ import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
 import com.zerobase.challengeproject.type.MemberType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +16,7 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {

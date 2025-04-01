@@ -33,6 +33,7 @@ public class ChallengeService {
     private final MemberChallengeRepository memberChallengeRepository;
     private final MemberRepository memberRepository;
 
+
     /**
      * 전체 챌린지조회
      */
@@ -82,9 +83,11 @@ public class ChallengeService {
      */
     public ResponseEntity<BaseResponseDto<Page<OngoingChallengeDto>>> getOngoingChallenges(@PathVariable Long memberId, Pageable pageable, UserDetailsImpl userDetails) {
 
+
         if(!memberId.equals(userDetails.getMember().getId())){
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
+
         Page<MemberChallenge> memberChallenges = memberChallengeRepository.findByMemberId(memberId, pageable);
 
         Page<OngoingChallengeDto> challengeDtos = memberChallenges.map(memberChallenge -> new OngoingChallengeDto(memberChallenge.getChallenge()));
@@ -108,12 +111,11 @@ public class ChallengeService {
             throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
         }
 
+        Member member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
         /**
          * 생성시 클라이언트가 보낸 멤버 정보로 챌린지 생성후 챌린지와 멤버엔티티 매핑
          */
-        Member member = memberRepository.findById(dto.getMemberId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-
         Challenge challenge = new Challenge(dto, member);
         challengeRepository.save(challenge);
 
