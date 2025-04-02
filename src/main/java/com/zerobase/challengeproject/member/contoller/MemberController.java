@@ -19,6 +19,11 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /**
+     * 유저가 회원 정보를 조회할 때 사용되는 컨트롤러 메서드
+     * @param userDetails 로그인한 유저의 정보
+     * @return 유저 정보(로그인아이디, 이름, 닉네임, 전화번호, 이메일주소)
+     */
     @GetMapping("/profile")
     public ResponseEntity<BaseResponseDto<MemberProfileDto>> getProfile (
             @AuthenticationPrincipal UserDetailsImpl userDetails){
