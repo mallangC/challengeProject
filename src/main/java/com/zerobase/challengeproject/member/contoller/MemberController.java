@@ -3,14 +3,13 @@ package com.zerobase.challengeproject.member.contoller;
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.domain.dto.MemberProfileDto;
+import com.zerobase.challengeproject.member.domain.form.MemberProfileFrom;
 import com.zerobase.challengeproject.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,5 +32,19 @@ public class MemberController {
                         "회원 정보 불러오기를 성공했습니다",
                         HttpStatus.OK
                         ));
+    }
+
+    @PatchMapping("profile")
+    public ResponseEntity<BaseResponseDto<MemberProfileDto>> updateProfile (
+            @RequestBody MemberProfileFrom form,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+            ) {
+        return ResponseEntity.ok(
+                new BaseResponseDto<>(
+                        memberService.updateProfile(userDetails, form),
+                        "회원 정보 수정 성공했습니다",
+                        HttpStatus.OK
+                )
+        );
     }
 }
