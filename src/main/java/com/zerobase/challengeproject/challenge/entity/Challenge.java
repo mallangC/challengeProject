@@ -1,6 +1,6 @@
 package com.zerobase.challengeproject.challenge.entity;
 
-import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
+import com.zerobase.challengeproject.challenge.domain.form.CreateChallengeForm;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.type.Category;
 import jakarta.persistence.*;
@@ -75,7 +75,7 @@ public class Challenge {
      * 클라이언트로부터 받은 정보로 챌린지 생성
      * @param dto
      */
-    public Challenge(ChallengeForm dto, Member member) {
+    public Challenge(CreateChallengeForm dto, Member member) {
 
         this.title = dto.getTitle();
         this.member = member;
@@ -91,7 +91,7 @@ public class Challenge {
         this.createAt = LocalDateTime.now();
     }
 
-    public Challenge(ChallengeForm dto) {
+    public Challenge(CreateChallengeForm dto) {
 
         this.title = dto.getTitle();
         this.img = dto.getImg();
@@ -111,7 +111,7 @@ public class Challenge {
      * 클라이언트로부터 받은 정보로 챌린지 수정
      * @param dto
      */
-    public void update(ChallengeForm dto) {
+    public void update(CreateChallengeForm dto) {
         this.title = dto.getTitle();
         this.img = dto.getImg();
         this.description = dto.getDescription();

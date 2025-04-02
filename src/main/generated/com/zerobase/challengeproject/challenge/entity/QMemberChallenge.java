@@ -24,9 +24,13 @@ public class QMemberChallenge extends EntityPathBase<MemberChallenge> {
 
     public final QChallenge challenge;
 
+    public final DateTimePath<java.time.LocalDateTime> entered_at = createDateTime("entered_at", java.time.LocalDateTime.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final com.zerobase.challengeproject.member.entity.QMember member;
+
+    public final NumberPath<Integer> memberDeposit = createNumber("memberDeposit", Integer.class);
 
     public QMemberChallenge(String variable) {
         this(MemberChallenge.class, forVariable(variable), INITS);

@@ -1,8 +1,6 @@
     package com.zerobase.challengeproject.challenge.domain.form;
 
 
-    import jakarta.validation.constraints.NotBlank;
-    import jakarta.validation.constraints.Size;
     import com.zerobase.challengeproject.type.Category;
     import jakarta.validation.constraints.*;
     import lombok.Builder;
@@ -14,7 +12,7 @@
     @Getter
     @Setter
     @Builder
-    public class ChallengeForm {
+    public class CreateChallengeForm {
 
         @NotNull(message = "멤버 ID는 필수 값입니다.")
         @Positive(message = "멤버 ID는 양수여야 합니다.")

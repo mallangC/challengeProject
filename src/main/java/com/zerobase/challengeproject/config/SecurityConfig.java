@@ -31,7 +31,6 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -108,10 +107,14 @@ public class SecurityConfig {
                     .requestMatchers("/api/member/sign-up", "/api/member/email-auth", "/api/member/login").permitAll()
                     .anyRequest().authenticated()
             );
+            http.sessionManagement(session
+                    -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
             http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-        }
-         */
+            http.addFilterAt(jwtAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
 
+        }
+
+         */
         return http.build();
     }
 }
