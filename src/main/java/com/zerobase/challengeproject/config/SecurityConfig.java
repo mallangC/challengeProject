@@ -97,6 +97,8 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(jwtAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
 
+
+        /*
         if (!securityEnabled) {
             // 🔥 Security 비활성화 (로컬 테스트용)
             http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
@@ -108,6 +110,7 @@ public class SecurityConfig {
             );
             http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         }
+         */
 
         return http.build();
     }
