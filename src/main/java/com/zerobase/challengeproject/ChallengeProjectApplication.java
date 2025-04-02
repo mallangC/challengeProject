@@ -23,7 +23,9 @@ public class ChallengeProjectApplication {
     String encodedKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
 
     // 생성된 키 출력
-    System.out.println("Encoded Secret Key: " + encodedKey);*/
+    System.out.println("Encoded Secret Key: " + encodedKey);
+
+     */
   }
 
 }
