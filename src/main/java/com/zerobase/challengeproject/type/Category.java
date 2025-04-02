@@ -1,5 +1,8 @@
 package com.zerobase.challengeproject.type;
 
+import lombok.Getter;
+
+@Getter
 public enum Category {
 
     COTE("COTE"),
@@ -13,7 +16,4 @@ public enum Category {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
 }

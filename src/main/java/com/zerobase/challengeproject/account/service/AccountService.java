@@ -137,7 +137,7 @@ public class AccountService {
    * 환불 신청 내역을 찾을 수 없는 경우 빈 페이지로 반환
    *
    * @param page 페이지 넘버
-   * @param form 검색 기준이 되는 날짜(문자열), 두개의 boolean
+   * @param form 검색 기준이 되는 날짜(문자열 예- 2025-03-31 00), 두개의 boolean
    * @return paging된 검색 기준에 맞는 Refund 정보
    */
   public BaseResponseDto<PageDto<RefundDto>> getAllRefund(int page, RefundSearchForm form) {

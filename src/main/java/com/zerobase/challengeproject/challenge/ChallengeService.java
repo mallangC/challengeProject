@@ -9,11 +9,14 @@ import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
 import com.zerobase.challengeproject.challenge.repository.MemberChallengeRepository;
+import com.zerobase.challengeproject.comment.entity.CoteChallenge;
+import com.zerobase.challengeproject.comment.repository.CoteChallengeRepository;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
+import com.zerobase.challengeproject.type.Category;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,7 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final MemberChallengeRepository memberChallengeRepository;
     private final MemberRepository memberRepository;
+    private final CoteChallengeRepository coteChallengeRepository;
 
 
     /**
@@ -129,8 +133,20 @@ public class ChallengeService {
          * 생성시 클라이언트가 보낸 멤버 정보로 챌린지 생성후 챌린지와 멤버엔티티 매핑
          */
         Challenge challenge = new Challenge(dto, member);
-        GetChallengeDto challengeDto = new GetChallengeDto(challenge);
         challengeRepository.save(challenge);
+
+        if (challenge.getCategory() == Category.COTE){
+            CoteChallenge coteChallenge = CoteChallenge.builder()
+                    .title("코테 이름을 입력해주세요")
+                    .question("코테 문제를 입력해주세요")
+                    .challenge(challenge)
+                    .build();
+            coteChallengeRepository.save(coteChallenge);
+        }
+//        else if (challenge.getCategory() == Category.DRINKING) {
+//            물마시기 challenge 만들어서 저장
+//        }
+        GetChallengeDto challengeDto = new GetChallengeDto(challenge);
 
         return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(challengeDto, "챌린지 생성 성공", HttpStatus.OK));
     }

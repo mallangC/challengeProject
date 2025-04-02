@@ -1,6 +1,7 @@
 package com.zerobase.challengeproject.challenge.entity;
 
 import com.zerobase.challengeproject.challenge.domain.form.ChallengeForm;
+import com.zerobase.challengeproject.comment.entity.CoteChallenge;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.type.Category;
 import jakarta.persistence.*;
@@ -60,7 +61,8 @@ public class Challenge {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-//    @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "challenge")
+    private CoteChallenge coteChallenge;
 //    @OneToMany(mappedBy = "callenge", fetch = FetchType.LAZY)
 //    List<DrinkingComment> drinkingComments;
 //    @OneToMany(mappedBy = "callenge", fetch = FetchType.LAZY)
