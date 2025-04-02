@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/search")
 @RequiredArgsConstructor
 public class SearchController {
 
@@ -22,7 +22,7 @@ public class SearchController {
     /**
      * 제목으로 챌린지 검색
      */
-    @GetMapping("/search/title")
+    @GetMapping("/title")
     public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> searchByTitle(@RequestParam String title, Pageable pageable) {
 
         return searchService.searchByTitle(title, pageable);
@@ -31,7 +31,7 @@ public class SearchController {
     /**
      * 카테고리로 챌린지 검색
      */
-    @GetMapping("/search/category")
+    @GetMapping("/category")
     public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> searchByCategory(@RequestParam Category category, Pageable pageable) {
 
         return searchService.searchByCategory(category, pageable);

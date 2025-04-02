@@ -103,6 +103,7 @@ public class ChallengeService {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
 
+
         Member member = userDetails.getMember();
 
         MemberChallenge memberChallenge = MemberChallenge.builder()

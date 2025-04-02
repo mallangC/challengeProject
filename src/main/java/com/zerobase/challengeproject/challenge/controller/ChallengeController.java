@@ -46,7 +46,7 @@ public class ChallengeController {
     /**
      * 사용자가 생성한 챌린지 조회
      */
-    @GetMapping("/my-challenge/{memberId}")
+    @GetMapping("/my-challenge")
     public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getChallengesMadeByUser(Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
         return challengeService.getChallengesMadeByUser(pageable, userDetails);

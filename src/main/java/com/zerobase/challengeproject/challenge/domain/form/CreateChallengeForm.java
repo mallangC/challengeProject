@@ -14,10 +14,6 @@
     @Builder
     public class CreateChallengeForm {
 
-        @NotNull(message = "멤버 ID는 필수 값입니다.")
-        @Positive(message = "멤버 ID는 양수여야 합니다.")
-        private Long memberId;
-
         @NotBlank(message = "제목을 작성해 주세요.")
         @Size(min = 3, max = 100, message = "제목은 3자 이상, 100자 이하로 입력해야 합니다.")
         private String title;
