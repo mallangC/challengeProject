@@ -17,7 +17,6 @@ public enum ErrorCode {
 
   INCORRECT_PASSWORD(HttpStatus.BAD_REQUEST,"비밀번호가 틀렸습니다."),
   TOKEN_IS_EXPIRATION(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
-  INCORRECT_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다" ),
   EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다" ),
   TOKEN_IS_INVALID_OR_EXPIRED(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 잘 못되었거나 만료되었습니다" ),
   TOKEN_NOT_PROVIDED(HttpStatus.BAD_REQUEST, "리프레시 토큰이 제공되지 않았습니다." ),

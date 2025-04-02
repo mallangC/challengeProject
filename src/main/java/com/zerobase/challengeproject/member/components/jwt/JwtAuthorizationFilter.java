@@ -11,8 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -27,7 +25,7 @@ import java.util.List;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     /**
      * HTTP 요청에서 JWT의 만료 여부를 확인하고, 만약 토큰이 유효하다면 SecurityContext에 인증 정보를 설정.
@@ -45,12 +43,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if (token != null && jwtUtil.isTokenValid(token)) {
             String memberId = jwtUtil.extractMemberId(token);
-            String role = jwtUtil.extractRoles(token);
-
-            MemberType memberType = role.equals("ROLE_ADMIN") ? MemberType.ADMIN : MemberType.USER;
-            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(memberType.getAuthority()));
-
-            UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
+            UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(memberId);
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
