@@ -10,6 +10,7 @@ import com.zerobase.challengeproject.account.domain.form.RefundUpdateForm;
 import com.zerobase.challengeproject.account.entity.AccountDetail;
 import com.zerobase.challengeproject.account.entity.Refund;
 import com.zerobase.challengeproject.account.repository.AccountDetailRepository;
+import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
 import com.zerobase.challengeproject.account.repository.RefundRepository;
 import com.zerobase.challengeproject.exception.CustomException;
@@ -79,6 +80,7 @@ class AccountServiceTest {
           .content("환불 사유")
           .build();
 
+  UserDetailsImpl userDetails = new UserDetailsImpl(memberBase);
 
   @Test
   @DisplayName("금액 충전 성공")
@@ -88,7 +90,7 @@ class AccountServiceTest {
             .willReturn(Optional.of(memberBase));
 
     //when
-    BaseResponseDto<AccountDetailDto> responseDto = accountService.addAmount(accountAddForm);
+    BaseResponseDto<AccountDetailDto> responseDto = accountService.addAmount(accountAddForm, userDetails);
 
     //then
     assertEquals(HttpStatus.OK, responseDto.getStatus());
@@ -110,7 +112,7 @@ class AccountServiceTest {
             .willReturn(Optional.empty());
     try {
       //when
-      accountService.addAmount(accountAddForm);
+      accountService.addAmount(accountAddForm, userDetails);
     } catch (CustomException e) {
       //then
       assertEquals(NOT_FOUND_MEMBER, e.getErrorCode());
@@ -128,7 +130,7 @@ class AccountServiceTest {
             .willReturn(memberSearch);
 
     //when
-    BaseResponseDto<RefundDto> result = accountService.addRefund(refundAddForm);
+    BaseResponseDto<RefundDto> result = accountService.addRefund(refundAddForm, userDetails);
 
     //then
     assertEquals(1L, result.getData().getAccountDetailId());
@@ -150,7 +152,7 @@ class AccountServiceTest {
             .willReturn(true);
     try {
       //when
-      accountService.addRefund(refundAddForm);
+      accountService.addRefund(refundAddForm, userDetails);
     } catch (CustomException e) {
       //then
       assertEquals(ALREADY_REFUND_REQUEST, e.getErrorCode());
@@ -179,7 +181,7 @@ class AccountServiceTest {
     given(refundRepository.searchAllMyRefund(anyInt(), anyString()))
             .willReturn(pageRefundDtos);
     //when
-    BaseResponseDto<PageDto<RefundDto>> result = accountService.getAllMyRefund(1);
+    BaseResponseDto<PageDto<RefundDto>> result = accountService.getAllMyRefund(1, userDetails);
 
     //then
     assertEquals(HttpStatus.OK, result.getStatus());

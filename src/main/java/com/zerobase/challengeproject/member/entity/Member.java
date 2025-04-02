@@ -45,6 +45,7 @@ public class Member {
     private List<MemberChallenge> memberChallenges;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private MemberType memberType;
 
     private Long account;
@@ -73,6 +74,7 @@ public class Member {
                 .memberType(MemberType.USER)
                 .registerDate(LocalDateTime.now())
                 .email(form.getEmail())
+                .account(0L)
                 .build();
     }
 

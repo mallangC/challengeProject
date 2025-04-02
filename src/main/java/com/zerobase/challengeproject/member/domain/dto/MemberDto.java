@@ -35,6 +35,10 @@ public class MemberDto {
   public static MemberDto fromWithoutAccountDetails(Member member) {
     return MemberDto.builder()
             .memberId(member.getMemberId())
+            .memberName(member.getMemberName())
+            .nickName(member.getNickname())
+            .phoneNum(member.getPhoneNum())
+            .email(member.getEmail())
             .account(member.getAccount())
             .build();
   }
