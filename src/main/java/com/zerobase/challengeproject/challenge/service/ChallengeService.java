@@ -1,4 +1,4 @@
-package com.zerobase.challengeproject.challenge;
+package com.zerobase.challengeproject.challenge.service;
 
 
 import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
