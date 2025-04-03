@@ -14,6 +14,7 @@ public enum ErrorCode {
   ALREADY_VERIFY_EMAIL(HttpStatus.BAD_REQUEST, "이미 인증된 메일입니다."),
   EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 전송에 실패했습니다."),
   CONFIRM_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "확인 비밀번호가 일치하지 않습니다."),
+  MATCHES_PREVIOUS_PASSWORD(HttpStatus.BAD_REQUEST,"이전 비밀번호와 동일합니다." ),
 
   INCORRECT_PASSWORD(HttpStatus.BAD_REQUEST,"비밀번호가 틀렸습니다."),
   TOKEN_IS_EXPIRATION(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
