@@ -98,6 +98,11 @@ public class MemberSignupService {
         return  new MemberEmailAuthDto(member);
     }
 
+    /**
+     * 회원 탈퇴시 사용하는 서비스 메서드
+     * @param userDetails 로그인한 유저의 정보
+     * @return 정보가 없는 쿠키
+     */
     public ResponseCookie unregister(UserDetailsImpl userDetails) {
         Member member = memberRepository.findByMemberId(userDetails.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));

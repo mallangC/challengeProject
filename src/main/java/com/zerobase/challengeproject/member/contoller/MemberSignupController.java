@@ -42,6 +42,11 @@ public class MemberSignupController {
         return ResponseEntity.ok(new BaseResponseDto<>(memberService.verifyEmail(emailAuthKey),"이메일 인증 완료되었습니다.", HttpStatus.OK));
     }
 
+    /**
+     * 회원 탈퇴 요청시 사용되는 컨트롤러 메서드
+     * @param userDetails 로그인한 유저의 정보
+     * @return 아무 정보도 없는 쿠키, 회원 탈퇴 성공 메세지
+     */
     @DeleteMapping("/unregister")
     public ResponseEntity<BaseResponseDto> unregister(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         ResponseCookie cookie = memberService.unregister(userDetails);
