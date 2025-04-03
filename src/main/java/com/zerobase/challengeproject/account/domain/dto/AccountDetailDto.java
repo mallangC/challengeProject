@@ -1,6 +1,8 @@
 package com.zerobase.challengeproject.account.domain.dto;
 
 import com.zerobase.challengeproject.account.entity.AccountDetail;
+import com.zerobase.challengeproject.type.AccountType;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +16,8 @@ import java.time.LocalDateTime;
 @Builder
 public class AccountDetailDto {
   private String memberId;
-  private boolean isCharge;
+  private AccountType accountType;
+
   private boolean isRefunded;
   private Long preAmount;
   private Long curAmount;
@@ -28,7 +31,7 @@ public class AccountDetailDto {
             .preAmount(detail.getPreAmount())
             .curAmount(detail.getCurAmount())
             .amount(detail.getAmount())
-            .isCharge(detail.isCharge())
+            .accountType(detail.getAccountType())
             .chargeDate(detail.getCreatedAt())
             .build();
   }

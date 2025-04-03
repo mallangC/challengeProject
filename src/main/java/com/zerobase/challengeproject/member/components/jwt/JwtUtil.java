@@ -37,6 +37,7 @@ public class JwtUtil {
      * @return 생성된 JWT 액세스 토큰
      */
     public String generateAccessToken(String memberId, MemberType role) {
+
         return Jwts.builder()
                 .setSubject(memberId)
                 .claim("role", role.getAuthority())
@@ -44,6 +45,7 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
+
     }
     /**
      * 리프레시 토큰 생성

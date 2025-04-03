@@ -7,6 +7,7 @@ import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
 import com.zerobase.challengeproject.type.MemberType;
+import com.zerobase.challengeproject.type.AccountType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -54,6 +56,7 @@ public class Member {
     private MemberType memberType;
 
     private Long account;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<AccountDetail> accountDetails;
 
@@ -94,7 +97,7 @@ public class Member {
     public void refundAccount(AccountDetail detail, Refund refund) {
         if (this.account < detail.getAmount()) {
             throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY_TO_REFUND);
-        } else if (!detail.isCharge()) {
+        } else if (detail.getAccountType() != AccountType.CHARGE) {
             throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
         } else if (detail.isRefunded()) {
             throw new CustomException(ErrorCode.ALREADY_REFUNDED);
