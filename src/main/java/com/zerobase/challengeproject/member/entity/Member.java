@@ -8,7 +8,10 @@ import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
 import com.zerobase.challengeproject.type.MemberType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,13 +36,15 @@ public class Member {
     private String nickname;
     @Column(length = 20, nullable = false)
     private String phoneNum;
+
     @Column(length = 50, nullable = false)
     private String email;
     private LocalDateTime registerDate;
-
     private boolean emailAuthYn;
     private LocalDateTime emailAuthDate;
     private String emailAuthKey;
+    @Column(length = 50)
+    private String previousEmail;
 
     @OneToMany(mappedBy = "member")
     private List<MemberChallenge> memberChallenges;
@@ -62,6 +67,11 @@ public class Member {
         }
     }
 
+    public void updateProfile( String phoneNum, String nickname) {
+        this.phoneNum = phoneNum;
+        this.nickname = nickname;
+    }
+
     public static Member from(MemberSignupForm form, String password, String emailAuthKey) {
         return Member.builder()
                 .memberId(form.getMemberId())
@@ -77,7 +87,6 @@ public class Member {
                 .account(0L)
                 .build();
     }
-
     public void chargeAccount(Long amount) {
         this.account += amount;
     }
@@ -94,5 +103,4 @@ public class Member {
         refund.refundTrue();
         this.account -= detail.getAmount();
     }
-
 }
