@@ -28,7 +28,7 @@ public class CoteChallenge {
   private String title;
   private String question;
   private LocalDateTime startAt;
-  @OneToMany(mappedBy = "coteChallenge", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "coteChallenge", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<CoteComment> comments;
 
   public static CoteChallenge from(CoteChallengeForm form, Challenge challenge) {

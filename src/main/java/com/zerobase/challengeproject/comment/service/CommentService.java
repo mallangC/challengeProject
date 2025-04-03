@@ -70,7 +70,7 @@ public class CommentService {
    * 코테 챌린지 아이디로 찾을 수 없는 경우 예외 발생
    *
    * @param coteChallengeId 코테 챌린지 아이디
-   * @return 코테 챌린지의 정보
+   * @return 댓글을 제외한 코테 챌린지의 정보
    */
   public BaseResponseDto<CoteChallengeDto> getCoteChallenge(
           Long coteChallengeId) {
@@ -90,7 +90,7 @@ public class CommentService {
    *
    * @param form        수정할 코테 챌린지 아이디, 수정할 코테 문제, 수정할 코테 링크
    * @param userDetails 자신이 만든 챌린지 인지 확인을 위한 회원 정보
-   * @return 수정된 코테 챌린지의 정보
+   * @return 댓글을 제외한 수정된 코테 챌린지의 정보
    */
   @Transactional
   public BaseResponseDto<CoteChallengeDto> updateCoteChallenge(
@@ -106,12 +106,42 @@ public class CommentService {
     }
     coteChallenge.update(form);
     return new BaseResponseDto<CoteChallengeDto>(
-            CoteChallengeDto.from(coteChallenge),
-            "코테 챌린지 단건 조회를 성공했습니다.",
+            CoteChallengeDto.fromWithoutComments(coteChallenge),
+            "코테 챌린지 수정을 성공했습니다.",
             HttpStatus.OK);
   }
 
-  //TODO 코테 문제 삭제(coteChallengeId, userDetails)
+  /**
+   * 코테 챌린지(문제) 삭제를 위한 서비스 메서드
+   * 내가 만든 챌린지가 아닐 때, 코테 챌린지를 찾을 수 없을 때,
+   * 댓글이 있을 때 예외 발생
+   *
+   * @param coteChallengeId 코테 챌린지 아이디
+   * @param userDetails 자신이 만든 챌린지 인지 확인을 위한 회원 정보
+   * @return 삭제된 코테 챌린지의 정보
+   */
+  @Transactional
+  public BaseResponseDto<CoteChallengeDto> deleteCoteChallenge(
+          Long coteChallengeId,
+          UserDetailsImpl userDetails) {
+
+    CoteChallenge coteChallenge = coteChallengeRepository.findById(coteChallengeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_CHALLENGE));
+    boolean isOwner = coteChallenge.getChallenge().getMember().getMemberId().equals(userDetails.getUsername());
+    if (!isOwner) {
+      throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
+    }
+
+    if (!coteChallenge.getComments().isEmpty()){
+      throw new CustomException(ErrorCode.CANNOT_DELETE_HAVE_COMMENT);
+    }
+
+    coteChallengeRepository.delete(coteChallenge);
+    return new BaseResponseDto<CoteChallengeDto>(
+            CoteChallengeDto.from(coteChallenge),
+            "코테 챌린지 삭제를 성공했습니다.",
+            HttpStatus.OK);
+  }
 
 
   /**

@@ -40,6 +40,14 @@ public class CoteChallengeController {
     return ResponseEntity.ok(commentService.updateCoteChallenge(form, userDetails));
   }
 
+
+  @DeleteMapping("/cote/{coteChallengeId}")
+  public ResponseEntity<BaseResponseDto<CoteChallengeDto>> deleteCoteChallenge(
+          @PathVariable Long coteChallengeId,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return ResponseEntity.ok(commentService.deleteCoteChallenge(coteChallengeId, userDetails));
+  }
+
   @PostMapping("/comment")
   public ResponseEntity<BaseResponseDto<CoteCommentDto>> addComment(
           @RequestBody @Valid CoteCommentForm form,
