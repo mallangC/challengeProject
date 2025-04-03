@@ -39,9 +39,6 @@ public enum ErrorCode {
   INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "시작날짜는 종료날짜보다 먼저이어야 합니다."),
   FORBIDDEN_DELETE_CHALLENGE(HttpStatus.BAD_REQUEST, "로그인한 유저의 아이디와 챌린지를 생성한 아이디가 같아야 합니다."),
 
-  NOT_FOUND_COTE_CHALLENGE(HttpStatus.BAD_REQUEST, "코테 챌린지를 찾을 수 없습니다."),
-
-
   ;
 
   private final HttpStatus httpStatus;
