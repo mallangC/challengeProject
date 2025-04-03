@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,6 +20,7 @@ public class CoteChallengeDto {
 
   public static CoteChallengeDto from(CoteChallenge coteChallenge) {
     return CoteChallengeDto.builder()
+            .id(coteChallenge.getId())
             .challengeId(coteChallenge.getId())
             .title(coteChallenge.getTitle())
             .question(coteChallenge.getQuestion())
@@ -28,4 +30,17 @@ public class CoteChallengeDto {
                     .toList())
             .build();
   }
+
+  public static CoteChallengeDto fromWithoutComments(CoteChallenge coteChallenge) {
+    return CoteChallengeDto.builder()
+            .id(coteChallenge.getId())
+            .challengeId(coteChallenge.getId())
+            .title(coteChallenge.getTitle())
+            .question(coteChallenge.getQuestion())
+            .startAt(coteChallenge.getStartAt())
+            .comments(new ArrayList<>())
+            .build();
+  }
+
+
 }

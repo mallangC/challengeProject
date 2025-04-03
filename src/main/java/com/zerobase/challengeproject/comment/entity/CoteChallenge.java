@@ -2,6 +2,7 @@ package com.zerobase.challengeproject.comment.entity;
 
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.comment.domain.form.CoteChallengeForm;
+import com.zerobase.challengeproject.comment.domain.form.CoteChallengeUpdateForm;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,5 +39,10 @@ public class CoteChallenge {
             .startAt(form.getStartAt())
             .comments(new ArrayList<>())
             .build();
+  }
+
+  public void update(CoteChallengeUpdateForm form) {
+    this.title = form.getTitle();
+    this.question = form.getQuestion();
   }
 }

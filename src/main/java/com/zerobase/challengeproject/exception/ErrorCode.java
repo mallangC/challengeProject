@@ -45,7 +45,7 @@ public enum ErrorCode {
   ALREADY_ADDED_THAT_DATE(HttpStatus.BAD_REQUEST, "입력한 날짜에 이미 문제가 추가되어 있습니다."),
   ALREADY_ADDED_COMMENT_TODAY(HttpStatus.BAD_REQUEST, "오늘 이미 인증했습니다."),
   NOT_ENTERED_CHALLENGE(HttpStatus.BAD_REQUEST, "참여하지 않은 챌린지에 댓글을 달 수 없습니다."),
-  NOT_OWNER_OF_CHALLENGE(HttpStatus.BAD_REQUEST, "챌린지를 만든 회원만 문제를 추가할 수 있습니다."),
+  NOT_OWNER_OF_CHALLENGE(HttpStatus.BAD_REQUEST, "챌린지를 만든 회원이 아닙니다."),
 
 
   ;
