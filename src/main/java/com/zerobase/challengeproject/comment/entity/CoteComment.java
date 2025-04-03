@@ -2,6 +2,7 @@ package com.zerobase.challengeproject.comment.entity;
 
 import com.zerobase.challengeproject.account.entity.BaseEntity;
 import com.zerobase.challengeproject.comment.domain.form.CoteCommentForm;
+import com.zerobase.challengeproject.comment.domain.form.CoteCommentUpdateForm;
 import com.zerobase.challengeproject.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,5 +37,10 @@ public class CoteComment extends BaseEntity {
             .image(form.getImage())
             .content(form.getContent())
             .build();
+  }
+
+  public void update(CoteCommentUpdateForm form){
+    this.image = form.getImage();
+    this.content = form.getContent();
   }
 }

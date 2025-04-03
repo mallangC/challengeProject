@@ -140,8 +140,8 @@ public class ChallengeService {
 
         Member member = userDetails.getMember();
         Challenge challenge = new Challenge(form, member);
-        GetChallengeDto challengeDto = new GetChallengeDto(challenge);
         challengeRepository.save(challenge);
+        GetChallengeDto challengeDto = new GetChallengeDto(challenge);
         return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(challengeDto, "챌린지 생성 성공", HttpStatus.OK));
     }
 

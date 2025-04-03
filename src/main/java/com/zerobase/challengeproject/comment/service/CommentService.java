@@ -8,6 +8,7 @@ import com.zerobase.challengeproject.comment.domain.dto.CoteCommentDto;
 import com.zerobase.challengeproject.comment.domain.form.CoteChallengeForm;
 import com.zerobase.challengeproject.comment.domain.form.CoteChallengeUpdateForm;
 import com.zerobase.challengeproject.comment.domain.form.CoteCommentForm;
+import com.zerobase.challengeproject.comment.domain.form.CoteCommentUpdateForm;
 import com.zerobase.challengeproject.comment.entity.CoteChallenge;
 import com.zerobase.challengeproject.comment.entity.CoteComment;
 import com.zerobase.challengeproject.comment.repository.CoteChallengeRepository;
@@ -18,6 +19,7 @@ import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,14 +98,9 @@ public class CommentService {
   public BaseResponseDto<CoteChallengeDto> updateCoteChallenge(
           CoteChallengeUpdateForm form,
           UserDetailsImpl userDetails) {
+    CoteChallenge coteChallenge = searchCoteChallengeByIdAndOwnerCheck(
+            form.getCoteChallengeId(), userDetails.getUsername());
 
-    CoteChallenge coteChallenge = coteChallengeRepository.findById(form.getCoteChallengeId())
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_CHALLENGE));
-
-    boolean isOwner = coteChallenge.getChallenge().getMember().getMemberId().equals(userDetails.getUsername());
-    if (!isOwner) {
-      throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
-    }
     coteChallenge.update(form);
     return new BaseResponseDto<CoteChallengeDto>(
             CoteChallengeDto.fromWithoutComments(coteChallenge),
@@ -117,22 +114,17 @@ public class CommentService {
    * 댓글이 있을 때 예외 발생
    *
    * @param coteChallengeId 코테 챌린지 아이디
-   * @param userDetails 자신이 만든 챌린지 인지 확인을 위한 회원 정보
+   * @param userDetails     자신이 만든 챌린지 인지 확인을 위한 회원 정보
    * @return 삭제된 코테 챌린지의 정보
    */
   @Transactional
   public BaseResponseDto<CoteChallengeDto> deleteCoteChallenge(
           Long coteChallengeId,
           UserDetailsImpl userDetails) {
+    CoteChallenge coteChallenge = searchCoteChallengeByIdAndOwnerCheck(
+            coteChallengeId, userDetails.getUsername());
 
-    CoteChallenge coteChallenge = coteChallengeRepository.findById(coteChallengeId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_CHALLENGE));
-    boolean isOwner = coteChallenge.getChallenge().getMember().getMemberId().equals(userDetails.getUsername());
-    if (!isOwner) {
-      throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
-    }
-
-    if (!coteChallenge.getComments().isEmpty()){
+    if (!coteChallenge.getComments().isEmpty()) {
       throw new CustomException(ErrorCode.CANNOT_DELETE_HAVE_COMMENT);
     }
 
@@ -172,13 +164,66 @@ public class CommentService {
     coteCommentRepository.save(coteComment);
     return new BaseResponseDto<CoteCommentDto>(
             CoteCommentDto.from(coteComment),
-            "댓글 추가를 성공했습니다.",
+            "인증 댓글 추가를 성공했습니다.",
             HttpStatus.OK);
   }
 
-  //TODO
-  //인증 수정 (commentId, form)
-  //인증 삭제 (commentId)
   //인증 단건 확인 (commentId)
+  public BaseResponseDto<CoteCommentDto> getComment(Long commentId) {
+    CoteComment coteComment = searchCoteCommentById(commentId);
+    return new BaseResponseDto<CoteCommentDto>(
+            CoteCommentDto.from(coteComment),
+            "인증 댓글 조회를 성공했습니다.",
+            HttpStatus.OK);
+  }
+
+
+  //인증 수정 (commentId, form)
+  @Transactional
+  public BaseResponseDto<CoteCommentDto> updateComment(CoteCommentUpdateForm form,
+                                                       UserDetailsImpl userDetails) {
+    CoteComment coteComment = searchCoteCommentById(form.getCommentId(), userDetails.getUsername());
+    coteComment.update(form);
+    return new BaseResponseDto<CoteCommentDto>(
+            CoteCommentDto.from(coteComment),
+            "인증 댓글 수정을 성공했습니다.",
+            HttpStatus.OK);
+  }
+
+  //인증 삭제 (commentId)
+  @Transactional
+  public BaseResponseDto<CoteCommentDto> deleteComment(Long commentId,
+                                                       UserDetailsImpl userDetails) {
+    CoteComment coteComment = searchCoteCommentById(commentId, userDetails.getUsername());
+    coteCommentRepository.delete(coteComment);
+    return new BaseResponseDto<CoteCommentDto>(
+            CoteCommentDto.from(coteComment),
+            "인증 댓글 삭제를 성공했습니다.",
+            HttpStatus.OK);
+  }
+
+  private CoteComment searchCoteCommentById(Long commentId){
+    return coteCommentRepository.findById(commentId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_COMMENT));
+  }
+
+  private CoteComment searchCoteCommentById(Long commentId, String username){
+    CoteComment coteComment = coteCommentRepository.findById(commentId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_COMMENT));
+    if (!coteComment.getMember().getMemberId().equals(username)) {
+      throw new CustomException(ErrorCode.NOT_OWNER_OF_COMMENT);
+    }
+    return coteComment;
+  }
+
+  private CoteChallenge searchCoteChallengeByIdAndOwnerCheck(Long coteChallengeId, String username) {
+    CoteChallenge coteChallenge = coteChallengeRepository.findById(coteChallengeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_CHALLENGE));
+    boolean isOwner = coteChallenge.getChallenge().getMember().getMemberId().equals(username);
+    if (!isOwner) {
+      throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
+    }
+    return coteChallenge;
+  }
 
 }

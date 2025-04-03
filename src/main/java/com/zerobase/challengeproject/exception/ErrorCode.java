@@ -47,6 +47,7 @@ public enum ErrorCode {
   NOT_ENTERED_CHALLENGE(HttpStatus.BAD_REQUEST, "참여하지 않은 챌린지에 댓글을 달 수 없습니다."),
   NOT_OWNER_OF_CHALLENGE(HttpStatus.BAD_REQUEST, "챌린지를 만든 회원이 아닙니다."),
   CANNOT_DELETE_HAVE_COMMENT(HttpStatus.BAD_REQUEST, "인증 댓글이 있으면 코테 챌린지를 삭제할 수 없습니다."),
+  NOT_OWNER_OF_COMMENT(HttpStatus.BAD_REQUEST, "댓글을 작성한 회원이 아닙니다."),
 
 
   ;
