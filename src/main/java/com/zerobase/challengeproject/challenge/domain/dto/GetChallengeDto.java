@@ -1,10 +1,8 @@
 package com.zerobase.challengeproject.challenge.domain.dto;
 
 import com.zerobase.challengeproject.challenge.entity.Challenge;
+import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.type.Category;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,33 +14,26 @@ import java.time.LocalDateTime;
 public class GetChallengeDto {
     private Long id;
 
+    private Long memberId;
+
     private String title;
 
     private String img;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Category category;
 
-    @Column(nullable = false)
     private Integer participant;
 
-    @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
     private Integer min_deposit;
 
-    @Column(nullable = false)
     private Integer max_deposit;
 
-    @Column(nullable = false)
     private String standard;
 
-    @Column(nullable = false)
     private LocalDateTime startDate;
 
-    @Column(nullable = false)
     private LocalDateTime endDate;
 
     private LocalDateTime createAt;
@@ -50,6 +41,7 @@ public class GetChallengeDto {
     private LocalDateTime updateAt;
 
     public GetChallengeDto(Challenge challenge) {
+        this.memberId = challenge.getMember().getId();
         this.id = challenge.getId();
         this.updateAt = challenge.getUpdateAt();
         this.createAt = challenge.getCreateAt();

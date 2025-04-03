@@ -29,7 +29,6 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -98,6 +97,24 @@ public class SecurityConfig {
 
 
 
+        /*
+        if (!securityEnabled) {
+            // 🔥 Security 비활성화 (로컬 테스트용)
+            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        } else {
+            // ✅ Security 활성화 (운영 환경)
+            http.authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/member/sign-up", "/api/member/email-auth", "/api/member/login").permitAll()
+                    .anyRequest().authenticated()
+            );
+            http.sessionManagement(session
+                    -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+            http.addFilterAt(jwtAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+
+        }
+
+         */
         return http.build();
     }
 }
