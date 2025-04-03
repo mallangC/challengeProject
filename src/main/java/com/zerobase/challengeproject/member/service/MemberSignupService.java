@@ -3,15 +3,19 @@ package com.zerobase.challengeproject.member.service;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.MailComponents;
+import com.zerobase.challengeproject.member.components.jwt.JwtUtil;
+import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.domain.dto.MemberEmailAuthDto;
 import com.zerobase.challengeproject.member.domain.dto.MemberSignupDto;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
+import com.zerobase.challengeproject.member.repository.RefreshTokenRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,8 @@ public class MemberSignupService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailComponents mailComponents;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtUtil jwtUtil;
 
     /**
      * 회원 가입시 사용되는 서비스 메서드, 비밀번호와 확인 비밀번호가 다르면 예외 발생.
@@ -90,5 +96,14 @@ public class MemberSignupService {
 
         member.completeEmailAuth();
         return  new MemberEmailAuthDto(member);
+    }
+
+    public ResponseCookie unregister(UserDetailsImpl userDetails) {
+        Member member = memberRepository.findByMemberId(userDetails.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+        refreshTokenRepository.deleteByMemberId(member.getMemberId());
+        ResponseCookie responseCookie =  jwtUtil.createRefreshTokenCookie("", 0);
+        memberRepository.delete(member);
+        return responseCookie;
     }
 }
