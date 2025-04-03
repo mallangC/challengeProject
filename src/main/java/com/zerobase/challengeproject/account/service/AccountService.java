@@ -18,14 +18,17 @@ import com.zerobase.challengeproject.member.repository.MemberRepository;
 import com.zerobase.challengeproject.account.repository.RefundRepository;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
+import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
+import com.zerobase.challengeproject.member.domain.dto.MemberDto;
+import com.zerobase.challengeproject.member.entity.Member;
+import com.zerobase.challengeproject.member.repository.MemberRepository;
+import com.zerobase.challengeproject.type.AccountType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -141,12 +144,7 @@ public class AccountService {
    * @return paging된 검색 기준에 맞는 Refund 정보
    */
   public BaseResponseDto<PageDto<RefundDto>> getAllRefund(int page, RefundSearchForm form) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
-    LocalDateTime startAt = null;
-    if (form.getStartAtStr() != null) {
-      startAt = LocalDateTime.parse(form.getStartAtStr(), formatter);
-    }
-    Page<RefundDto> paging = refundRepository.searchAllRefund(page - 1, startAt, form.getDone(), form.getRefunded());
+    Page<RefundDto> paging = refundRepository.searchAllRefund(page - 1, form.getStartAtStr(), form.getDone(), form.getRefunded());
     return new BaseResponseDto<>(PageDto.from(paging)
             , "환불 신청 조회에 성공했습니다.(" + page + "페이지)"
             , HttpStatus.OK);
@@ -172,7 +170,7 @@ public class AccountService {
   public BaseResponseDto<RefundDto> refundDecision(boolean approval, RefundUpdateForm form) {
     Refund refund = refundRepository.searchRefundById(form.getRefundId());
     AccountDetail accountDetail = refund.getAccountDetail();
-    if (!accountDetail.isCharge()) {
+    if (accountDetail.getAccountType() != AccountType.CHARGE) {
       throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
     }
     if (approval) {

@@ -5,6 +5,7 @@ import com.zerobase.challengeproject.account.entity.AccountDetail;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.entity.Member;
+import com.zerobase.challengeproject.type.AccountType;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     Member findMember = queryFactory.selectFrom(member)
             .leftJoin(member.accountDetails, accountDetail).fetchJoin()
             .where(member.memberId.eq(email)
-                    .and(accountDetail.isCharge.eq(true))
+                    .and(accountDetail.accountType.eq(AccountType.CHARGE))
                     .and(accountDetail.isRefunded.eq(false))
                     .and(accountDetail.createdAt.between(searchByDate, LocalDateTime.now())))
             .fetchOne();
@@ -58,7 +59,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     if (findMember == null) {
       throw new CustomException(ErrorCode.NOT_FOUND_ACCOUNT_DETAIL);
     }
-    if (!findMember.getAccountDetails().get(0).isCharge()){
+    if (findMember.getAccountDetails().get(0).getAccountType() != AccountType.CHARGE){
       throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
     }
     return findMember;

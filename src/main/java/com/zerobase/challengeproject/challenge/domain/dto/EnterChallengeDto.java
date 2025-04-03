@@ -11,15 +11,11 @@ public class EnterChallengeDto {
     private String title;
     private String category;
     private Integer myDeposit;
-    private Integer minDeposit;
-
-
 
     public EnterChallengeDto(Challenge challenge, Integer memberDeposit) {
         this.challengeId = challenge.getId();
         this.title = challenge.getTitle();
-        this.category = challenge.getCategory().toString();
+        this.category = challenge.getCategoryType().toString();
         this.myDeposit = memberDeposit;
-        this.minDeposit = challenge.getMin_deposit();
     }
 }

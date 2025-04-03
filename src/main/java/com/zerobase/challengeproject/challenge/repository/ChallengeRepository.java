@@ -2,7 +2,7 @@ package com.zerobase.challengeproject.challenge.repository;
 
 
 import com.zerobase.challengeproject.challenge.entity.Challenge;
-import com.zerobase.challengeproject.type.Category;
+import com.zerobase.challengeproject.type.CategoryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,7 +20,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     Page<Challenge> findByTitleContaining(String title, Pageable pageable);
 
-    Page<Challenge> findByCategory(Category category, Pageable pageable);
+    Page<Challenge> findByCategory(CategoryType categoryType, Pageable pageable);
 
 
     /**

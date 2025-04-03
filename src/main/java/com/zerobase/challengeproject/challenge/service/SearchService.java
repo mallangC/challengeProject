@@ -5,7 +5,7 @@ import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
 import com.zerobase.challengeproject.challenge.domain.dto.GetChallengeDto;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
-import com.zerobase.challengeproject.type.Category;
+import com.zerobase.challengeproject.type.CategoryType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,8 +34,8 @@ public class SearchService {
     /**
      * 카테고리로 챌린지 검색
      */
-    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> searchByCategory(Category category, Pageable pageable) {
-        Page<Challenge> challenges = challengeRepository.findByCategory(category, pageable);
+    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> searchByCategory(CategoryType categoryType, Pageable pageable) {
+        Page<Challenge> challenges = challengeRepository.findByCategory(categoryType, pageable);
 
         Page<GetChallengeDto> searchResult = challenges.map(challenge -> new GetChallengeDto(challenge));
 

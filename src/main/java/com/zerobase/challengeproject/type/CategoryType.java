@@ -1,6 +1,6 @@
 package com.zerobase.challengeproject.type;
 
-public enum Category {
+public enum CategoryType {
 
     COTE("COTE"),
     DRINKING("DRINKING"),
@@ -9,7 +9,7 @@ public enum Category {
 
     private final String description;
 
-    Category(String description) {
+    CategoryType(String description) {
         this.description = description;
     }
 
