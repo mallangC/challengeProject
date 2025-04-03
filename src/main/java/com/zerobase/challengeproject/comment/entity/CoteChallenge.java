@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,12 +21,13 @@ public class CoteChallenge {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @OneToOne
+  @ManyToOne
+  @JoinColumn(name = "challenge_id")
   private Challenge challenge;
   private String title;
   private String question;
-  @OneToMany
-  @JoinColumn(name = "cote_comment_id")
+  private LocalDateTime startAt;
+  @OneToMany(mappedBy = "coteChallenge", fetch = FetchType.LAZY)
   private List<CoteComment> comments;
 
   public static CoteChallenge from(CoteChallengeForm form, Challenge challenge) {
@@ -32,11 +35,8 @@ public class CoteChallenge {
             .challenge(challenge)
             .title(form.getTitle())
             .question(form.getQuestion())
+            .startAt(form.getStartAt())
+            .comments(new ArrayList<>())
             .build();
-  }
-
-  public void update(CoteChallengeForm form) {
-    this.title = form.getTitle();
-    this.question = form.getQuestion();
   }
 }

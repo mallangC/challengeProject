@@ -2,6 +2,7 @@ package com.zerobase.challengeproject.member.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.zerobase.challengeproject.account.entity.AccountDetail;
+import com.zerobase.challengeproject.challenge.entity.QMemberChallenge;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.entity.Member;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.zerobase.challengeproject.account.entity.QAccountDetail.accountDetail;
+import static com.zerobase.challengeproject.challenge.entity.QMemberChallenge.*;
 import static com.zerobase.challengeproject.member.entity.QMember.member;
 
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     }
 
     List<AccountDetail> accountDetails = findMember.getAccountDetails();
-    if (accountDetails.isEmpty()){
+    if (accountDetails.isEmpty()) {
       throw new CustomException(ErrorCode.ALREADY_REFUNDED);
     }
 
@@ -42,7 +44,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
             .mapToLong(AccountDetail::getAmount)
             .sum();
 
-    if (sum > findMember.getAccount()){
+    if (sum > findMember.getAccount()) {
       throw new CustomException(ErrorCode.ALREADY_SPENT_MONEY);
     }
 
@@ -59,9 +61,25 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     if (findMember == null) {
       throw new CustomException(ErrorCode.NOT_FOUND_ACCOUNT_DETAIL);
     }
-    if (findMember.getAccountDetails().get(0).getAccountType() != AccountType.CHARGE){
+    if (findMember.getAccountDetails().get(0).getAccountType() != AccountType.CHARGE) {
       throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
     }
+    return findMember;
+  }
+
+
+  @Override
+  public Member searchByEmail(String email) {
+    Member findMember = queryFactory.selectFrom(member)
+            .leftJoin(member.memberChallenges, memberChallenge).fetchJoin()
+            .where(member.memberId.eq(email))
+            .fetchOne();
+
+    if (findMember == null) {
+      throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
+    }
+
+
     return findMember;
   }
 }

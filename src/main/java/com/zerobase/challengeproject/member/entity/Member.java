@@ -3,6 +3,7 @@ package com.zerobase.challengeproject.member.entity;
 import com.zerobase.challengeproject.account.entity.AccountDetail;
 import com.zerobase.challengeproject.account.entity.Refund;
 import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
+import com.zerobase.challengeproject.comment.entity.CoteComment;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
@@ -45,6 +46,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<MemberChallenge> memberChallenges;
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<CoteComment> coteComments;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MemberType memberType;
@@ -85,7 +89,7 @@ public class Member {
 
     public void refundAccount(AccountDetail detail, Refund refund) {
         if (this.account < detail.getAmount()) {
-            throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY_TO_REFUND);
+            throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY);
         } else if (detail.getAccountType() != AccountType.CHARGE) {
             throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
         } else if (detail.isRefunded()) {
@@ -96,4 +100,19 @@ public class Member {
         this.account -= detail.getAmount();
     }
 
+    public void depositAccount(Long amount) {
+        if (this.account < amount) {
+            throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY);
+        }
+        this.account -= amount;
+    }
+
+    public void depositBack(AccountDetail detail) {
+         if (detail.getAccountType() != AccountType.DEPOSIT) {
+            throw new CustomException(ErrorCode.NOT_DEPOSIT_DETAIL);
+        } else if (detail.isRefunded()) {
+            throw new CustomException(ErrorCode.ALREADY_REFUNDED);
+        }
+        this.account += detail.getAmount();
+    }
 }

@@ -10,8 +10,7 @@ public class CoteCommentDto {
   private Long id;
   private String userId;
   private Long coteChallengeId;
-  private String solution;
-  private Boolean isPass;
+  private String image;
   private String content;
 
   public static CoteCommentDto from(CoteComment coteComment) {
@@ -19,8 +18,7 @@ public class CoteCommentDto {
             .id(coteComment.getId())
             .userId(coteComment.getMember().getMemberId())
             .coteChallengeId(coteComment.getCoteChallenge().getId())
-            .solution(coteComment.getSolution())
-            .isPass(coteComment.getIsPass())
+            .image(coteComment.getImage())
             .content(coteComment.getContent())
             .build();
   }

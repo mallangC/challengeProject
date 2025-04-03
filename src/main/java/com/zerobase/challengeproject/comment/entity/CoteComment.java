@@ -24,8 +24,7 @@ public class CoteComment extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "cote_challenge_id")
   private CoteChallenge coteChallenge;
-  private String solution;
-  private Boolean isPass;
+  private String image;
   private String content;
 
   public static CoteComment from(CoteCommentForm form,
@@ -34,7 +33,7 @@ public class CoteComment extends BaseEntity {
     return CoteComment.builder()
             .member(member)
             .coteChallenge(coteChallenge)
-            .solution(form.getSolution())
+            .image(form.getImage())
             .content(form.getContent())
             .build();
   }

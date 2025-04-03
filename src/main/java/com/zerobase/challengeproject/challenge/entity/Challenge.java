@@ -61,8 +61,8 @@ public class Challenge {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-    @OneToOne(mappedBy = "challenge")
-    private CoteChallenge coteChallenge;
+    @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY)
+    private List<CoteChallenge> coteChallenge;
 //    @OneToMany(mappedBy = "callenge", fetch = FetchType.LAZY)
 //    List<DrinkingComment> drinkingComments;
 //    @OneToMany(mappedBy = "callenge", fetch = FetchType.LAZY)

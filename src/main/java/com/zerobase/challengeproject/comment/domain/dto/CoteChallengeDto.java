@@ -4,6 +4,7 @@ import com.zerobase.challengeproject.comment.entity.CoteChallenge;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -13,14 +14,15 @@ public class CoteChallengeDto {
   private Long challengeId;
   private String title;
   private String question;
+  private LocalDateTime startAt;
   private List<CoteCommentDto> comments;
 
   public static CoteChallengeDto from(CoteChallenge coteChallenge) {
     return CoteChallengeDto.builder()
-            .id(coteChallenge.getId())
             .challengeId(coteChallenge.getId())
             .title(coteChallenge.getTitle())
             .question(coteChallenge.getQuestion())
+            .startAt(coteChallenge.getStartAt())
             .comments(coteChallenge.getComments().stream()
                     .map(CoteCommentDto::from)
                     .toList())
