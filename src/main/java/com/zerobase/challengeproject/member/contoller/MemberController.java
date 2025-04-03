@@ -35,6 +35,13 @@ public class MemberController {
                         ));
     }
 
+    /**
+     * 회원 정보를 수정하는 컨트롤러 메서드
+     *
+     * @param form 수정 정보 form(nickname, phoneNum)
+     * @param userDetails 로그인한 유저의 정보
+     * @return 수정한 유저의 정보
+     */
     @PatchMapping("/profile")
     public ResponseEntity<BaseResponseDto<MemberProfileDto>> updateProfile (
             @RequestBody MemberProfileFrom form,
@@ -49,6 +56,12 @@ public class MemberController {
         );
     }
 
+    /**
+     * 유저의 비밀번호를 수정하는 메서드
+     * @param form 현재비밀번호, 새비밀번호, 새비밀번호확인
+     * @param userDetails 로그인한 유저의 정보
+     * @return 수정 성공한 유저의 아이디
+     */
     @PatchMapping("/change-password")
     public ResponseEntity<BaseResponseDto<String>> changePassword (
             @RequestBody ChangePasswordForm form,
