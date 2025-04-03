@@ -18,8 +18,8 @@ public class GetChallengeDto {
     private CategoryType categoryType;
     private Integer participant;
     private String description;
-    private Integer min_deposit;
-    private Integer max_deposit;
+    private Long min_deposit;
+    private Long max_deposit;
     private String standard;
     private LocalDateTime startDate;
     private LocalDateTime endDate;

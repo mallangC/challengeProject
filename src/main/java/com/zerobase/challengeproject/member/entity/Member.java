@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -83,6 +82,22 @@ public class Member {
 
     public void chargeAccount(Long amount) {
         this.account += amount;
+    }
+
+    public void depositAccount(Long amount) {
+        if (this.account < amount) {
+            throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY);
+        }
+        this.account -= amount;
+    }
+
+    public void depositBack(AccountDetail detail) {
+        if (detail.getAccountType() != AccountType.DEPOSIT) {
+            throw new CustomException(ErrorCode.NOT_DEPOSIT_DETAIL);
+        } else if (detail.isRefunded()) {
+            throw new CustomException(ErrorCode.ALREADY_REFUNDED);
+        }
+        this.account += detail.getAmount();
     }
 
     public void refundAccount(AccountDetail detail, Refund refund) {

@@ -1,5 +1,7 @@
 package com.zerobase.challengeproject.challenge.domain.form;
 
+import com.zerobase.challengeproject.exception.CustomException;
+import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.type.CategoryType;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -30,14 +32,27 @@ public class UpdateChallengeForm {
     private String description;
 
     @Min(value = 0, message = "최소 보증금을 입력해 주세요.")
-    private Integer minDeposit;
+    private Long minDeposit;
 
     @Max(value = 1_000_000, message = "최대 보증금은 1,000,000원 이하로 설정해 주세요.")
-    private Integer maxDeposit;
+    private Long maxDeposit;
 
     @FutureOrPresent(message = "시작날짜를 지정해 주세요.")
     private LocalDateTime startDate;
 
     @Future(message = "종료날짜를 지정해 주세요.")
     private LocalDateTime endDate;
+
+    public void validate() {
+        if (minDeposit > maxDeposit) {
+            throw new CustomException(ErrorCode.INVALID_DEPOSIT_AMOUNT);
+        }
+        if (startDate.isAfter(endDate)) {
+            throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
+        }
+        if (participant <= 0) {
+            throw new CustomException(ErrorCode.INVALID_PARTICIPANT_NUMBER);
+        }
+    }
+
 }

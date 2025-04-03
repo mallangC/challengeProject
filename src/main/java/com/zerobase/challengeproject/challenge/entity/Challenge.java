@@ -28,7 +28,7 @@ public class Challenge {
     private Member member;
 
     @OneToMany(mappedBy = "challenge")
-    private List<MemberChallenge> challengeMembers;
+    private List<MemberChallenge> memberChallenges;
 
     @Column(nullable = false)
     private String title;
@@ -47,10 +47,10 @@ public class Challenge {
     private String description;
 
     @Column(nullable = false)
-    private Integer minDeposit;
+    private Long minDeposit;
 
     @Column(nullable = false)
-    private Integer maxDeposit;
+    private Long maxDeposit;
 
     @Column(nullable = false)
     private String standard;

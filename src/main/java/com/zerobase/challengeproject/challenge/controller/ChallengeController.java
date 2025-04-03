@@ -1,6 +1,7 @@
 package com.zerobase.challengeproject.challenge.controller;
 
 
+import com.zerobase.challengeproject.account.service.AccountService;
 import com.zerobase.challengeproject.challenge.domain.dto.EnterChallengeDto;
 import com.zerobase.challengeproject.challenge.domain.form.RegistrationChallengeForm;
 import com.zerobase.challengeproject.challenge.domain.form.UpdateChallengeForm;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class ChallengeController {
 
     private final ChallengeService challengeService;
+
 
     /**
      * 챌린지 전체 조회
