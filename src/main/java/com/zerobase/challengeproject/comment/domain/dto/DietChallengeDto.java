@@ -11,14 +11,14 @@ import java.util.List;
 
 @Getter
 @Builder
-public class DietChallengeDto extends BaseEntity {
+public class DietChallengeDto {
   private Long id;
   private String loginId;
   private Float goalWeight;
   private Float currentWeight;
   private List<DietCommentDto> comments;
 
-  public static DietChallengeDto from(DietChallenge dietChallenge){
+  public static DietChallengeDto from(DietChallenge dietChallenge) {
     return DietChallengeDto.builder()
             .id(dietChallenge.getId())
             .loginId(dietChallenge.getMember().getMemberId())
@@ -30,7 +30,7 @@ public class DietChallengeDto extends BaseEntity {
             .build();
   }
 
-  public static DietChallengeDto fromWithoutComments(DietChallenge dietChallenge){
+  public static DietChallengeDto fromWithoutComments(DietChallenge dietChallenge) {
     return DietChallengeDto.builder()
             .id(dietChallenge.getId())
             .loginId(dietChallenge.getMember().getMemberId())
@@ -38,9 +38,5 @@ public class DietChallengeDto extends BaseEntity {
             .currentWeight(dietChallenge.getCurrentWeight())
             .comments(new ArrayList<>())
             .build();
-  }
-
-  public void updateWeight(Float currentWeight){
-    this.currentWeight = currentWeight;
   }
 }

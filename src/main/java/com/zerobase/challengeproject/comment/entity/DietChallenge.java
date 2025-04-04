@@ -3,9 +3,11 @@ package com.zerobase.challengeproject.comment.entity;
 import com.zerobase.challengeproject.account.entity.BaseEntity;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.comment.domain.form.DietChallengeAddForm;
+import com.zerobase.challengeproject.comment.domain.form.DietChallengeUpdateForm;
+import com.zerobase.challengeproject.exception.CustomException;
+import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.entity.Member;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +36,10 @@ public class DietChallenge extends BaseEntity {
   @OneToMany(mappedBy = "dietChallenge", fetch = FetchType.LAZY)
   private List<DietComment> comments;
 
-  public static DietChallenge from(DietChallengeAddForm form, Member member, Challenge challenge){
+  public static DietChallenge from(DietChallengeAddForm form, Member member, Challenge challenge) {
+    if (form.getCurrentWeight() - form.getGoalWeight() < 5) {
+      throw new CustomException(ErrorCode.DIFFERENCE_MORE_THEN_5KG);
+    }
     return DietChallenge.builder()
             .challenge(challenge)
             .member(member)
@@ -44,7 +49,15 @@ public class DietChallenge extends BaseEntity {
             .build();
   }
 
-  public void updateWeight(Float currentWeight){
+  public void update(DietChallengeUpdateForm form) {
+    if (form.getCurrentWeight() - form.getGoalWeight() < 5) {
+      throw new CustomException(ErrorCode.DIFFERENCE_MORE_THEN_5KG);
+    }
+    this.goalWeight = form.getGoalWeight();
+    this.currentWeight = form.getCurrentWeight();
+  }
+
+  public void updateWeight(Float currentWeight) {
     this.currentWeight = currentWeight;
   }
 }

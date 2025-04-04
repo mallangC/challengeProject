@@ -57,6 +57,9 @@ public enum ErrorCode {
 
   NOT_DIET_CHALLENGE(HttpStatus.BAD_REQUEST, "다이어트 챌린지가 아닙니다."),
   ALREADY_ADDED_DIET_CHALLENGE(HttpStatus.BAD_REQUEST, "이미 다이어트 챌린지가 추가되어 있습니다."),
+  NOT_FOUND_DIET_CHALLENGE(HttpStatus.BAD_REQUEST, "다이어트 챌린지를 찾을 수 없습니다."),
+  DIFFERENCE_MORE_THEN_5KG(HttpStatus.BAD_REQUEST, "현재 몸무게와 목표 몸무게의 차이가 5kg이상 되어야 합니다."),
+  CANNOT_UPDATE_AFTER_START_CHALLENGE(HttpStatus.BAD_REQUEST, "챌린지가 시작하면 다이어트 챌린지를 수정할 수 없습니다."),
 
   ;
 

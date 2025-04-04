@@ -86,7 +86,7 @@ class CoteChallengeServiceTest {
           .maxDeposit(50)
           .standard("challengeStandard")
           .member(memberBase)
-          .coteChallenge(new ArrayList<>())
+          .coteChallenges(new ArrayList<>())
           .build();
 
 
@@ -111,7 +111,7 @@ class CoteChallengeServiceTest {
           .member(Member.builder()
                   .memberId("틀리다")
                   .build())
-          .coteChallenge(new ArrayList<>())
+          .coteChallenges(new ArrayList<>())
           .build();
 
   CoteComment commentBase = CoteComment.builder()
@@ -188,7 +188,7 @@ class CoteChallengeServiceTest {
                     .maxDeposit(50)
                     .standard("challengeStandard")
                     .member(memberBase)
-                    .coteChallenge(List.of(coteChallengeBase))
+                    .coteChallenges(List.of(coteChallengeBase))
                     .build());
 
     CoteChallengeForm form = CoteChallengeForm.builder()
