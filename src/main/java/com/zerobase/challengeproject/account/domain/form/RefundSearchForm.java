@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class RefundSearchForm {
-
-  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDateTime startAtStr;
   private Boolean done;
   private Boolean refunded;

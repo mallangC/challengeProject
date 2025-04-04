@@ -101,11 +101,11 @@ class MemberLoginServiceTest {
     @Test
     @DisplayName("로그인 실패 - 존재하지 않는 회원")
     void loginFailure1() {
+        // given
         MemberLoginForm loginForm = MemberLoginForm.builder()
                 .memberId("testId")
                 .password("testPassword1!")
                 .build();
-        // given
         when(memberRepository.findByMemberId(loginForm.getMemberId())).thenReturn(Optional.empty());
 
         // when & then

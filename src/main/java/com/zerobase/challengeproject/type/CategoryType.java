@@ -1,6 +1,9 @@
 package com.zerobase.challengeproject.type;
 
-public enum CategoryType {
+import lombok.Getter;
+
+@Getter
+public enum Category {
 
     COTE("COTE"),
     DRINKING("DRINKING"),
@@ -11,9 +14,5 @@ public enum CategoryType {
 
     CategoryType(String description) {
         this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
     }
 }

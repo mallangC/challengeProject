@@ -12,13 +12,13 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
+public interface ChallengeRepository extends JpaRepository<Challenge, Long>, ChallengeRepositoryCustom {
 
-    Page<Challenge> findAll(Pageable pageable);
-    Page<Challenge> findByMemberId(Long memberId, Pageable pageable);
+  Page<Challenge> findAll(Pageable pageable);
 
+  Page<Challenge> findByMemberId(Long memberId, Pageable pageable);
 
-    Page<Challenge> findByTitleContaining(String title, Pageable pageable);
+  Page<Challenge> findByTitleContaining(String title, Pageable pageable);
 
     Page<Challenge> findByCategoryType(CategoryType categoryType, Pageable pageable);
 

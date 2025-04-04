@@ -3,11 +3,12 @@ package com.zerobase.challengeproject.member.entity;
 import com.zerobase.challengeproject.account.entity.AccountDetail;
 import com.zerobase.challengeproject.account.entity.Refund;
 import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
+import com.zerobase.challengeproject.comment.entity.CoteComment;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
-import com.zerobase.challengeproject.type.MemberType;
 import com.zerobase.challengeproject.type.AccountType;
+import com.zerobase.challengeproject.type.MemberType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,16 +35,21 @@ public class Member {
     private String nickname;
     @Column(length = 20, nullable = false)
     private String phoneNum;
+
     @Column(length = 50, nullable = false)
     private String email;
     private LocalDateTime registerDate;
-
     private boolean emailAuthYn;
     private LocalDateTime emailAuthDate;
     private String emailAuthKey;
+    @Column(length = 50)
+    private String previousEmail;
 
     @OneToMany(mappedBy = "member")
     private List<MemberChallenge> memberChallenges;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<CoteComment> coteComments;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -62,6 +68,11 @@ public class Member {
             this.emailAuthYn = true;
             this.emailAuthDate = LocalDateTime.now();
         }
+    }
+
+    public void updateProfile( String phoneNum, String nickname) {
+        this.phoneNum = phoneNum;
+        this.nickname = nickname;
     }
 
     public static Member from(MemberSignupForm form, String password, String emailAuthKey) {
@@ -113,4 +124,23 @@ public class Member {
         this.account -= detail.getAmount();
     }
 
+    public void depositAccount(Long amount) {
+        if (this.account < amount) {
+            throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY);
+        }
+        this.account -= amount;
+    }
+
+    public void depositBack(AccountDetail detail) {
+         if (detail.getAccountType() != AccountType.DEPOSIT) {
+            throw new CustomException(ErrorCode.NOT_DEPOSIT_DETAIL);
+        } else if (detail.isRefunded()) {
+            throw new CustomException(ErrorCode.ALREADY_REFUNDED);
+        }
+        this.account += detail.getAmount();
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }

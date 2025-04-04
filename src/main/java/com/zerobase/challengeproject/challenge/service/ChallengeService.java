@@ -14,6 +14,7 @@ import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
 import com.zerobase.challengeproject.challenge.repository.MemberChallengeRepository;
+import com.zerobase.challengeproject.comment.repository.CoteChallengeRepository;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
@@ -38,10 +39,10 @@ import java.util.List;
 @Transactional
 public class ChallengeService {
 
-    private final ChallengeRepository challengeRepository;
-    private final MemberChallengeRepository memberChallengeRepository;
-    private final AccountDetailRepository accountDetailRepository;
-    private final MemberRepository memberRepository;
+  private final ChallengeRepository challengeRepository;
+  private final MemberChallengeRepository memberChallengeRepository;
+  private final CoteChallengeRepository coteChallengeRepository;
+  private final MemberRepository memberRepository;
 
     /**
      * 전체 챌린지조회

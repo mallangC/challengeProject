@@ -8,4 +8,6 @@ public interface MemberRepositoryCustom {
   Member searchByEmailAndAccountDetailsToDate(String email, LocalDateTime searchByDate);
 
   Member searchByEmailAndAccountDetailId(String email, Long accountId);
+
+  Member searchByEmail(String email);
 }
