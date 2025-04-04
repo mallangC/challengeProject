@@ -42,7 +42,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class CoteCommentServiceTest {
+class CoteChallengeServiceTest {
 
   @Mock
   private MemberRepository memberRepository;
@@ -57,7 +57,7 @@ class CoteCommentServiceTest {
   private ChallengeRepository challengeRepository;
 
   @InjectMocks
-  private CoteCommentService coteCommentService;
+  private CoteChallengeService coteChallengeService;
 
   LocalDateTime startAt = LocalDateTime.parse("2025-04-04T00:00:00");
 
@@ -140,7 +140,7 @@ class CoteCommentServiceTest {
             .build();
     //when
     BaseResponseDto<CoteChallengeDto> result =
-            coteCommentService.addCoteChallenge(form, userDetailsBase);
+            coteChallengeService.addCoteChallenge(form, userDetailsBase);
     //then
     assertEquals(HttpStatus.OK, result.getStatus());
     assertEquals("코테 챌린지 생성을 성공했습니다.", result.getMessage());
@@ -165,7 +165,7 @@ class CoteCommentServiceTest {
             .build();
     //when
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.addCoteChallenge(form, userDetailsBase));
+            coteChallengeService.addCoteChallenge(form, userDetailsBase));
 
     //then
     assertEquals(NOT_OWNER_OF_CHALLENGE, exception.getErrorCode());
@@ -199,7 +199,7 @@ class CoteCommentServiceTest {
             .build();
     //when
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.addCoteChallenge(form, userDetailsBase));
+            coteChallengeService.addCoteChallenge(form, userDetailsBase));
 
     //then
     assertEquals(ALREADY_ADDED_THAT_DATE, exception.getErrorCode());
@@ -214,7 +214,7 @@ class CoteCommentServiceTest {
             .willReturn(Optional.of(coteChallengeBase));
     //when
     BaseResponseDto<CoteChallengeDto> result =
-            coteCommentService.getCoteChallenge(1L);
+            coteChallengeService.getCoteChallenge(1L);
     //then
     assertEquals(HttpStatus.OK, result.getStatus());
     assertEquals("코테 챌린지 단건 조회를 성공했습니다.", result.getMessage());
@@ -232,7 +232,7 @@ class CoteCommentServiceTest {
             .willReturn(Optional.empty());
     //when
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.getCoteChallenge(1L));
+            coteChallengeService.getCoteChallenge(1L));
     //then
     assertEquals(NOT_FOUND_COTE_CHALLENGE, exception.getErrorCode());
   }
@@ -252,7 +252,7 @@ class CoteCommentServiceTest {
             .build();
     //when
     BaseResponseDto<CoteChallengeDto> result =
-            coteCommentService.updateCoteChallenge(form, userDetailsBase);
+            coteChallengeService.updateCoteChallenge(form, userDetailsBase);
     //then
     assertEquals(HttpStatus.OK, result.getStatus());
     assertEquals("코테 챌린지 수정을 성공했습니다.", result.getMessage());
@@ -282,7 +282,7 @@ class CoteCommentServiceTest {
     //when
 
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.updateCoteChallenge(form, userDetailsBase));
+            coteChallengeService.updateCoteChallenge(form, userDetailsBase));
     //then
     assertEquals(NOT_OWNER_OF_CHALLENGE, exception.getErrorCode());
   }
@@ -303,7 +303,7 @@ class CoteCommentServiceTest {
                     .build());
     //when
     BaseResponseDto<CoteChallengeDto> result =
-            coteCommentService.deleteCoteChallenge(1L, userDetailsBase);
+            coteChallengeService.deleteCoteChallenge(1L, userDetailsBase);
 
     //then
     assertEquals(HttpStatus.OK, result.getStatus());
@@ -331,7 +331,7 @@ class CoteCommentServiceTest {
                     .build());
     //when
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.deleteCoteChallenge(1L, userDetailsBase));
+            coteChallengeService.deleteCoteChallenge(1L, userDetailsBase));
 
     //then
     assertEquals(NOT_OWNER_OF_CHALLENGE, exception.getErrorCode());
@@ -354,7 +354,7 @@ class CoteCommentServiceTest {
                     .build());
     //when
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.deleteCoteChallenge(1L, userDetailsBase));
+            coteChallengeService.deleteCoteChallenge(1L, userDetailsBase));
     //then
     assertEquals(CANNOT_DELETE_HAVE_COMMENT, exception.getErrorCode());
   }
@@ -383,7 +383,7 @@ class CoteCommentServiceTest {
 
     //when
     BaseResponseDto<CoteCommentDto> result =
-            coteCommentService.addComment(form, userDetailsBase);
+            coteChallengeService.addComment(form, userDetailsBase);
     //then
     assertEquals(HttpStatus.OK, result.getStatus());
     assertEquals("인증 댓글 추가를 성공했습니다.", result.getMessage());
@@ -417,7 +417,7 @@ class CoteCommentServiceTest {
     //when
 
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.addComment(form, userDetailsBase));
+            coteChallengeService.addComment(form, userDetailsBase));
     //then
     assertEquals(NOT_ENTERED_CHALLENGE, exception.getErrorCode());
     verify(coteCommentRepository, times(0)).save(any());
@@ -431,7 +431,7 @@ class CoteCommentServiceTest {
     given(coteCommentRepository.findById(anyLong()))
             .willReturn(Optional.of(commentBase));
     //when
-    BaseResponseDto<CoteCommentDto> result = coteCommentService.getComment(1L);
+    BaseResponseDto<CoteCommentDto> result = coteChallengeService.getComment(1L);
     //then
     assertEquals(HttpStatus.OK, result.getStatus());
     assertEquals("인증 댓글 조회를 성공했습니다.", result.getMessage());
@@ -455,7 +455,7 @@ class CoteCommentServiceTest {
             .build();
     //when
     BaseResponseDto<CoteCommentDto> result =
-            coteCommentService.updateComment(form, userDetailsBase);
+            coteChallengeService.updateComment(form, userDetailsBase);
 
     //then
     assertEquals(HttpStatus.OK, result.getStatus());
@@ -485,7 +485,7 @@ class CoteCommentServiceTest {
             .build();
     //when
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.updateComment(form, userDetailsBase));
+            coteChallengeService.updateComment(form, userDetailsBase));
 
     //then
     assertEquals(NOT_OWNER_OF_COMMENT, exception.getErrorCode());
@@ -498,7 +498,7 @@ class CoteCommentServiceTest {
     given(coteCommentRepository.searchCoteCommentById(anyLong()))
             .willReturn(commentBase);
     //when
-    BaseResponseDto<CoteCommentDto> result = coteCommentService.deleteComment(1L, userDetailsBase);
+    BaseResponseDto<CoteCommentDto> result = coteChallengeService.deleteComment(1L, userDetailsBase);
     //then
     assertEquals(HttpStatus.OK, result.getStatus());
     assertEquals("인증 댓글 삭제를 성공했습니다.", result.getMessage());
@@ -523,7 +523,7 @@ class CoteCommentServiceTest {
                     .build());
     //when
     CustomException exception = assertThrows(CustomException.class, () ->
-            coteCommentService.deleteComment(1L, userDetailsBase));
+            coteChallengeService.deleteComment(1L, userDetailsBase));
     //then
     assertEquals(NOT_OWNER_OF_COMMENT, exception.getErrorCode());
   }

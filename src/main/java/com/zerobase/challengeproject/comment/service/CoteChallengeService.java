@@ -29,7 +29,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class CoteCommentService {
+public class CoteChallengeService {
   private final CoteCommentRepository coteCommentRepository;
   private final CoteChallengeRepository coteChallengeRepository;
   private final ChallengeRepository challengeRepository;
@@ -56,7 +56,7 @@ public class CoteCommentService {
       throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
     }
 
-    boolean isExist = challenge.getCoteChallenge().stream()
+    boolean isExist = challenge.getCoteChallenges().stream()
             .anyMatch(c -> c.getStartAt().isEqual(form.getStartAt()));
     if (isExist) {
       throw new CustomException(ErrorCode.ALREADY_ADDED_THAT_DATE);

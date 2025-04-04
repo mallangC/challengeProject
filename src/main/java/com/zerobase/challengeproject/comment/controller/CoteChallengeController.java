@@ -7,7 +7,7 @@ import com.zerobase.challengeproject.comment.domain.form.CoteChallengeForm;
 import com.zerobase.challengeproject.comment.domain.form.CoteChallengeUpdateForm;
 import com.zerobase.challengeproject.comment.domain.form.CoteCommentForm;
 import com.zerobase.challengeproject.comment.domain.form.CoteCommentUpdateForm;
-import com.zerobase.challengeproject.comment.service.CoteCommentService;
+import com.zerobase.challengeproject.comment.service.CoteChallengeService;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +19,21 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("api/challenge")
 public class CoteChallengeController {
-  private final CoteCommentService coteCommentService;
+  private final CoteChallengeService coteChallengeService;
 
   //코테 챌린지 추가
   @PostMapping("/cote")
   public ResponseEntity<BaseResponseDto<CoteChallengeDto>> addCoteChallenge(
           @RequestBody @Valid CoteChallengeForm form,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    return ResponseEntity.ok(coteCommentService.addCoteChallenge(form, userDetails));
+    return ResponseEntity.ok(coteChallengeService.addCoteChallenge(form, userDetails));
   }
 
   //코테 챌린지 단건 조회
   @GetMapping("/cote/{coteChallengeId}")
   public ResponseEntity<BaseResponseDto<CoteChallengeDto>> getCoteChallenge(
           @PathVariable Long coteChallengeId) {
-    return ResponseEntity.ok(coteCommentService.getCoteChallenge(coteChallengeId));
+    return ResponseEntity.ok(coteChallengeService.getCoteChallenge(coteChallengeId));
   }
 
   //코테 챌린지 수정
@@ -41,7 +41,7 @@ public class CoteChallengeController {
   public ResponseEntity<BaseResponseDto<CoteChallengeDto>> updateCoteChallenge(
           @RequestBody @Valid CoteChallengeUpdateForm form,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    return ResponseEntity.ok(coteCommentService.updateCoteChallenge(form, userDetails));
+    return ResponseEntity.ok(coteChallengeService.updateCoteChallenge(form, userDetails));
   }
 
   //코테 챌린지 삭제
@@ -49,7 +49,7 @@ public class CoteChallengeController {
   public ResponseEntity<BaseResponseDto<CoteChallengeDto>> deleteCoteChallenge(
           @PathVariable Long coteChallengeId,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    return ResponseEntity.ok(coteCommentService.deleteCoteChallenge(coteChallengeId, userDetails));
+    return ResponseEntity.ok(coteChallengeService.deleteCoteChallenge(coteChallengeId, userDetails));
   }
 
   //코테 댓글 추가
@@ -57,14 +57,14 @@ public class CoteChallengeController {
   public ResponseEntity<BaseResponseDto<CoteCommentDto>> addComment(
           @RequestBody @Valid CoteCommentForm form,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    return ResponseEntity.ok(coteCommentService.addComment(form, userDetails));
+    return ResponseEntity.ok(coteChallengeService.addComment(form, userDetails));
   }
 
   //코테 댓글 조회
   @GetMapping("/comment/{commentId}")
   public ResponseEntity<BaseResponseDto<CoteCommentDto>> getComment(
           @PathVariable Long commentId) {
-    return ResponseEntity.ok(coteCommentService.getComment(commentId));
+    return ResponseEntity.ok(coteChallengeService.getComment(commentId));
   }
 
   //코테 댓글 수정
@@ -72,7 +72,7 @@ public class CoteChallengeController {
   public ResponseEntity<BaseResponseDto<CoteCommentDto>> updateComment(
           @RequestBody @Valid CoteCommentUpdateForm form,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    return ResponseEntity.ok(coteCommentService.updateComment(form, userDetails));
+    return ResponseEntity.ok(coteChallengeService.updateComment(form, userDetails));
   }
 
   //코테 댓글 삭제
@@ -80,7 +80,7 @@ public class CoteChallengeController {
   public ResponseEntity<BaseResponseDto<CoteCommentDto>> deleteComment(
           @PathVariable Long commentId,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    return ResponseEntity.ok(coteCommentService.deleteComment(commentId, userDetails));
+    return ResponseEntity.ok(coteChallengeService.deleteComment(commentId, userDetails));
   }
 
 
