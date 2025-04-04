@@ -12,8 +12,7 @@ public enum Category {
 
     private final String description;
 
-    Category(String description) {
+    CategoryType(String description) {
         this.description = description;
     }
-
 }

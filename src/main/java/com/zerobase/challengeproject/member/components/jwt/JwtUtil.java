@@ -29,7 +29,6 @@ public class JwtUtil {
     @PostConstruct
     public void init() {
         secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-        System.out.println(SECRET_KEY);
     }
     /**
      * 액세스 토큰 생성

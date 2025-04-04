@@ -1,13 +1,14 @@
 package com.zerobase.challengeproject.challenge.controller;
 
 
-import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
 import com.zerobase.challengeproject.challenge.domain.dto.EnterChallengeDto;
-import com.zerobase.challengeproject.challenge.domain.dto.GetChallengeDto;
-import com.zerobase.challengeproject.challenge.domain.dto.OngoingChallengeDto;
-import com.zerobase.challengeproject.challenge.domain.form.CreateChallengeForm;
-import com.zerobase.challengeproject.challenge.domain.form.EnterChallengeForm;
+import com.zerobase.challengeproject.challenge.domain.form.RegistrationChallengeForm;
+import com.zerobase.challengeproject.challenge.domain.form.UpdateChallengeForm;
 import com.zerobase.challengeproject.challenge.service.ChallengeService;
+import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
+import com.zerobase.challengeproject.challenge.domain.dto.GetChallengeDto;
+import com.zerobase.challengeproject.challenge.domain.dto.ParticipationChallengeDto;
+import com.zerobase.challengeproject.challenge.domain.form.CreateChallengeForm;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -54,8 +55,8 @@ public class ChallengeController {
     /**
      * 사용자가 참여중인 챌린지 조회
      */
-    @GetMapping("/on-going")
-    public ResponseEntity<BaseResponseDto<Page<OngoingChallengeDto>>> ongoingChallenges(Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    @GetMapping("/participation")
+    public ResponseEntity<BaseResponseDto<Page<ParticipationChallengeDto>>> ongoingChallenges(Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
         return challengeService.getOngoingChallenges(pageable, userDetails);
     }
@@ -63,11 +64,10 @@ public class ChallengeController {
     /**
      * 사용자가 챌린지에 참여
      */
-    @PostMapping("/enter/{challengeId}")
-    public ResponseEntity<BaseResponseDto<EnterChallengeDto>> enterChallenge(@PathVariable Long challengeId, @Valid @RequestBody EnterChallengeForm enterChallengeForm, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    @PostMapping("/registrations/{challengeId}")
+    public ResponseEntity<BaseResponseDto<EnterChallengeDto>> enterChallenge(@PathVariable Long challengeId, @Valid @RequestBody RegistrationChallengeForm registrationChallengeForm, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-
-        return challengeService.enterChallenge(challengeId, enterChallengeForm, userDetails);
+        return challengeService.enterChallenge(challengeId, registrationChallengeForm, userDetails);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ChallengeController {
      * 챌린지 수정
      */
     @PutMapping("/{challengeId}")
-    public ResponseEntity<BaseResponseDto<GetChallengeDto>> updateChallenge(@PathVariable Long challengeId, @Valid @RequestBody CreateChallengeForm form, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<BaseResponseDto<GetChallengeDto>> updateChallenge(@PathVariable Long challengeId, @Valid @RequestBody UpdateChallengeForm form, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
         return challengeService.updateChallenge(challengeId, form, userDetails);
     }

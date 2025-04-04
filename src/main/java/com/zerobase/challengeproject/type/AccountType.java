@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum AccountType {
-  CHARGE,
-  REFUND,
-  DEPOSIT,
-  DEPOSIT_BACK
+    CHARGE,
+    REFUND,
+    DEPOSIT,
+    DEPOSIT_BACK
 }

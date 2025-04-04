@@ -3,7 +3,7 @@ package com.zerobase.challengeproject.challenge.controller;
 import com.zerobase.challengeproject.challenge.domain.dto.BaseResponseDto;
 import com.zerobase.challengeproject.challenge.domain.dto.GetChallengeDto;
 import com.zerobase.challengeproject.challenge.service.SearchService;
-import com.zerobase.challengeproject.type.Category;
+import com.zerobase.challengeproject.type.CategoryType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +32,8 @@ public class SearchController {
      * 카테고리로 챌린지 검색
      */
     @GetMapping("/category")
-    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> searchByCategory(@RequestParam Category category, Pageable pageable) {
+    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> searchByCategory(@RequestParam CategoryType categoryType, Pageable pageable) {
 
-        return searchService.searchByCategory(category, pageable);
+        return searchService.searchByCategory(categoryType, pageable);
     }
 }

@@ -18,6 +18,7 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -35,13 +36,15 @@ public class Member {
     private String nickname;
     @Column(length = 20, nullable = false)
     private String phoneNum;
+
     @Column(length = 50, nullable = false)
     private String email;
     private LocalDateTime registerDate;
-
     private boolean emailAuthYn;
     private LocalDateTime emailAuthDate;
     private String emailAuthKey;
+    @Column(length = 50)
+    private String previousEmail;
 
     @OneToMany(mappedBy = "member")
     private List<MemberChallenge> memberChallenges;
@@ -54,6 +57,7 @@ public class Member {
     private MemberType memberType;
 
     private Long account;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<AccountDetail> accountDetails;
 
@@ -65,6 +69,11 @@ public class Member {
             this.emailAuthYn = true;
             this.emailAuthDate = LocalDateTime.now();
         }
+    }
+
+    public void updateProfile( String phoneNum, String nickname) {
+        this.phoneNum = phoneNum;
+        this.nickname = nickname;
     }
 
     public static Member from(MemberSignupForm form, String password, String emailAuthKey) {
@@ -89,7 +98,7 @@ public class Member {
 
     public void refundAccount(AccountDetail detail, Refund refund) {
         if (this.account < detail.getAmount()) {
-            throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY);
+            throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY_TO_REFUND);
         } else if (detail.getAccountType() != AccountType.CHARGE) {
             throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
         } else if (detail.isRefunded()) {
@@ -114,5 +123,9 @@ public class Member {
             throw new CustomException(ErrorCode.ALREADY_REFUNDED);
         }
         this.account += detail.getAmount();
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
     }
 }
