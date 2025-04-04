@@ -28,7 +28,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
+public class CoteCommentService {
   private final CoteCommentRepository coteCommentRepository;
   private final CoteChallengeRepository coteChallengeRepository;
   private final ChallengeRepository challengeRepository;
@@ -154,7 +154,7 @@ public class CommentService {
     Member member = memberRepository.searchByEmail(userDetails.getUsername());
 
     CoteChallenge coteChallenge = coteChallengeRepository.searchCoteChallengeByStartAt(
-                    form.getChallengeId(), member.getMemberId(), parseToday());
+            form.getChallengeId(), member.getMemberId(), parseToday());
 
     boolean isEnter = member.getMemberChallenges().stream()
             .anyMatch(challenge ->
