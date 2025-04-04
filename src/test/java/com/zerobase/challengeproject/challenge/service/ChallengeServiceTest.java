@@ -53,7 +53,7 @@ public class ChallengeServiceTest {
 
     @Mock
     private UserDetailsImpl userDetails;
-    
+
     @InjectMocks
     private ChallengeService challengeService;
 

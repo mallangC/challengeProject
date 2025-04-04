@@ -3,16 +3,14 @@ package com.zerobase.challengeproject.member.entity;
 import com.zerobase.challengeproject.account.entity.AccountDetail;
 import com.zerobase.challengeproject.account.entity.Refund;
 import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
+import com.zerobase.challengeproject.comment.entity.CoteComment;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.domain.form.MemberSignupForm;
-import com.zerobase.challengeproject.type.MemberType;
 import com.zerobase.challengeproject.type.AccountType;
+import com.zerobase.challengeproject.type.MemberType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +48,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<MemberChallenge> memberChallenges;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<CoteComment> coteComments;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -90,6 +91,7 @@ public class Member {
                 .account(0L)
                 .build();
     }
+
     public void chargeAccount(Long amount) {
         this.account += amount;
     }
@@ -105,6 +107,22 @@ public class Member {
         detail.refundTrue();
         refund.refundTrue();
         this.account -= detail.getAmount();
+    }
+
+    public void depositAccount(Long amount) {
+        if (this.account < amount) {
+            throw new CustomException(ErrorCode.NOT_ENOUGH_MONEY);
+        }
+        this.account -= amount;
+    }
+
+    public void depositBack(AccountDetail detail) {
+         if (detail.getAccountType() != AccountType.DEPOSIT) {
+            throw new CustomException(ErrorCode.NOT_DEPOSIT_DETAIL);
+        } else if (detail.isRefunded()) {
+            throw new CustomException(ErrorCode.ALREADY_REFUNDED);
+        }
+        this.account += detail.getAmount();
     }
 
     public void changePassword(String newPassword) {

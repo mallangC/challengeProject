@@ -2,8 +2,6 @@ package com.zerobase.challengeproject.account.service;
 
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.account.domain.dto.AccountDetailDto;
-import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
-import com.zerobase.challengeproject.member.domain.dto.MemberDto;
 import com.zerobase.challengeproject.account.domain.dto.PageDto;
 import com.zerobase.challengeproject.account.domain.dto.RefundDto;
 import com.zerobase.challengeproject.account.domain.form.AccountAddForm;
@@ -11,10 +9,8 @@ import com.zerobase.challengeproject.account.domain.form.RefundAddForm;
 import com.zerobase.challengeproject.account.domain.form.RefundSearchForm;
 import com.zerobase.challengeproject.account.domain.form.RefundUpdateForm;
 import com.zerobase.challengeproject.account.entity.AccountDetail;
-import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.account.entity.Refund;
 import com.zerobase.challengeproject.account.repository.AccountDetailRepository;
-import com.zerobase.challengeproject.member.repository.MemberRepository;
 import com.zerobase.challengeproject.account.repository.RefundRepository;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
@@ -28,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -140,7 +135,7 @@ public class AccountService {
    * 환불 신청 내역을 찾을 수 없는 경우 빈 페이지로 반환
    *
    * @param page 페이지 넘버
-   * @param form 검색 기준이 되는 날짜(문자열), 두개의 boolean
+   * @param form 검색 기준이 되는 날짜(문자열 예- 2025-03-31 00), 두개의 boolean
    * @return paging된 검색 기준에 맞는 Refund 정보
    */
   public BaseResponseDto<PageDto<RefundDto>> getAllRefund(int page, RefundSearchForm form) {

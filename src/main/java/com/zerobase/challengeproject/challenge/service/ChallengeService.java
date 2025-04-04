@@ -13,6 +13,7 @@ import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.entity.MemberChallenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
 import com.zerobase.challengeproject.challenge.repository.MemberChallengeRepository;
+import com.zerobase.challengeproject.comment.repository.CoteChallengeRepository;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
@@ -34,45 +35,47 @@ import java.time.LocalDateTime;
 @Transactional
 public class ChallengeService {
 
-    private final ChallengeRepository challengeRepository;
-    private final MemberChallengeRepository memberChallengeRepository;
+  private final ChallengeRepository challengeRepository;
+  private final MemberChallengeRepository memberChallengeRepository;
+  private final CoteChallengeRepository coteChallengeRepository;
 
-    /**
-     * 전체 챌린지조회
-     */
-    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getAllChallenges(Pageable pageable) {
 
-        Page<Challenge> allChallenges = challengeRepository.findAll(pageable);
+  /**
+   * 전체 챌린지조회
+   */
+  public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getAllChallenges(Pageable pageable) {
 
-        if (allChallenges.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND_CHALLENGES);
-        }
-        Page<GetChallengeDto> challengeDtos = allChallenges.map(allChallenge -> new GetChallengeDto(allChallenge));
+    Page<Challenge> allChallenges = challengeRepository.findAll(pageable);
 
-        return ResponseEntity.ok(new BaseResponseDto<Page<GetChallengeDto>>(challengeDtos, "전체 챌린지 조회 성공", HttpStatus.OK));
+    if (allChallenges.isEmpty()) {
+      throw new CustomException(ErrorCode.NOT_FOUND_CHALLENGES);
     }
+    Page<GetChallengeDto> challengeDtos = allChallenges.map(allChallenge -> new GetChallengeDto(allChallenge));
 
-    /**
-     *  특정챌린지 상세 조회
-     */
-    public ResponseEntity<BaseResponseDto<GetChallengeDto>> getChallengeDetail(@PathVariable Long challengeId){
+    return ResponseEntity.ok(new BaseResponseDto<Page<GetChallengeDto>>(challengeDtos, "전체 챌린지 조회 성공", HttpStatus.OK));
+  }
 
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() ->  new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
+  /**
+   * 특정챌린지 상세 조회
+   */
+  public ResponseEntity<BaseResponseDto<GetChallengeDto>> getChallengeDetail(@PathVariable Long challengeId) {
 
-        GetChallengeDto challengeDto = new GetChallengeDto(challenge);
-        return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(challengeDto,"챌린지 상제정보 조회 성공", HttpStatus.OK));
-    }
+    Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
 
-    /**
-     * 사용자가 만든 챌린지 조회
-     */
-    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getChallengesMadeByUser(Pageable pageable, UserDetailsImpl userDetails){
+    GetChallengeDto challengeDto = new GetChallengeDto(challenge);
+    return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(challengeDto, "챌린지 상제정보 조회 성공", HttpStatus.OK));
+  }
 
-        Long memberId = userDetails.getMember().getId();
-        Page<Challenge> userChallenges = challengeRepository.findByMemberId(memberId, pageable);
+  /**
+   * 사용자가 만든 챌린지 조회
+   */
+  public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getChallengesMadeByUser(Pageable pageable, UserDetailsImpl userDetails) {
 
-        Page<GetChallengeDto> challengeDtos = userChallenges.map(userChallenge -> new GetChallengeDto(userChallenge));
+    Long memberId = userDetails.getMember().getId();
+    Page<Challenge> userChallenges = challengeRepository.findByMemberId(memberId, pageable);
+
+    Page<GetChallengeDto> challengeDtos = userChallenges.map(userChallenge -> new GetChallengeDto(userChallenge));
 
             if (challengeDtos.isEmpty()) {
                 throw new CustomException(ErrorCode.NOT_FOUND_CHALLENGES);
@@ -85,10 +88,10 @@ public class ChallengeService {
      */
     public ResponseEntity<BaseResponseDto<Page<ParticipationChallengeDto>>> getOngoingChallenges(Pageable pageable, UserDetailsImpl userDetails) {
 
-        /** 로그인시에만 가능
-         */
-        Long memberId = userDetails.getMember().getId();
-        Page<MemberChallenge> memberChallenges = memberChallengeRepository.findByMemberId(memberId, pageable);
+    /** 로그인시에만 가능
+     */
+    Long memberId = userDetails.getMember().getId();
+    Page<MemberChallenge> memberChallenges = memberChallengeRepository.findByMemberId(memberId, pageable);
 
         Page<ParticipationChallengeDto> challengeDtos = memberChallenges.map(memberChallenge -> new ParticipationChallengeDto(memberChallenge.getChallenge()));
         return ResponseEntity.ok(new BaseResponseDto<Page<ParticipationChallengeDto>>(challengeDtos, "유저가 참여중인 챌린지 조회 성공", HttpStatus.OK));
@@ -99,8 +102,8 @@ public class ChallengeService {
      */
     public ResponseEntity<BaseResponseDto<EnterChallengeDto>> enterChallenge(Long challengeId, RegistrationChallengeForm form, UserDetailsImpl userDetails){
 
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
+    Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
 
         Member member = userDetails.getMember();
 
@@ -184,8 +187,8 @@ public class ChallengeService {
      */
     public ResponseEntity<BaseResponseDto<GetChallengeDto>> updateChallenge(@PathVariable Long challengeId, @RequestBody UpdateChallengeForm form, UserDetailsImpl userDetails) {
 
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
+    Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
 
         if (!challenge.getMember().getId().equals(userDetails.getMember().getId())) {
             throw new CustomException(ErrorCode.FORBIDDEN_UPDATE_CHALLENGE);
@@ -210,16 +213,16 @@ public class ChallengeService {
         GetChallengeDto challengeDto = new GetChallengeDto(challenge);
         challengeRepository.save(challenge);
 
-        return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(challengeDto, "챌린지 수정 성공", HttpStatus.OK));
-    }
+    return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(challengeDto, "챌린지 수정 성공", HttpStatus.OK));
+  }
 
     /**
      * 챌린지 삭제
      */
     public ResponseEntity<BaseResponseDto<GetChallengeDto>> deleteChallenge(@PathVariable Long challengeId, UserDetailsImpl userDetails){
 
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
+    Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
 
         if (!challenge.getMember().getId().equals(userDetails.getMember().getId())) {
             throw new CustomException(ErrorCode.FORBIDDEN_DELETE_CHALLENGE);
@@ -227,7 +230,7 @@ public class ChallengeService {
 
         challengeRepository.delete(challenge);
 
-        return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(null, "챌린지 삭제 성공", HttpStatus.OK));
-    }
+    return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(null, "챌린지 삭제 성공", HttpStatus.OK));
+  }
 
 }
