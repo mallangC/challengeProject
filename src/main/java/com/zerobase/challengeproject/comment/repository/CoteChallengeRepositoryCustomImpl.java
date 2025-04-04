@@ -21,7 +21,6 @@ public class CoteChallengeRepositoryCustomImpl implements CoteChallengeRepositor
 
   @Override
   public CoteChallenge searchCoteChallengeByStartAt(Long challengeId, String memberId, LocalDateTime startAt) {
-    //TODO 쿼리문이 3번 실행됨 수정
     CoteChallenge findCoteChallenge = queryFactory.selectFrom(coteChallenge)
             .leftJoin(coteChallenge.comments, coteComment).fetchJoin()
             .join(coteChallenge.challenge, challenge).fetchJoin()

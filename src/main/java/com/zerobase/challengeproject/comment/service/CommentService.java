@@ -140,21 +140,21 @@ public class CommentService {
 
 
   /**
-   * 코테 챌린지 인증 작성을 위한 서비스 메서드
+   * 코테 챌린지 인증 댓글 작성을 위한 서비스 메서드
    * 오늘 날짜에 이미 댓글을 썼거나, 챌린지 아이디로 챌린지를 찾을 수 없거나(아이디를 잘못썼거나, 있어야할 CoteChallenge 가 없거나),
    * 챌린지에 참여하지 않은 사람이 댓글을 쓰려고 할 때 예외발생
    * (DB호출 3번) 호출 2, 저장 1
    *
    * @param form        챌린지 아이디, 인증하기 위한 이미지주소, 설명
    * @param userDetails username 사용
-   * @return 인증 댓글 반환
+   * @return 인증 댓글 정보
    */
   public BaseResponseDto<CoteCommentDto> addComment(CoteCommentForm form, UserDetailsImpl userDetails) {
 
     Member member = memberRepository.searchByEmail(userDetails.getUsername());
-    LocalDateTime now = LocalDateTime.now();
-    LocalDateTime today = LocalDateTime.parse(String.format("%04d-%02d-%02dT00:00:00", now.getYear(), now.getMonthValue(), now.getDayOfMonth()));
-    CoteChallenge coteChallenge = coteChallengeRepository.searchCoteChallengeByStartAt(form.getChallengeId(), member.getMemberId(), today);
+
+    CoteChallenge coteChallenge = coteChallengeRepository.searchCoteChallengeByStartAt(
+                    form.getChallengeId(), member.getMemberId(), parseToday());
 
     boolean isEnter = member.getMemberChallenges().stream()
             .anyMatch(challenge ->
@@ -173,7 +173,14 @@ public class CommentService {
             HttpStatus.OK);
   }
 
-  //인증 단건 확인 (commentId) (DB호출 1회)
+  /**
+   * 코테 챌린지 인증 댓글을 조회하기 위한 서비스 메서드
+   * 인증 댓글 아이디가 맞지 않으면 예외 발생
+   * (DB호출 1회) 호출 1
+   *
+   * @param commentId 댓글 아이디
+   * @return 인증 댓글 정보
+   */
   public BaseResponseDto<CoteCommentDto> getComment(Long commentId) {
     CoteComment coteComment = searchCoteCommentById(commentId);
     return new BaseResponseDto<CoteCommentDto>(
@@ -183,7 +190,15 @@ public class CommentService {
   }
 
 
-  //인증 수정 (commentId, form) (DB호출 2회) 호출 1, 업데이트 1
+  /**
+   * 코테 챌린지 인증 댓글을 수정하기 위한 서비스 메서드
+   * 인증 댓글 아이디가 맞지 않거나, 회원 자신이 작성한 댓글이 아니면 예외 발생
+   * (DB호출 2회) 호출 1, 업데이트 1
+   *
+   * @param form        댓글 아이디, 수정할 이미지 주소, 수정할 문제풀이
+   * @param userDetails 회원 정보
+   * @return 수정된 인증 댓글 정보
+   */
   @Transactional
   public BaseResponseDto<CoteCommentDto> updateComment(CoteCommentUpdateForm form,
                                                        UserDetailsImpl userDetails) {
@@ -195,7 +210,16 @@ public class CommentService {
             HttpStatus.OK);
   }
 
-  //인증 삭제 (commentId) (DB호출 2회) 호출 1, 삭제 1
+
+  /**
+   * 코테 챌린지 인증 댓글을 삭제하기 위한 서비스 메서드
+   * 인증 댓글 아이디가 맞지 않거나, 회원 자신이 작성한 댓글이 아니면 예외 발생
+   * (DB호출 2회) 호출 1, 삭제 1
+   *
+   * @param commentId   댓글 아이디
+   * @param userDetails 회원 정보
+   * @return 삭제된 인증 댓글 정보
+   */
   @Transactional
   public BaseResponseDto<CoteCommentDto> deleteComment(Long commentId,
                                                        UserDetailsImpl userDetails) {
@@ -213,8 +237,7 @@ public class CommentService {
   }
 
   private CoteComment searchCoteCommentById(Long commentId, String username) {
-    CoteComment coteComment = coteCommentRepository.findById(commentId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_COMMENT));
+    CoteComment coteComment = coteCommentRepository.searchCoteCommentById(commentId);
     if (!coteComment.getMember().getMemberId().equals(username)) {
       throw new CustomException(ErrorCode.NOT_OWNER_OF_COMMENT);
     }
@@ -228,6 +251,11 @@ public class CommentService {
       throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
     }
     return coteChallenge;
+  }
+
+  private LocalDateTime parseToday() {
+    LocalDateTime now = LocalDateTime.now();
+    return LocalDateTime.parse(String.format("%04d-%02d-%02dT00:00:00", now.getYear(), now.getMonthValue(), now.getDayOfMonth()));
   }
 
 }
