@@ -41,7 +41,10 @@ public class Challenge {
     private CategoryType categoryType;
 
     @Column(nullable = false)
-    private Integer participant;
+    private Long maxParticipant;
+
+    @Column
+    private Long currentParticipant = 0L;
 
     @Column(nullable = false)
     private String description;
@@ -71,18 +74,13 @@ public class Challenge {
     
     private LocalDateTime updateAt;
 
-
-    /**
-     * 클라이언트로부터 받은 정보로 챌린지 생성
-     * @param form
-     */
     public Challenge(CreateChallengeForm form, Member member) {
-
+        this.currentParticipant = 1L;
         this.title = form.getTitle();
         this.member = member;
         this.categoryType = form.getCategoryType();
         this.img = form.getImg();
-        this.participant = form.getParticipant();
+        this.maxParticipant = form.getMaxParticipant();
         this.maxDeposit = form.getMaxDeposit();
         this.standard = form.getStandard();
         this.minDeposit = form.getMinDeposit();
@@ -98,7 +96,7 @@ public class Challenge {
         if (form.getCategoryType() != null) this.setCategoryType(form.getCategoryType());
         if (form.getStandard() != null) this.setStandard(form.getStandard());
         if (form.getImg() != null) this.setImg(form.getImg());
-        if (form.getParticipant() != null) this.setParticipant(form.getParticipant());
+        if (form.getMaxParticipant() != null) this.setMaxParticipant(form.getMaxParticipant());
         if (form.getDescription() != null) this.setDescription(form.getDescription());
         if (form.getMinDeposit() != null) this.setMinDeposit(form.getMinDeposit());
         if (form.getMaxDeposit() != null) this.setMaxDeposit(form.getMaxDeposit());
@@ -106,11 +104,7 @@ public class Challenge {
         if (form.getEndDate() != null) this.setEndDate(form.getEndDate());
         this.updateAt = LocalDateTime.now();
     }
-
-
-    /**
-     * 클라이언트로부터 받은 정보로 챌린지 수정
-     * @param dto
-     */
-
+    public void registration(){
+        this.setCurrentParticipant(this.getCurrentParticipant() + 1);
+    }
 }

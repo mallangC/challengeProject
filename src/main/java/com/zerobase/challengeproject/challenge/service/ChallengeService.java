@@ -18,6 +18,7 @@ import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.entity.Member;
+import com.zerobase.challengeproject.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,7 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final MemberChallengeRepository memberChallengeRepository;
     private final AccountDetailRepository accountDetailRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 전체 챌린지조회
@@ -97,11 +99,8 @@ public class ChallengeService {
 
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
-        form.validate(challenge);
-        if (LocalDateTime.now().isAfter(challenge.getEndDate())){
-            throw new CustomException(ErrorCode.CHALLENGE_ALREADY_ENDED);
-        }
 
+        form.validate(challenge);
         Member member = userDetails.getMember();
         EnterChallengeDto enterChallengeDto = new EnterChallengeDto(challenge, form.getMemberDeposit());
 
@@ -121,12 +120,42 @@ public class ChallengeService {
                 .build();
 
         /**
-         * 보증금차감 및 저장
+         * 보증금차감, 챌린지인원업데이트 및 저장
          */
+        member.chargeAccount(100000L);
         member.depositAccount(form.getMemberDeposit());
+        challenge.registration();
+        memberRepository.save(member);
         memberChallengeRepository.save(memberChallenge);
         accountDetailRepository.save(AccountDetail.deposit(member, form.getMemberDeposit()));
         return ResponseEntity.ok(new BaseResponseDto<EnterChallengeDto>(enterChallengeDto,"챌린지 참여에 성공했습니다.", HttpStatus.OK));
+    }
+
+
+    /**
+     * 챌린지 참여 취소
+     *
+     */
+    public ResponseEntity<BaseResponseDto<GetChallengeDto>> cancelChallenge(Long challengeId, UserDetailsImpl userDetails){
+
+        Member member = userDetails.getMember();
+        Challenge challenge = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
+        MemberChallenge memberChallenge = memberChallengeRepository.findByChallengeAndMember(challenge, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PARTICIPATION));
+
+        // 시작전에만 취소가능
+        if (LocalDateTime.now().isBefore(challenge.getStartDate())) {
+            memberChallengeRepository.delete(memberChallenge);
+            Long refundAmount = memberChallenge.getMemberDeposit();
+            AccountDetail refundRecord = AccountDetail.depositBack(member, refundAmount);
+            member.chargeAccount(refundAmount);
+            accountDetailRepository.save(refundRecord);
+            memberRepository.save(member);
+            return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(null, "챌린지참여가 취소되었습니다.", HttpStatus.OK));
+        }else{
+            throw new CustomException(ErrorCode.ALREADY_STARTED_CHALLENGE);
+        }
     }
 
     /**
@@ -134,7 +163,6 @@ public class ChallengeService {
      */
     public ResponseEntity<BaseResponseDto<GetChallengeDto>> createChallenge(@RequestBody CreateChallengeForm form,
                                                                       UserDetailsImpl userDetails){
-
         Member member = userDetails.getMember();
         Challenge challenge = new Challenge(form, member);
         GetChallengeDto challengeDto = new GetChallengeDto(challenge);
@@ -149,11 +177,12 @@ public class ChallengeService {
                 .entered_at(LocalDateTime.now())
                 .member(member)
                 .build();
-
         /**
          * 보증금차감 및 저장
          */
+        member.chargeAccount(100000L);
         member.depositAccount(form.getMemberDeposit());
+        memberRepository.save(member);
         challengeRepository.save(challenge);
         memberChallengeRepository.save(memberChallenge);
         accountDetailRepository.save(AccountDetail.deposit(member, form.getMemberDeposit()));
@@ -185,6 +214,7 @@ public class ChallengeService {
      */
     public ResponseEntity<BaseResponseDto<GetChallengeDto>> deleteChallenge(@PathVariable Long challengeId, UserDetailsImpl userDetails){
 
+        Member member = userDetails.getMember();
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
 
@@ -192,9 +222,12 @@ public class ChallengeService {
             throw new CustomException(ErrorCode.FORBIDDEN_DELETE_CHALLENGE);
         }
 
-        challengeRepository.delete(challenge);
+        long participantCount = memberChallengeRepository.countByChallengeAndMemberNot(challenge, member);
+        if (participantCount > 0) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_HAS_PARTICIPANTS);
+        }
 
+        challengeRepository.delete(challenge);
         return ResponseEntity.ok(new BaseResponseDto<GetChallengeDto>(null, "챌린지 삭제 성공", HttpStatus.OK));
     }
-
 }

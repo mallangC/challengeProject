@@ -26,6 +26,8 @@ public class QChallenge extends EntityPathBase<Challenge> {
 
     public final DateTimePath<java.time.LocalDateTime> createAt = createDateTime("createAt", java.time.LocalDateTime.class);
 
+    public final NumberPath<Long> currentParticipant = createNumber("currentParticipant", Long.class);
+
     public final StringPath description = createString("description");
 
     public final DateTimePath<java.time.LocalDateTime> endDate = createDateTime("endDate", java.time.LocalDateTime.class);
@@ -36,13 +38,13 @@ public class QChallenge extends EntityPathBase<Challenge> {
 
     public final NumberPath<Long> maxDeposit = createNumber("maxDeposit", Long.class);
 
+    public final NumberPath<Long> maxParticipant = createNumber("maxParticipant", Long.class);
+
     public final com.zerobase.challengeproject.member.entity.QMember member;
 
     public final ListPath<MemberChallenge, QMemberChallenge> memberChallenges = this.<MemberChallenge, QMemberChallenge>createList("memberChallenges", MemberChallenge.class, QMemberChallenge.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> minDeposit = createNumber("minDeposit", Long.class);
-
-    public final NumberPath<Integer> participant = createNumber("participant", Integer.class);
 
     public final StringPath standard = createString("standard");
 

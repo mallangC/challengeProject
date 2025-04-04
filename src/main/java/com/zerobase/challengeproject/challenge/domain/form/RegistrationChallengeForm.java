@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class RegistrationChallengeForm {
@@ -17,8 +19,14 @@ public class RegistrationChallengeForm {
     private Long memberDeposit;
 
     public void validate(Challenge challenge) {
-        if (memberDeposit != null && challenge.getMinDeposit() != null && memberDeposit < challenge.getMinDeposit()) {
+        if (memberDeposit != null && challenge.getMinDeposit() != null && memberDeposit < challenge.getMinDeposit() && memberDeposit > challenge.getMaxDeposit()) {
             throw new CustomException(ErrorCode.INVALID_DEPOSIT_AMOUNT);
+        }
+        if (challenge.getMaxParticipant().equals(challenge.getCurrentParticipant())){
+            throw new CustomException(ErrorCode.CHALLENGE_FULL);
+        }
+        if (LocalDateTime.now().isAfter(challenge.getEndDate())){
+            throw new CustomException(ErrorCode.CHALLENGE_ALREADY_ENDED);
         }
     }
 }

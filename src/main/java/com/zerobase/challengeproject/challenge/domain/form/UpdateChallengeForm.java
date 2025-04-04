@@ -26,7 +26,7 @@ public class UpdateChallengeForm {
 
     @Min(value = 1, message = "참여 인원은 최소 1명이상이어야 합니다.")
     @Max(value = 100, message = "참여 인원은 최대 100명이하여야 합니다.")
-    private Integer participant;
+    private Long maxParticipant;
 
     @Size(min = 10, max = 500, message = "내용은 10자 이상, 500자 이하로 입력해야 합니다.")
     private String description;
@@ -44,13 +44,15 @@ public class UpdateChallengeForm {
     private LocalDateTime endDate;
 
     public void validate() {
-        if (minDeposit > maxDeposit) {
+        if (minDeposit != null && maxDeposit != null && minDeposit > maxDeposit) {
             throw new CustomException(ErrorCode.INVALID_DEPOSIT_AMOUNT);
         }
-        if (startDate.isAfter(endDate)) {
+
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
             throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
         }
-        if (participant <= 0) {
+
+        if (maxParticipant != null && maxParticipant <= 0) {
             throw new CustomException(ErrorCode.INVALID_PARTICIPANT_NUMBER);
         }
     }
