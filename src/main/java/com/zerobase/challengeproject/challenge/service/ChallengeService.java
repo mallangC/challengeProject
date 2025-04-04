@@ -21,6 +21,7 @@ import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -44,15 +46,13 @@ public class ChallengeService {
     /**
      * 전체 챌린지조회
      */
-    public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getAllChallenges(Pageable pageable) {
-
+    @Cacheable(value = "challenges", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
+    public List<GetChallengeDto> getAllChallenges(Pageable pageable) {
         Page<Challenge> allChallenges = challengeRepository.findAll(pageable);
         if (allChallenges.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND_CHALLENGES);
         }
-        Page<GetChallengeDto> challengeDtos = allChallenges.map(allChallenge -> new GetChallengeDto(allChallenge));
-
-        return ResponseEntity.ok(new BaseResponseDto<Page<GetChallengeDto>>(challengeDtos, "전체 챌린지 조회 성공", HttpStatus.OK));
+        return allChallenges.map(GetChallengeDto::new).getContent();
     }
 
     /**

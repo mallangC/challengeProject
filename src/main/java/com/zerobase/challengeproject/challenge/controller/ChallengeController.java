@@ -22,10 +22,14 @@ import com.zerobase.challengeproject.type.CategoryType;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/challenge")
@@ -42,8 +46,14 @@ public class ChallengeController {
      */
     @GetMapping
     public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> getAllChallenge(Pageable pageable) {
-        
-        return challengeService.getAllChallenges(pageable);
+        List<GetChallengeDto> challengeList = challengeService.getAllChallenges(pageable);
+
+        Page<GetChallengeDto> challengePage = new PageImpl<>(
+                challengeList,
+                pageable,
+                challengeList.size() // 또는 DB에서 총 개수 조회해서 넣어도 됨
+        );
+        return ResponseEntity.ok(new BaseResponseDto<>(challengePage, "전체 챌린지 조회 성공", HttpStatus.OK));
     }
 
     /**
