@@ -363,7 +363,7 @@ class CoteCommentServiceTest {
   @DisplayName("인증 댓글 추가 성공")
   void addComment() {
     //given
-    given(memberRepository.searchByEmail(anyString()))
+    given(memberRepository.searchByLoginId(anyString()))
             .willReturn(Member.builder()
                     .id(1L)
                     .memberId("인증댓글추가멤버아이디")
@@ -399,7 +399,7 @@ class CoteCommentServiceTest {
   @DisplayName("인증 댓글 추가 실패(챌린지에 참여하지 않은 회원)")
   void addCommentFailure1() {
     //given
-    given(memberRepository.searchByEmail(anyString()))
+    given(memberRepository.searchByLoginId(anyString()))
             .willReturn(Member.builder()
                     .id(1L)
                     .memberId("인증댓글추가멤버아이디")

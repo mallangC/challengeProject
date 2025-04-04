@@ -151,7 +151,7 @@ public class CoteCommentService {
    */
   public BaseResponseDto<CoteCommentDto> addComment(CoteCommentForm form, UserDetailsImpl userDetails) {
 
-    Member member = memberRepository.searchByEmail(userDetails.getUsername());
+    Member member = memberRepository.searchByLoginId(userDetails.getUsername());
 
     CoteChallenge coteChallenge = coteChallengeRepository.searchCoteChallengeByStartAt(
             form.getChallengeId(), member.getMemberId(), parseToday());

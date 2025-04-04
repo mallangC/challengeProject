@@ -89,7 +89,7 @@ public class AccountService {
     if (isExist) {
       throw new CustomException(ErrorCode.ALREADY_REFUND_REQUEST);
     }
-    Member member = memberRepository.searchByEmailAndAccountDetailId(userId, form.getAccountId());
+    Member member = memberRepository.searchByLoginIdAndAccountDetailId(userId, form.getAccountId());
 
     Refund refund = Refund.from(form.getContent(), member);
     refundRepository.save(refund);
@@ -169,7 +169,7 @@ public class AccountService {
       throw new CustomException(ErrorCode.NOT_CHARGE_DETAIL);
     }
     if (approval) {
-      Member member = memberRepository.searchByEmailAndAccountDetailsToDate(
+      Member member = memberRepository.searchByLoginIdAndAccountDetailsToDate(
               refund.getMember().getMemberId(),
               accountDetail.getCreatedAt());
       AccountDetail refundDetail = AccountDetail.refund(member, accountDetail.getAmount());
