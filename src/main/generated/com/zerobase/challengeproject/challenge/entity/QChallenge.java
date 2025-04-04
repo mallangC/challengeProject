@@ -24,6 +24,8 @@ public class QChallenge extends EntityPathBase<Challenge> {
 
     public final EnumPath<com.zerobase.challengeproject.type.CategoryType> categoryType = createEnum("categoryType", com.zerobase.challengeproject.type.CategoryType.class);
 
+    public final ListPath<com.zerobase.challengeproject.comment.entity.CoteChallenge, com.zerobase.challengeproject.comment.entity.QCoteChallenge> coteChallenge = this.<com.zerobase.challengeproject.comment.entity.CoteChallenge, com.zerobase.challengeproject.comment.entity.QCoteChallenge>createList("coteChallenge", com.zerobase.challengeproject.comment.entity.CoteChallenge.class, com.zerobase.challengeproject.comment.entity.QCoteChallenge.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> createAt = createDateTime("createAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> currentParticipant = createNumber("currentParticipant", Long.class);

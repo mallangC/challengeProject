@@ -24,6 +24,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final ListPath<com.zerobase.challengeproject.account.entity.AccountDetail, com.zerobase.challengeproject.account.entity.QAccountDetail> accountDetails = this.<com.zerobase.challengeproject.account.entity.AccountDetail, com.zerobase.challengeproject.account.entity.QAccountDetail>createList("accountDetails", com.zerobase.challengeproject.account.entity.AccountDetail.class, com.zerobase.challengeproject.account.entity.QAccountDetail.class, PathInits.DIRECT2);
 
+    public final ListPath<com.zerobase.challengeproject.comment.entity.CoteComment, com.zerobase.challengeproject.comment.entity.QCoteComment> coteComments = this.<com.zerobase.challengeproject.comment.entity.CoteComment, com.zerobase.challengeproject.comment.entity.QCoteComment>createList("coteComments", com.zerobase.challengeproject.comment.entity.CoteComment.class, com.zerobase.challengeproject.comment.entity.QCoteComment.class, PathInits.DIRECT2);
+
     public final StringPath email = createString("email");
 
     public final DateTimePath<java.time.LocalDateTime> emailAuthDate = createDateTime("emailAuthDate", java.time.LocalDateTime.class);
@@ -47,6 +49,8 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath password = createString("password");
 
     public final StringPath phoneNum = createString("phoneNum");
+
+    public final StringPath previousEmail = createString("previousEmail");
 
     public final DateTimePath<java.time.LocalDateTime> registerDate = createDateTime("registerDate", java.time.LocalDateTime.class);
 

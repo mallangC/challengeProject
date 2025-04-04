@@ -3,7 +3,7 @@ package com.zerobase.challengeproject.type;
 import lombok.Getter;
 
 @Getter
-public enum Category {
+public enum CategoryType {
 
     COTE("COTE"),
     DRINKING("DRINKING"),
