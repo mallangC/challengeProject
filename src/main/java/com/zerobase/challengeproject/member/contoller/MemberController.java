@@ -3,6 +3,7 @@ package com.zerobase.challengeproject.member.contoller;
 import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.domain.dto.MemberProfileDto;
+import com.zerobase.challengeproject.member.domain.form.ChangePasswordForm;
 import com.zerobase.challengeproject.member.domain.form.MemberProfileFrom;
 import com.zerobase.challengeproject.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,14 @@ public class MemberController {
                         ));
     }
 
-    @PatchMapping("profile")
+    /**
+     * 회원 정보를 수정하는 컨트롤러 메서드
+     *
+     * @param form 수정 정보 form(nickname, phoneNum)
+     * @param userDetails 로그인한 유저의 정보
+     * @return 수정한 유저의 정보
+     */
+    @PatchMapping("/profile")
     public ResponseEntity<BaseResponseDto<MemberProfileDto>> updateProfile (
             @RequestBody MemberProfileFrom form,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -43,6 +51,26 @@ public class MemberController {
                 new BaseResponseDto<>(
                         memberService.updateProfile(userDetails, form),
                         "회원 정보 수정 성공했습니다",
+                        HttpStatus.OK
+                )
+        );
+    }
+
+    /**
+     * 유저의 비밀번호를 수정하는 메서드
+     * @param form 현재비밀번호, 새비밀번호, 새비밀번호확인
+     * @param userDetails 로그인한 유저의 정보
+     * @return 수정 성공한 유저의 아이디
+     */
+    @PatchMapping("/change-password")
+    public ResponseEntity<BaseResponseDto<String>> changePassword (
+            @RequestBody ChangePasswordForm form,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(
+                new BaseResponseDto<>(
+                        memberService.changePassword(userDetails, form),
+                        "비밀 번호 수정 성공했습니다",
                         HttpStatus.OK
                 )
         );

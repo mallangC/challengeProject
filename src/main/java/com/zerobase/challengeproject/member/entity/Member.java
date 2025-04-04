@@ -106,4 +106,8 @@ public class Member {
         refund.refundTrue();
         this.account -= detail.getAmount();
     }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }
