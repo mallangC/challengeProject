@@ -47,7 +47,7 @@ public class ChallengeServiceTest {
 
     @Mock
     private UserDetailsImpl userDetails;
-    
+
     @InjectMocks
     private ChallengeService challengeService;
 
@@ -180,7 +180,7 @@ public class ChallengeServiceTest {
         CreateChallengeForm form = createChallengeForm();
 
         Challenge challenge = new Challenge(form, member);
-        given(memberRepository.findById(form.getMemberId())).willReturn(Optional.of(member));
+        given(memberRepository.findById(any())).willReturn(Optional.of(member));
         given(challengeRepository.save(any(Challenge.class))).willReturn(challenge);
 
         // When
