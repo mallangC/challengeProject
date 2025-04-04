@@ -18,6 +18,7 @@ import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
+import com.zerobase.challengeproject.type.CategoryType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,9 @@ public class CoteCommentService {
           CoteChallengeForm form,
           UserDetailsImpl userDetails) {
     Challenge challenge = challengeRepository.searchChallengeById(form.getChallengeId());
+    if (challenge.getCategoryType() != CategoryType.COTE) {
+      throw new CustomException(ErrorCode.NOT_COTE_CHALLENGE);
+    }
     if (!Objects.equals(challenge.getMember().getMemberId(), userDetails.getUsername())) {
       throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
     }
