@@ -40,7 +40,6 @@ public class ChallengeController {
     private final ChallengeRepository challengeRepository;
     private final AccountDetailRepository accountDetailRepository;
 
-
     /**
      * 챌린지 전체 조회
      */
@@ -51,7 +50,7 @@ public class ChallengeController {
         Page<GetChallengeDto> challengePage = new PageImpl<>(
                 challengeList,
                 pageable,
-                challengeList.size() // 또는 DB에서 총 개수 조회해서 넣어도 됨
+                challengeList.size()
         );
         return ResponseEntity.ok(new BaseResponseDto<>(challengePage, "전체 챌린지 조회 성공", HttpStatus.OK));
     }
