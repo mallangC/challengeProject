@@ -2,14 +2,12 @@ package com.zerobase.challengeproject.comment.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.zerobase.challengeproject.comment.entity.CoteComment;
-import com.zerobase.challengeproject.comment.entity.QCoteComment;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
-import com.zerobase.challengeproject.member.entity.QMember;
 import lombok.RequiredArgsConstructor;
 
-import static com.zerobase.challengeproject.comment.entity.QCoteComment.*;
-import static com.zerobase.challengeproject.member.entity.QMember.*;
+import static com.zerobase.challengeproject.comment.entity.QCoteComment.coteComment;
+import static com.zerobase.challengeproject.member.entity.QMember.member;
 
 @RequiredArgsConstructor
 public class CoteCommentRepositoryCustomImpl implements CoteCommentRepositoryCustom {
