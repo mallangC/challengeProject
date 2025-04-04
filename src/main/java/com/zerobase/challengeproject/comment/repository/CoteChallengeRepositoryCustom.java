@@ -6,4 +6,6 @@ import java.time.LocalDateTime;
 
 public interface CoteChallengeRepositoryCustom {
   CoteChallenge searchCoteChallengeByStartAt(Long challengeId, String memberId, LocalDateTime startAt);
+
+  CoteChallenge searchCoteChallengeById(Long coteChallengeId);
 }

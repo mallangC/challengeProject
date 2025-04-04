@@ -19,7 +19,6 @@ import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +39,7 @@ public class CommentService {
    * 날짜를 기준으로 코테 문제를 추가하는 서비스 메서드
    * 폼에 적은 날짜에 이미 CoteChallenge를 추가 했거나, Challenge를 찾을 수 없거나,
    * 추가 하려는 회원이 챌린지를 만든 회원이 아닐 때 예외발생
+   * (DB호출 2회) 호출 1, 저장 1
    *
    * @param form 챌린지 아이디, 코테 제목, 코테 문제링크, 문제가 시작되는 날짜
    * @return 코테 챌린지 정보
@@ -47,13 +47,13 @@ public class CommentService {
   public BaseResponseDto<CoteChallengeDto> addCoteChallenge(
           CoteChallengeForm form,
           UserDetailsImpl userDetails) {
-    Challenge challenge = challengeRepository.findById(form.getChallengeId())
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
+    Challenge challenge = challengeRepository.searchChallengeById(form.getChallengeId());
     if (!Objects.equals(challenge.getMember().getMemberId(), userDetails.getUsername())) {
       throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
     }
 
-    boolean isExist = coteChallengeRepository.existsByStartAt(form.getStartAt());
+    boolean isExist = challenge.getCoteChallenge().stream()
+            .anyMatch(c -> c.getStartAt().isEqual(form.getStartAt()));
     if (isExist) {
       throw new CustomException(ErrorCode.ALREADY_ADDED_THAT_DATE);
     }
@@ -70,6 +70,7 @@ public class CommentService {
   /**
    * 코테 챌린지를 단건 조회하는 서비스 메서드
    * 코테 챌린지 아이디로 찾을 수 없는 경우 예외 발생
+   * (DB호출 1회) 호출 1
    *
    * @param coteChallengeId 코테 챌린지 아이디
    * @return 댓글을 제외한 코테 챌린지의 정보
@@ -89,6 +90,7 @@ public class CommentService {
   /**
    * 코테 챌린지를 수정하기 위한 서비스 메서드
    * 내가 만든 챌린지가 아닐 때, 코테 챌린지를 찾을 수 없을 때 예외 발생
+   * (DB호출 2회) - 호출 1, 업데이트 1
    *
    * @param form        수정할 코테 챌린지 아이디, 수정할 코테 문제, 수정할 코테 링크
    * @param userDetails 자신이 만든 챌린지 인지 확인을 위한 회원 정보
@@ -112,6 +114,7 @@ public class CommentService {
    * 코테 챌린지(문제) 삭제를 위한 서비스 메서드
    * 내가 만든 챌린지가 아닐 때, 코테 챌린지를 찾을 수 없을 때,
    * 댓글이 있을 때 예외 발생
+   * (DB호출 2회) - 호출 1, 삭제 1
    *
    * @param coteChallengeId 코테 챌린지 아이디
    * @param userDetails     자신이 만든 챌린지 인지 확인을 위한 회원 정보
@@ -140,17 +143,19 @@ public class CommentService {
    * 코테 챌린지 인증 작성을 위한 서비스 메서드
    * 오늘 날짜에 이미 댓글을 썼거나, 챌린지 아이디로 챌린지를 찾을 수 없거나(아이디를 잘못썼거나, 있어야할 CoteChallenge 가 없거나),
    * 챌린지에 참여하지 않은 사람이 댓글을 쓰려고 할 때 예외발생
+   * (DB호출 3번) 호출 2, 저장 1
    *
    * @param form        챌린지 아이디, 인증하기 위한 이미지주소, 설명
    * @param userDetails username 사용
    * @return 인증 댓글 반환
    */
   public BaseResponseDto<CoteCommentDto> addComment(CoteCommentForm form, UserDetailsImpl userDetails) {
-    LocalDateTime now = LocalDateTime.now();
-    LocalDateTime today = LocalDateTime.parse(String.format("%04d-%02d-%02dT00:00:00", now.getYear(), now.getMonthValue(), now.getDayOfMonth()));
-    CoteChallenge coteChallenge = coteChallengeRepository.searchCoteChallengeByStartAt(form.getChallengeId(), userDetails.getUsername(), today);
 
     Member member = memberRepository.searchByEmail(userDetails.getUsername());
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime today = LocalDateTime.parse(String.format("%04d-%02d-%02dT00:00:00", now.getYear(), now.getMonthValue(), now.getDayOfMonth()));
+    CoteChallenge coteChallenge = coteChallengeRepository.searchCoteChallengeByStartAt(form.getChallengeId(), member.getMemberId(), today);
+
     boolean isEnter = member.getMemberChallenges().stream()
             .anyMatch(challenge ->
                     challenge.getChallenge()
@@ -168,7 +173,7 @@ public class CommentService {
             HttpStatus.OK);
   }
 
-  //인증 단건 확인 (commentId)
+  //인증 단건 확인 (commentId) (DB호출 1회)
   public BaseResponseDto<CoteCommentDto> getComment(Long commentId) {
     CoteComment coteComment = searchCoteCommentById(commentId);
     return new BaseResponseDto<CoteCommentDto>(
@@ -178,7 +183,7 @@ public class CommentService {
   }
 
 
-  //인증 수정 (commentId, form)
+  //인증 수정 (commentId, form) (DB호출 2회) 호출 1, 업데이트 1
   @Transactional
   public BaseResponseDto<CoteCommentDto> updateComment(CoteCommentUpdateForm form,
                                                        UserDetailsImpl userDetails) {
@@ -190,7 +195,7 @@ public class CommentService {
             HttpStatus.OK);
   }
 
-  //인증 삭제 (commentId)
+  //인증 삭제 (commentId) (DB호출 2회) 호출 1, 삭제 1
   @Transactional
   public BaseResponseDto<CoteCommentDto> deleteComment(Long commentId,
                                                        UserDetailsImpl userDetails) {
@@ -202,12 +207,12 @@ public class CommentService {
             HttpStatus.OK);
   }
 
-  private CoteComment searchCoteCommentById(Long commentId){
+  private CoteComment searchCoteCommentById(Long commentId) {
     return coteCommentRepository.findById(commentId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_COMMENT));
   }
 
-  private CoteComment searchCoteCommentById(Long commentId, String username){
+  private CoteComment searchCoteCommentById(Long commentId, String username) {
     CoteComment coteComment = coteCommentRepository.findById(commentId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_COMMENT));
     if (!coteComment.getMember().getMemberId().equals(username)) {
@@ -217,8 +222,7 @@ public class CommentService {
   }
 
   private CoteChallenge searchCoteChallengeByIdAndOwnerCheck(Long coteChallengeId, String username) {
-    CoteChallenge coteChallenge = coteChallengeRepository.findById(coteChallengeId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_CHALLENGE));
+    CoteChallenge coteChallenge = coteChallengeRepository.searchCoteChallengeById(coteChallengeId);
     boolean isOwner = coteChallenge.getChallenge().getMember().getMemberId().equals(username);
     if (!isOwner) {
       throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);

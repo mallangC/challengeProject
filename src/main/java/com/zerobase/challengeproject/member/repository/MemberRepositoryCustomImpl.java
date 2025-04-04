@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.zerobase.challengeproject.account.entity.QAccountDetail.accountDetail;
+import static com.zerobase.challengeproject.challenge.entity.QChallenge.challenge;
 import static com.zerobase.challengeproject.challenge.entity.QMemberChallenge.memberChallenge;
 import static com.zerobase.challengeproject.member.entity.QMember.member;
 
@@ -71,6 +72,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
   public Member searchByEmail(String email) {
     Member findMember = queryFactory.selectFrom(member)
             .leftJoin(member.memberChallenges, memberChallenge).fetchJoin()
+            .leftJoin(memberChallenge.challenge, challenge).fetchJoin()
             .where(member.memberId.eq(email))
             .fetchOne();
 
@@ -80,4 +82,6 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
     return findMember;
   }
+
+
 }
