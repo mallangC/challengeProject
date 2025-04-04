@@ -131,26 +131,4 @@ public class ChallengeController {
         return challengeService.deleteChallenge(challengeId, userDetails);
     }
 
-
-    /**
-     * 챌린지 환급
-    @PostMapping("/deposit-back/{dietChallengeId}")
-    public ResponseEntity<BaseResponseDto<DepositBackDto>> depositBack(@PathVariable Long dietChallengeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-
-        Member member = userDetails.getMember();
-
-        AccountDetail accountDetail = accountDetailRepository.findByMemberId(member.getId(), dietChallengeId);
-
-        DietChallenge diet = dietChallengeRepository.findByDietChallengeId(dietChallengeId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHALLENGE));
-
-        if(diet.goalWeight >= diet.current_weight){
-            accountDetail.depositBack(member, diet.getChallenge().getMemberDeposit() * 1.1);
-        }
-        member.chargeAccount(diet.getChallenge().getMemberDeposit() * 1.1);
-        accountDetail.refundTrue();
-        accountDetailRepository.save(accountDetail);
-        return ;
-    }
-    */
 }
