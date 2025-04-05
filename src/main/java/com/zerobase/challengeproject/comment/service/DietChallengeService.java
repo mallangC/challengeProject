@@ -64,7 +64,7 @@ public class DietChallengeService {
     dietChallengeRepository.save(dietChallenge);
     dietCommentRepository.save(dietComment);
 
-    return new BaseResponseDto<DietChallengeDto>(DietChallengeDto.from(dietChallenge),
+    return new BaseResponseDto<>(DietChallengeDto.from(dietChallenge),
             "다이어트 챌린지 추가를 성공했습니다.",
             HttpStatus.OK);
   }
@@ -75,7 +75,7 @@ public class DietChallengeService {
     DietChallenge dietChallenge =
             dietChallengeRepository.searchDietChallengeByChallengeIdAndLoginId(
                     challengeId, userDetails.getUsername());
-    return new BaseResponseDto<DietChallengeDto>(DietChallengeDto.from(dietChallenge),
+    return new BaseResponseDto<>(DietChallengeDto.from(dietChallenge),
             "다이어트 챌린지 단건 조회를 성공했습니다.",
             HttpStatus.OK);
   }
@@ -85,7 +85,7 @@ public class DietChallengeService {
                                                                         Long challengeId) {
     Page<DietChallengeDto> dietChallengeDtos =
             dietChallengeRepository.searchDietChallengeByChallengeId(page - 1, challengeId);
-    return new BaseResponseDto<PageDto<DietChallengeDto>>(PageDto.from(dietChallengeDtos),
+    return new BaseResponseDto<>(PageDto.from(dietChallengeDtos),
             "다이어트 챌린지 전체 조회를 성공했습니다.(" + page + "페이지)",
             HttpStatus.OK);
   }
@@ -102,15 +102,10 @@ public class DietChallengeService {
       throw new CustomException(ErrorCode.CANNOT_UPDATE_AFTER_START_CHALLENGE);
     }
     dietChallenge.update(form);
-    return new BaseResponseDto<DietChallengeDto>(DietChallengeDto.from(dietChallenge),
+    return new BaseResponseDto<>(DietChallengeDto.from(dietChallenge),
             "다이어트 챌린지 수정을 성공했습니다.",
             HttpStatus.OK);
   }
-
-  // TODO 다이어트 챌린지 삭제는 참여 취소 하면 같이 삭제
-  //  참여할 때 작성하는게 다이어트 챌린지이기 때문에
-  //  따로 삭제 API를 만들 필요는 없을 것으로 생각
-
 
   //다이어트 코멘트 추가 (form, userDetails) (DB호출 3회) 호출 1, 저장 1, 업데이트 1
   @Transactional
@@ -121,7 +116,7 @@ public class DietChallengeService {
     DietComment dietComment = DietComment.from(form, dietChallenge, member);
     dietCommentRepository.save(dietComment);
     dietChallenge.updateWeight(form.getCurrentWeight());
-    return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
+    return new BaseResponseDto<>(DietCommentDto.from(dietComment),
             "다이어트 댓글 추가를 성공했습니다.",
             HttpStatus.OK);
   }
@@ -129,7 +124,7 @@ public class DietChallengeService {
   //다이어트 코멘트 단건 조회 (commentId)
   public BaseResponseDto<DietCommentDto> getDietComment(Long commentId) {
     DietComment dietComment = dietCommentRepository.searchDietCommentById(commentId);
-    return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
+    return new BaseResponseDto<>(DietCommentDto.from(dietComment),
             "다이어트 댓글 조회를 성공했습니다.",
             HttpStatus.OK);
   }
@@ -143,7 +138,7 @@ public class DietChallengeService {
     checkMemberOwnerOfComment(member, dietComment);
     dietComment.update(form);
     dietComment.getDietChallenge().updateWeight(form.getCurrentWeight());
-    return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
+    return new BaseResponseDto<>(DietCommentDto.from(dietComment),
             "다이어트 댓글 수정을 성공했습니다.",
             HttpStatus.OK);
   }
@@ -156,7 +151,7 @@ public class DietChallengeService {
     DietComment dietComment = dietCommentRepository.searchDietCommentById(commentId);
     checkMemberOwnerOfComment(member, dietComment);
     dietCommentRepository.delete(dietComment);
-    return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
+    return new BaseResponseDto<>(DietCommentDto.from(dietComment),
             "다이어트 댓글 삭제를 성공했습니다.",
             HttpStatus.OK);
   }
