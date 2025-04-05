@@ -4,8 +4,10 @@ import com.zerobase.challengeproject.BaseResponseDto;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
 import com.zerobase.challengeproject.comment.domain.dto.DietChallengeDto;
+import com.zerobase.challengeproject.comment.domain.dto.DietCommentDto;
 import com.zerobase.challengeproject.comment.domain.form.DietChallengeAddForm;
 import com.zerobase.challengeproject.comment.domain.form.DietChallengeUpdateForm;
+import com.zerobase.challengeproject.comment.domain.form.DietCommentAddForm;
 import com.zerobase.challengeproject.comment.entity.DietChallenge;
 import com.zerobase.challengeproject.comment.entity.DietComment;
 import com.zerobase.challengeproject.comment.repository.DietChallengeRepository;
@@ -70,19 +72,19 @@ public class DietChallengeService {
   public BaseResponseDto<DietChallengeDto> getDietChallenge(Long challengeId,
                                                             UserDetailsImpl userDetails) {
     DietChallenge dietChallenge =
-            dietChallengeRepository.searchDietChallengeByChallengeIdAndMemberId(
+            dietChallengeRepository.searchDietChallengeByChallengeIdAndLoginId(
                     challengeId, userDetails.getUsername());
     return new BaseResponseDto<DietChallengeDto>(DietChallengeDto.from(dietChallenge),
             "다이어트 챌린지 단건 조회를 성공했습니다.",
             HttpStatus.OK);
   }
 
-  //다이어트 챌린지 수정 (form, userDetails)
+  //다이어트 챌린지 수정 (form, userDetails)(DB호출 2회) 호출 1, 업데이트 1
   @Transactional
   public BaseResponseDto<DietChallengeDto> updateDietChallenge(DietChallengeUpdateForm form,
                                                                UserDetailsImpl userDetails) {
     DietChallenge dietChallenge =
-            dietChallengeRepository.searchDietChallengeByChallengeIdAndMemberId(
+            dietChallengeRepository.searchDietChallengeByChallengeIdAndLoginId(
                     form.getChallengeId(), userDetails.getUsername());
     if (dietChallenge.getChallenge().getStartDate().isBefore(LocalDateTime.now())) {
       throw new CustomException(ErrorCode.CANNOT_UPDATE_AFTER_START_CHALLENGE);
@@ -92,6 +94,29 @@ public class DietChallengeService {
             "다이어트 챌린지 수정을 성공했습니다.",
             HttpStatus.OK);
   }
+
+  // TODO 다이어트 챌린지 삭제는 참여 취소 하면 같이 삭제
+  //  참여할 때 작성하는게 다이어트 챌린지이기 때문에
+  //  따로 삭제 API를 만들 필요는 없을 것으로 생각
+
+
+  //다이어트 코멘트 추가 (form, userDetails) (DB호출 2회) 호출 1, 저장 1
+  @Transactional
+  public BaseResponseDto<DietCommentDto> addDietComment(DietCommentAddForm form, UserDetailsImpl userDetails) {
+    Member member = userDetails.getMember();
+    DietChallenge dietChallenge = dietChallengeRepository.
+            searchDietChallengeByChallengeIdAndLoginId(form.getChallengeId(), member.getMemberId());
+    DietComment dietComment = DietComment.from(form, dietChallenge, member);
+    dietCommentRepository.save(dietComment);
+    dietChallenge.updateWeight(form.getCurrentWeight());
+    return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
+    "다이어트 댓글 추가를 성공했습니다.",
+            HttpStatus.OK);
+  }
+
+  //다이어트 코멘트 단건 조회 (commentId)
+  //다이어트 코멘트 수정 (form, userDetails)
+  //다이어트 코멘트 삭제 (commentId, userDetails)
 
 
 }
