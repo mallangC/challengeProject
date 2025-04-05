@@ -1,6 +1,5 @@
 package com.zerobase.challengeproject.comment.domain.dto;
 
-import com.zerobase.challengeproject.account.entity.BaseEntity;
 import com.zerobase.challengeproject.comment.entity.DietChallenge;
 import lombok.Builder;
 import lombok.Getter;

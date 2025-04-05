@@ -1,8 +1,8 @@
 package com.zerobase.challengeproject.comment.repository;
 
-import com.zerobase.challengeproject.comment.entity.DietChallenge;
+import com.zerobase.challengeproject.comment.entity.DietComment;
 
 public interface DietCommentRepositoryCustom {
 
-  DietChallenge searchDietChallengeByChallengeIdAndMemberId(Long challengeId, String loginId);
+  DietComment searchDietCommentById(Long commentId);
 }

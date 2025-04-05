@@ -45,12 +45,21 @@ public class DietChallengeController {
     return ResponseEntity.ok(dietChallengeService.updateDietChallenge(form, userDetails));
   }
 
-
+  //다이어트 댓글 추가
   @PostMapping("/comment")
   public ResponseEntity<BaseResponseDto<DietCommentDto>> addComment(
           @RequestBody @Valid DietCommentAddForm form,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
     return ResponseEntity.ok(dietChallengeService.addDietComment(form, userDetails));
+  }
+
+
+
+  //다이어트 댓글 단건 확인
+  @GetMapping("/comment/{commentId}")
+  public ResponseEntity<BaseResponseDto<DietCommentDto>> getComment(
+          @PathVariable Long commentId) {
+    return ResponseEntity.ok(dietChallengeService.getDietComment(commentId));
   }
 
 

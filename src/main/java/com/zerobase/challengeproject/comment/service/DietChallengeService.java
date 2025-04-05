@@ -16,7 +16,6 @@ import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.entity.Member;
-import com.zerobase.challengeproject.member.repository.MemberRepository;
 import com.zerobase.challengeproject.type.CategoryType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class DietChallengeService {
   private final ChallengeRepository challengeRepository;
-  private final MemberRepository memberRepository;
   private final DietChallengeRepository dietChallengeRepository;
   private final DietCommentRepository dietCommentRepository;
 
@@ -100,7 +98,7 @@ public class DietChallengeService {
   //  따로 삭제 API를 만들 필요는 없을 것으로 생각
 
 
-  //다이어트 코멘트 추가 (form, userDetails) (DB호출 2회) 호출 1, 저장 1
+  //다이어트 코멘트 추가 (form, userDetails) (DB호출 3회) 호출 1, 저장 1, 업데이트 1
   @Transactional
   public BaseResponseDto<DietCommentDto> addDietComment(DietCommentAddForm form, UserDetailsImpl userDetails) {
     Member member = userDetails.getMember();
@@ -115,6 +113,13 @@ public class DietChallengeService {
   }
 
   //다이어트 코멘트 단건 조회 (commentId)
+  public BaseResponseDto<DietCommentDto> getDietComment(Long commentId) {
+    DietComment dietComment = dietCommentRepository.searchDietCommentById(commentId);
+    return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
+            "다이어트 댓글 조회를 성공했습니다.",
+            HttpStatus.OK);
+  }
+
   //다이어트 코멘트 수정 (form, userDetails)
   //다이어트 코멘트 삭제 (commentId, userDetails)
 
