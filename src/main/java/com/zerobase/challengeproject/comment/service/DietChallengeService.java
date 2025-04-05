@@ -1,6 +1,7 @@
 package com.zerobase.challengeproject.comment.service;
 
 import com.zerobase.challengeproject.BaseResponseDto;
+import com.zerobase.challengeproject.account.domain.dto.PageDto;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
 import com.zerobase.challengeproject.comment.domain.dto.DietChallengeDto;
@@ -19,6 +20,7 @@ import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.type.CategoryType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +79,17 @@ public class DietChallengeService {
             "다이어트 챌린지 단건 조회를 성공했습니다.",
             HttpStatus.OK);
   }
+
+  //다이어트 챌린지 전체 조회 (challengeId, userDetails)
+  public BaseResponseDto<PageDto<DietChallengeDto>> getAllDietChallenge(int page,
+                                                                        Long challengeId) {
+    Page<DietChallengeDto> dietChallengeDtos =
+            dietChallengeRepository.searchDietChallengeByChallengeId(page - 1, challengeId);
+    return new BaseResponseDto<PageDto<DietChallengeDto>>(PageDto.from(dietChallengeDtos),
+            "다이어트 챌린지 전체 조회를 성공했습니다.(" + page + "페이지)",
+            HttpStatus.OK);
+  }
+
 
   //다이어트 챌린지 수정 (form, userDetails)(DB호출 2회) 호출 1, 업데이트 1
   @Transactional

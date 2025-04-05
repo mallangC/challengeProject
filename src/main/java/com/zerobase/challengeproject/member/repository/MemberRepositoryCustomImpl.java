@@ -28,7 +28,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
    *
    * @param loginId 로그인 아이디
    * @param searchByDate 검색에 기준이 되는 LocalDateTime
-   * @return
+   * @return 멤버 객체
    */
   @Override
   public Member searchByLoginIdAndAccountDetailsToDate(String loginId, LocalDateTime searchByDate) {
@@ -60,12 +60,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     return findMember;
   }
 
-  /**
-   *
-   * @param longinId
-   * @param accountId
-   * @return
-   */
+
   @Override
   public Member searchByLoginIdAndAccountDetailId(String longinId, Long accountId) {
     Member findMember = queryFactory.selectFrom(member)
