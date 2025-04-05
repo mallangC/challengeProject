@@ -6,6 +6,7 @@ import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
+import static com.zerobase.challengeproject.challenge.entity.QChallenge.challenge;
 import static com.zerobase.challengeproject.comment.entity.QDietChallenge.dietChallenge;
 import static com.zerobase.challengeproject.comment.entity.QDietComment.dietComment;
 import static com.zerobase.challengeproject.member.entity.QMember.member;
@@ -20,6 +21,7 @@ public class DietCommentRepositoryCustomImpl implements DietCommentRepositoryCus
 
     DietComment findDietComment = queryFactory.selectFrom(dietComment)
             .join(dietComment.dietChallenge, dietChallenge).fetchJoin()
+            .join(dietComment.dietChallenge.challenge, challenge).fetchJoin()
             .join(dietComment.member, member).fetchJoin()
             .where(dietComment.id.eq(commentId))
             .fetchOne();

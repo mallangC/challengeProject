@@ -109,7 +109,7 @@ public class DietChallengeService {
     dietCommentRepository.save(dietComment);
     dietChallenge.updateWeight(form.getCurrentWeight());
     return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
-    "다이어트 댓글 추가를 성공했습니다.",
+            "다이어트 댓글 추가를 성공했습니다.",
             HttpStatus.OK);
   }
 
@@ -123,12 +123,11 @@ public class DietChallengeService {
 
   //다이어트 코멘트 수정 (form, userDetails)
   @Transactional
-  public BaseResponseDto<DietCommentDto> updateDietComment(DietCommentUpdateForm form, UserDetailsImpl userDetails) {
+  public BaseResponseDto<DietCommentDto> updateDietComment(DietCommentUpdateForm form,
+                                                           UserDetailsImpl userDetails) {
     Member member = userDetails.getMember();
     DietComment dietComment = dietCommentRepository.searchDietCommentById(form.getCommentId());
-    if (!member.getMemberId().equals(dietComment.getMember().getMemberId())) {
-      throw new CustomException(ErrorCode.NOT_OWNER_OF_COMMENT);
-    }
+    checkMemberOwnerOfComment(member, dietComment);
     dietComment.update(form);
     dietComment.getDietChallenge().updateWeight(form.getCurrentWeight());
     return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
@@ -137,6 +136,22 @@ public class DietChallengeService {
   }
 
   //다이어트 코멘트 삭제 (commentId, userDetails)
+  @Transactional
+  public BaseResponseDto<DietCommentDto> deleteDietComment(Long commentId,
+                                                           UserDetailsImpl userDetails) {
+    Member member = userDetails.getMember();
+    DietComment dietComment = dietCommentRepository.searchDietCommentById(commentId);
+    checkMemberOwnerOfComment(member, dietComment);
+    dietCommentRepository.delete(dietComment);
+    return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
+            "다이어트 댓글 삭제를 성공했습니다.",
+            HttpStatus.OK);
+  }
 
+  private void checkMemberOwnerOfComment(Member member, DietComment comment) {
+    if (!member.getMemberId().equals(comment.getMember().getMemberId())) {
+      throw new CustomException(ErrorCode.NOT_OWNER_OF_COMMENT);
+    }
+  }
 
 }

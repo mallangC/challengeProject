@@ -47,7 +47,6 @@ public class DietChallengeController {
   }
 
 
-
   //다이어트 댓글 추가
   @PostMapping("/comment")
   public ResponseEntity<BaseResponseDto<DietCommentDto>> addComment(
@@ -72,5 +71,12 @@ public class DietChallengeController {
   }
 
 
+  //다이어트 댓글 삭제
+  @DeleteMapping("/comment/{commentId}")
+  public ResponseEntity<BaseResponseDto<DietCommentDto>> deleteComment(
+          @PathVariable Long commentId,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return ResponseEntity.ok(dietChallengeService.deleteDietComment(commentId, userDetails));
+  }
 
 }
