@@ -1,6 +1,7 @@
 package com.zerobase.challengeproject.comment.controller;
 
 import com.zerobase.challengeproject.BaseResponseDto;
+import com.zerobase.challengeproject.account.domain.dto.PageDto;
 import com.zerobase.challengeproject.comment.domain.dto.CoteChallengeDto;
 import com.zerobase.challengeproject.comment.domain.dto.CoteCommentDto;
 import com.zerobase.challengeproject.comment.domain.form.CoteChallengeForm;
@@ -10,6 +11,7 @@ import com.zerobase.challengeproject.comment.domain.form.CoteCommentUpdateForm;
 import com.zerobase.challengeproject.comment.service.CoteChallengeService;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,12 +19,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/challenge")
+@RequestMapping("api/challenge/cote")
 public class CoteChallengeController {
   private final CoteChallengeService coteChallengeService;
 
   //코테 챌린지 추가
-  @PostMapping("/cote")
+  @PostMapping
   public ResponseEntity<BaseResponseDto<CoteChallengeDto>> addCoteChallenge(
           @RequestBody @Valid CoteChallengeForm form,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -30,14 +32,22 @@ public class CoteChallengeController {
   }
 
   //코테 챌린지 단건 조회
-  @GetMapping("/cote/{coteChallengeId}")
+  @GetMapping("/{coteChallengeId}")
   public ResponseEntity<BaseResponseDto<CoteChallengeDto>> getCoteChallenge(
           @PathVariable Long coteChallengeId) {
     return ResponseEntity.ok(coteChallengeService.getCoteChallenge(coteChallengeId));
   }
 
+  //코테 챌린지 전체 조회
+  @GetMapping
+  public ResponseEntity<BaseResponseDto<PageDto<CoteChallengeDto>>> getCoteChallenge(
+          @RequestParam @Min(1) int page,
+          @RequestParam("id") Long challengeId) {
+    return ResponseEntity.ok(coteChallengeService.getAllCoteChallenge(page, challengeId));
+  }
+
   //코테 챌린지 수정
-  @PatchMapping("/cote")
+  @PatchMapping
   public ResponseEntity<BaseResponseDto<CoteChallengeDto>> updateCoteChallenge(
           @RequestBody @Valid CoteChallengeUpdateForm form,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -45,7 +55,7 @@ public class CoteChallengeController {
   }
 
   //코테 챌린지 삭제
-  @DeleteMapping("/cote/{coteChallengeId}")
+  @DeleteMapping("/{coteChallengeId}")
   public ResponseEntity<BaseResponseDto<CoteChallengeDto>> deleteCoteChallenge(
           @PathVariable Long coteChallengeId,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {

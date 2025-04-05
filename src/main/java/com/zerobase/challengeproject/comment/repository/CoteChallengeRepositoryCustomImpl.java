@@ -1,12 +1,18 @@
 package com.zerobase.challengeproject.comment.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.zerobase.challengeproject.comment.domain.dto.CoteChallengeDto;
 import com.zerobase.challengeproject.comment.entity.CoteChallenge;
 import com.zerobase.challengeproject.exception.CustomException;
 import com.zerobase.challengeproject.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.zerobase.challengeproject.challenge.entity.QChallenge.challenge;
 import static com.zerobase.challengeproject.comment.entity.QCoteChallenge.coteChallenge;
@@ -58,5 +64,33 @@ public class CoteChallengeRepositoryCustomImpl implements CoteChallengeRepositor
     }
 
     return findCoteChallenge;
+  }
+
+  @Override
+  public Page<CoteChallengeDto> searchAllCoteChallengeByChallengeId(int page, Long challengeId) {
+    Pageable pageable = PageRequest.of(page, 20);
+
+    Long total = queryFactory.select(coteChallenge.count())
+            .from(coteChallenge)
+            .where(coteChallenge.challenge.id.eq(challengeId))
+            .fetchOne();
+
+    if (total == null) {
+      return new PageImpl<>(List.of(), pageable, 0);
+    }
+
+    List<CoteChallenge> findCoteChallenges = queryFactory.selectFrom(coteChallenge)
+            .join(coteChallenge.challenge, challenge).fetchJoin()
+            .join(challenge.member, member).fetchJoin()
+            .where(coteChallenge.challenge.id.eq(challengeId))
+            .limit(pageable.getPageSize())
+            .offset(pageable.getOffset())
+            .fetch();
+
+    List<CoteChallengeDto> coteChallengeDtos = findCoteChallenges.stream()
+            .map(CoteChallengeDto::fromWithoutComments)
+            .toList();
+
+    return new PageImpl<>(coteChallengeDtos, pageable, total);
   }
 }

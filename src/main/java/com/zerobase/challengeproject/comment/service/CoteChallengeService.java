@@ -1,6 +1,7 @@
 package com.zerobase.challengeproject.comment.service;
 
 import com.zerobase.challengeproject.BaseResponseDto;
+import com.zerobase.challengeproject.account.domain.dto.PageDto;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
 import com.zerobase.challengeproject.comment.domain.dto.CoteChallengeDto;
@@ -20,6 +21,7 @@ import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
 import com.zerobase.challengeproject.type.CategoryType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,8 +81,7 @@ public class CoteChallengeService {
    * @param coteChallengeId 코테 챌린지 아이디
    * @return 댓글을 제외한 코테 챌린지의 정보
    */
-  public BaseResponseDto<CoteChallengeDto> getCoteChallenge(
-          Long coteChallengeId) {
+  public BaseResponseDto<CoteChallengeDto> getCoteChallenge(Long coteChallengeId) {
 
     CoteChallenge coteChallenge = coteChallengeRepository.findById(coteChallengeId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_CHALLENGE));
@@ -90,6 +91,25 @@ public class CoteChallengeService {
             "코테 챌린지 단건 조회를 성공했습니다.",
             HttpStatus.OK);
   }
+
+  /**
+   * 코테 챌린지를 전체 조회하는 서비스 메서드
+   * (DB호출 1회) 호출 1
+   *
+   * @param page        페이지
+   * @param challengeId 챌린지 아이디
+   * @return 댓글을 제외한 모든 코테 챌린지의 정보
+   */
+  public BaseResponseDto<PageDto<CoteChallengeDto>> getAllCoteChallenge(int page,
+                                                                        Long challengeId) {
+    Page<CoteChallengeDto> coteChallenge =
+            coteChallengeRepository.searchAllCoteChallengeByChallengeId(page - 1, challengeId);
+    return new BaseResponseDto<PageDto<CoteChallengeDto>>(
+            PageDto.from(coteChallenge),
+            "코테 챌린지 전체 조회를 성공했습니다.(" + page + "페이지)",
+            HttpStatus.OK);
+  }
+
 
   /**
    * 코테 챌린지를 수정하기 위한 서비스 메서드
