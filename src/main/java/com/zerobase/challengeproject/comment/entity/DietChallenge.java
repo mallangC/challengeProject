@@ -26,12 +26,14 @@ public class DietChallenge extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @ManyToOne
-  @JoinColumn(name = "member_id")
+  @JoinColumn(name = "member_id", nullable = false)
   private Member member;
   @ManyToOne
-  @JoinColumn(name = "challenge_id")
+  @JoinColumn(name = "challenge_id", nullable = false)
   private Challenge challenge;
+  @Column(nullable = false)
   private Float goalWeight;
+  @Column(nullable = false)
   private Float currentWeight;
   @OneToMany(mappedBy = "dietChallenge", fetch = FetchType.LAZY)
   private List<DietComment> comments;

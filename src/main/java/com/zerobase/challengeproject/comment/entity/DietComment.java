@@ -20,12 +20,14 @@ public class DietComment extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @ManyToOne
-  @JoinColumn(name = "diet_challenge_id")
+  @JoinColumn(name = "diet_challenge_id", nullable = false)
   private DietChallenge dietChallenge;
   @ManyToOne
-  @JoinColumn(name = "member_id")
+  @JoinColumn(name = "member_id", nullable = false)
   private Member member;
+  @Column(nullable = false)
   private String image;
+  @Column(nullable = false)
   private String content;
 
   public static DietComment from(DietCommentAddForm form, DietChallenge dietChallenge, Member member) {

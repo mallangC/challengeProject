@@ -25,7 +25,9 @@ public class CoteComment extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "cote_challenge_id")
   private CoteChallenge coteChallenge;
+  @Column(nullable = false)
   private String image;
+  @Column(nullable = false)
   private String content;
 
   public static CoteComment from(CoteCommentForm form,
