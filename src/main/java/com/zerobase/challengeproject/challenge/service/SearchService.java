@@ -27,7 +27,7 @@ public class SearchService {
 
         Page<GetChallengeDto> searchResult = challenges.map(challenge -> new GetChallengeDto(challenge));
 
-        return ResponseEntity.ok(new BaseResponseDto<Page<GetChallengeDto>>(searchResult, "제목검색 성공", HttpStatus.OK));
+        return ResponseEntity.ok(new BaseResponseDto<>(searchResult, "제목검색 성공", HttpStatus.OK));
 
     }
 
@@ -35,11 +35,11 @@ public class SearchService {
      * 카테고리로 챌린지 검색
      */
     public ResponseEntity<BaseResponseDto<Page<GetChallengeDto>>> searchByCategory(CategoryType categoryType, Pageable pageable) {
-        Page<Challenge> challenges = challengeRepository.findByCategory(categoryType, pageable);
+        Page<Challenge> challenges = challengeRepository.findByCategoryType(categoryType, pageable);
 
         Page<GetChallengeDto> searchResult = challenges.map(challenge -> new GetChallengeDto(challenge));
 
-        return ResponseEntity.ok(new BaseResponseDto<Page<GetChallengeDto>>(searchResult, "카테고리검색 성공", HttpStatus.OK));
+        return ResponseEntity.ok(new BaseResponseDto<>(searchResult, "카테고리검색 성공", HttpStatus.OK));
 
     }
 }

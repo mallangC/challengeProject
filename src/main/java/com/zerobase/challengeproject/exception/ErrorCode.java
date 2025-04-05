@@ -23,6 +23,7 @@ public enum ErrorCode {
   TOKEN_NOT_PROVIDED(HttpStatus.BAD_REQUEST, "리프레시 토큰이 제공되지 않았습니다."),
 
   NOT_ENOUGH_MONEY_TO_REFUND(HttpStatus.BAD_REQUEST, "환불할 금액이 부족합니다."),
+  NOT_ENOUGH_MONEY(HttpStatus.BAD_REQUEST, "금액이 부족합니다."),
   NOT_FOUND_ACCOUNT_DETAIL(HttpStatus.BAD_REQUEST, "계좌 내역을 찾을 수 없습니다."),
   NOT_CHARGE_DETAIL(HttpStatus.BAD_REQUEST, "충전 내역이 아닙니다."),
   ALREADY_REFUNDED(HttpStatus.BAD_REQUEST, "이미 환불된 내역입니다."),
@@ -42,8 +43,10 @@ public enum ErrorCode {
   FORBIDDEN_DELETE_CHALLENGE(HttpStatus.BAD_REQUEST, "챌린지를 생성한 유저만 삭제가 가능합니다." ),
   INSUFFICIENT_DEPOSIT(HttpStatus.BAD_REQUEST, "보증금이 부족합니다." ),
   CHALLENGE_ALREADY_ENDED(HttpStatus.BAD_REQUEST, "이미 종료된 챌린지입니다." ),
+  NOT_DEPOSIT_DETAIL(HttpStatus.BAD_REQUEST, "보증금 내역이 아닙니다." ),
 
   NOT_FOUND_COTE_CHALLENGE(HttpStatus.BAD_REQUEST, "코테 챌린지를 찾을 수 없습니다."),
+  NOT_COTE_CHALLENGE(HttpStatus.BAD_REQUEST, "코테 챌린지가 아닙니다."),
   NOT_FOUND_COTE_COMMENT(HttpStatus.BAD_REQUEST, "코테 댓글을 찾을 수 없습니다."),
   ALREADY_ADDED_THAT_DATE(HttpStatus.BAD_REQUEST, "입력한 날짜에 이미 문제가 추가되어 있습니다."),
   ALREADY_ADDED_COMMENT_TODAY(HttpStatus.BAD_REQUEST, "오늘 이미 인증했습니다."),
@@ -52,6 +55,12 @@ public enum ErrorCode {
   CANNOT_DELETE_HAVE_COMMENT(HttpStatus.BAD_REQUEST, "인증 댓글이 있으면 코테 챌린지를 삭제할 수 없습니다."),
   NOT_OWNER_OF_COMMENT(HttpStatus.BAD_REQUEST, "댓글을 작성한 회원이 아닙니다."),
 
+  NOT_DIET_CHALLENGE(HttpStatus.BAD_REQUEST, "다이어트 챌린지가 아닙니다."),
+  ALREADY_ADDED_DIET_CHALLENGE(HttpStatus.BAD_REQUEST, "이미 다이어트 챌린지가 추가되어 있습니다."),
+  NOT_FOUND_DIET_CHALLENGE(HttpStatus.BAD_REQUEST, "다이어트 챌린지를 찾을 수 없습니다."),
+  DIFFERENCE_MORE_THEN_5KG(HttpStatus.BAD_REQUEST, "현재 몸무게와 목표 몸무게의 차이가 5kg이상 되어야 합니다."),
+  CANNOT_UPDATE_AFTER_START_CHALLENGE(HttpStatus.BAD_REQUEST, "챌린지가 시작하면 다이어트 챌린지를 수정할 수 없습니다."),
+  NOT_FOUND_DIET_COMMENT(HttpStatus.BAD_REQUEST, "다이어트 댓글을 찾을 수 없습니다."),
 
   ;
 

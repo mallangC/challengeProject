@@ -18,7 +18,7 @@ public class ChallengeRepositoryCustomImpl implements ChallengeRepositoryCustom 
   public Challenge searchChallengeById(Long challengeId) {
     Challenge findChallenge = queryFactory.selectFrom(challenge)
             .join(challenge.member, member).fetchJoin()
-            .leftJoin(challenge.coteChallenge, coteChallenge).fetchJoin()
+            .leftJoin(challenge.coteChallenges, coteChallenge).fetchJoin()
             .where(challenge.id.eq(challengeId))
             .fetchOne();
 

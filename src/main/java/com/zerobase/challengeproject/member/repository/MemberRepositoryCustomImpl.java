@@ -21,11 +21,20 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
 
+  /**
+   * 로그인 아이디와 searchByDate로 계좌 내역을 검색
+   * searchByDate에서 검색하는 시간까지 내역을 검색
+   * 계좌 내역을 Fetch Join
+   *
+   * @param loginId 로그인 아이디
+   * @param searchByDate 검색에 기준이 되는 LocalDateTime
+   * @return 멤버 객체
+   */
   @Override
-  public Member searchByEmailAndAccountDetailsToDate(String email, LocalDateTime searchByDate) {
+  public Member searchByLoginIdAndAccountDetailsToDate(String loginId, LocalDateTime searchByDate) {
     Member findMember = queryFactory.selectFrom(member)
             .leftJoin(member.accountDetails, accountDetail).fetchJoin()
-            .where(member.memberId.eq(email)
+            .where(member.memberId.eq(loginId)
                     .and(accountDetail.accountType.eq(AccountType.CHARGE))
                     .and(accountDetail.isRefunded.eq(false))
                     .and(accountDetail.createdAt.between(searchByDate, LocalDateTime.now())))
@@ -51,11 +60,12 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     return findMember;
   }
 
+
   @Override
-  public Member searchByEmailAndAccountDetailId(String email, Long accountId) {
+  public Member searchByLoginIdAndAccountDetailId(String longinId, Long accountId) {
     Member findMember = queryFactory.selectFrom(member)
             .join(member.accountDetails, accountDetail).fetchJoin()
-            .where(member.memberId.eq(email)
+            .where(member.memberId.eq(longinId)
                     .and(accountDetail.id.eq(accountId)))
             .fetchOne();
     if (findMember == null) {
@@ -69,11 +79,11 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
 
   @Override
-  public Member searchByEmail(String email) {
+  public Member searchByLoginId(String loginId) {
     Member findMember = queryFactory.selectFrom(member)
             .leftJoin(member.memberChallenges, memberChallenge).fetchJoin()
             .leftJoin(memberChallenge.challenge, challenge).fetchJoin()
-            .where(member.memberId.eq(email))
+            .where(member.memberId.eq(loginId))
             .fetchOne();
 
     if (findMember == null) {

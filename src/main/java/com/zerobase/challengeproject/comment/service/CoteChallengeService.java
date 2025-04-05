@@ -1,6 +1,7 @@
 package com.zerobase.challengeproject.comment.service;
 
 import com.zerobase.challengeproject.BaseResponseDto;
+import com.zerobase.challengeproject.account.domain.dto.PageDto;
 import com.zerobase.challengeproject.challenge.entity.Challenge;
 import com.zerobase.challengeproject.challenge.repository.ChallengeRepository;
 import com.zerobase.challengeproject.comment.domain.dto.CoteChallengeDto;
@@ -18,7 +19,9 @@ import com.zerobase.challengeproject.exception.ErrorCode;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import com.zerobase.challengeproject.member.entity.Member;
 import com.zerobase.challengeproject.member.repository.MemberRepository;
+import com.zerobase.challengeproject.type.CategoryType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +31,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class CoteCommentService {
+public class CoteChallengeService {
   private final CoteCommentRepository coteCommentRepository;
   private final CoteChallengeRepository coteChallengeRepository;
   private final ChallengeRepository challengeRepository;
@@ -48,11 +51,14 @@ public class CoteCommentService {
           CoteChallengeForm form,
           UserDetailsImpl userDetails) {
     Challenge challenge = challengeRepository.searchChallengeById(form.getChallengeId());
+    if (challenge.getCategoryType() != CategoryType.COTE) {
+      throw new CustomException(ErrorCode.NOT_COTE_CHALLENGE);
+    }
     if (!Objects.equals(challenge.getMember().getMemberId(), userDetails.getUsername())) {
       throw new CustomException(ErrorCode.NOT_OWNER_OF_CHALLENGE);
     }
 
-    boolean isExist = challenge.getCoteChallenge().stream()
+    boolean isExist = challenge.getCoteChallenges().stream()
             .anyMatch(c -> c.getStartAt().isEqual(form.getStartAt()));
     if (isExist) {
       throw new CustomException(ErrorCode.ALREADY_ADDED_THAT_DATE);
@@ -61,7 +67,7 @@ public class CoteCommentService {
     CoteChallenge coteChallenge = CoteChallenge.from(form, challenge);
     coteChallengeRepository.save(coteChallenge);
 
-    return new BaseResponseDto<CoteChallengeDto>(
+    return new BaseResponseDto<>(
             CoteChallengeDto.from(coteChallenge),
             "코테 챌린지 생성을 성공했습니다.",
             HttpStatus.OK);
@@ -75,17 +81,35 @@ public class CoteCommentService {
    * @param coteChallengeId 코테 챌린지 아이디
    * @return 댓글을 제외한 코테 챌린지의 정보
    */
-  public BaseResponseDto<CoteChallengeDto> getCoteChallenge(
-          Long coteChallengeId) {
+  public BaseResponseDto<CoteChallengeDto> getCoteChallenge(Long coteChallengeId) {
 
     CoteChallenge coteChallenge = coteChallengeRepository.findById(coteChallengeId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COTE_CHALLENGE));
 
-    return new BaseResponseDto<CoteChallengeDto>(
+    return new BaseResponseDto<>(
             CoteChallengeDto.fromWithoutComments(coteChallenge),
             "코테 챌린지 단건 조회를 성공했습니다.",
             HttpStatus.OK);
   }
+
+  /**
+   * 코테 챌린지를 전체 조회하는 서비스 메서드
+   * (DB호출 1회) 호출 1
+   *
+   * @param page        페이지
+   * @param challengeId 챌린지 아이디
+   * @return 댓글을 제외한 모든 코테 챌린지의 정보
+   */
+  public BaseResponseDto<PageDto<CoteChallengeDto>> getAllCoteChallenge(int page,
+                                                                        Long challengeId) {
+    Page<CoteChallengeDto> coteChallenge =
+            coteChallengeRepository.searchAllCoteChallengeByChallengeId(page - 1, challengeId);
+    return new BaseResponseDto<>(
+            PageDto.from(coteChallenge),
+            "코테 챌린지 전체 조회를 성공했습니다.(" + page + "페이지)",
+            HttpStatus.OK);
+  }
+
 
   /**
    * 코테 챌린지를 수정하기 위한 서비스 메서드
@@ -104,7 +128,7 @@ public class CoteCommentService {
             form.getCoteChallengeId(), userDetails.getUsername());
 
     coteChallenge.update(form);
-    return new BaseResponseDto<CoteChallengeDto>(
+    return new BaseResponseDto<>(
             CoteChallengeDto.fromWithoutComments(coteChallenge),
             "코테 챌린지 수정을 성공했습니다.",
             HttpStatus.OK);
@@ -132,7 +156,7 @@ public class CoteCommentService {
     }
 
     coteChallengeRepository.delete(coteChallenge);
-    return new BaseResponseDto<CoteChallengeDto>(
+    return new BaseResponseDto<>(
             CoteChallengeDto.from(coteChallenge),
             "코테 챌린지 삭제를 성공했습니다.",
             HttpStatus.OK);
@@ -151,7 +175,7 @@ public class CoteCommentService {
    */
   public BaseResponseDto<CoteCommentDto> addComment(CoteCommentForm form, UserDetailsImpl userDetails) {
 
-    Member member = memberRepository.searchByEmail(userDetails.getUsername());
+    Member member = memberRepository.searchByLoginId(userDetails.getUsername());
 
     CoteChallenge coteChallenge = coteChallengeRepository.searchCoteChallengeByStartAt(
             form.getChallengeId(), member.getMemberId(), parseToday());
@@ -167,7 +191,7 @@ public class CoteCommentService {
 
     CoteComment coteComment = CoteComment.from(form, member, coteChallenge);
     coteCommentRepository.save(coteComment);
-    return new BaseResponseDto<CoteCommentDto>(
+    return new BaseResponseDto<>(
             CoteCommentDto.from(coteComment),
             "인증 댓글 추가를 성공했습니다.",
             HttpStatus.OK);
@@ -183,7 +207,7 @@ public class CoteCommentService {
    */
   public BaseResponseDto<CoteCommentDto> getComment(Long commentId) {
     CoteComment coteComment = searchCoteCommentById(commentId);
-    return new BaseResponseDto<CoteCommentDto>(
+    return new BaseResponseDto<>(
             CoteCommentDto.from(coteComment),
             "인증 댓글 조회를 성공했습니다.",
             HttpStatus.OK);
@@ -204,7 +228,7 @@ public class CoteCommentService {
                                                        UserDetailsImpl userDetails) {
     CoteComment coteComment = searchCoteCommentById(form.getCommentId(), userDetails.getUsername());
     coteComment.update(form);
-    return new BaseResponseDto<CoteCommentDto>(
+    return new BaseResponseDto<>(
             CoteCommentDto.from(coteComment),
             "인증 댓글 수정을 성공했습니다.",
             HttpStatus.OK);
@@ -225,7 +249,7 @@ public class CoteCommentService {
                                                        UserDetailsImpl userDetails) {
     CoteComment coteComment = searchCoteCommentById(commentId, userDetails.getUsername());
     coteCommentRepository.delete(coteComment);
-    return new BaseResponseDto<CoteCommentDto>(
+    return new BaseResponseDto<>(
             CoteCommentDto.from(coteComment),
             "인증 댓글 삭제를 성공했습니다.",
             HttpStatus.OK);
