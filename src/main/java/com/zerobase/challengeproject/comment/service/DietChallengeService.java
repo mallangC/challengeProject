@@ -8,6 +8,7 @@ import com.zerobase.challengeproject.comment.domain.dto.DietCommentDto;
 import com.zerobase.challengeproject.comment.domain.form.DietChallengeAddForm;
 import com.zerobase.challengeproject.comment.domain.form.DietChallengeUpdateForm;
 import com.zerobase.challengeproject.comment.domain.form.DietCommentAddForm;
+import com.zerobase.challengeproject.comment.domain.form.DietCommentUpdateForm;
 import com.zerobase.challengeproject.comment.entity.DietChallenge;
 import com.zerobase.challengeproject.comment.entity.DietComment;
 import com.zerobase.challengeproject.comment.repository.DietChallengeRepository;
@@ -121,6 +122,20 @@ public class DietChallengeService {
   }
 
   //다이어트 코멘트 수정 (form, userDetails)
+  @Transactional
+  public BaseResponseDto<DietCommentDto> updateDietComment(DietCommentUpdateForm form, UserDetailsImpl userDetails) {
+    Member member = userDetails.getMember();
+    DietComment dietComment = dietCommentRepository.searchDietCommentById(form.getCommentId());
+    if (!member.getMemberId().equals(dietComment.getMember().getMemberId())) {
+      throw new CustomException(ErrorCode.NOT_OWNER_OF_COMMENT);
+    }
+    dietComment.update(form);
+    dietComment.getDietChallenge().updateWeight(form.getCurrentWeight());
+    return new BaseResponseDto<DietCommentDto>(DietCommentDto.from(dietComment),
+            "다이어트 댓글 수정을 성공했습니다.",
+            HttpStatus.OK);
+  }
+
   //다이어트 코멘트 삭제 (commentId, userDetails)
 
 

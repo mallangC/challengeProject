@@ -6,6 +6,7 @@ import com.zerobase.challengeproject.comment.domain.dto.DietCommentDto;
 import com.zerobase.challengeproject.comment.domain.form.DietChallengeAddForm;
 import com.zerobase.challengeproject.comment.domain.form.DietChallengeUpdateForm;
 import com.zerobase.challengeproject.comment.domain.form.DietCommentAddForm;
+import com.zerobase.challengeproject.comment.domain.form.DietCommentUpdateForm;
 import com.zerobase.challengeproject.comment.service.DietChallengeService;
 import com.zerobase.challengeproject.member.components.jwt.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -45,6 +46,8 @@ public class DietChallengeController {
     return ResponseEntity.ok(dietChallengeService.updateDietChallenge(form, userDetails));
   }
 
+
+
   //다이어트 댓글 추가
   @PostMapping("/comment")
   public ResponseEntity<BaseResponseDto<DietCommentDto>> addComment(
@@ -53,14 +56,21 @@ public class DietChallengeController {
     return ResponseEntity.ok(dietChallengeService.addDietComment(form, userDetails));
   }
 
-
-
   //다이어트 댓글 단건 확인
   @GetMapping("/comment/{commentId}")
   public ResponseEntity<BaseResponseDto<DietCommentDto>> getComment(
           @PathVariable Long commentId) {
     return ResponseEntity.ok(dietChallengeService.getDietComment(commentId));
   }
+
+  //다이어트 댓글 수정
+  @PatchMapping("/comment")
+  public ResponseEntity<BaseResponseDto<DietCommentDto>> updateComment(
+          @RequestBody @Valid DietCommentUpdateForm form,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return ResponseEntity.ok(dietChallengeService.updateDietComment(form, userDetails));
+  }
+
 
 
 }
